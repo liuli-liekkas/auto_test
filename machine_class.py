@@ -136,7 +136,7 @@ class RTO:
 class SMW:
     def __init__(self, ip, *args):
         self.ip = ip
-        self.address = 'TCPIP0::%s::inst0::INSTR' % self.ip
+        self.address = 'TCPIP::%s::5025::INSTR' % self.ip
         self.resourceManager = pyvisa.ResourceManager()
 
     def open(self):
@@ -156,7 +156,7 @@ class SMW:
         return idn
 
 if __name__ == '__main__':
-    # rsc = RSC('192.168.2.101', 50, 2000000)
+    # rsc = RSC('192.168.0.101', 50, 2000000)
     # rsc.open()
     # rsc.reset()
     # time.sleep(3)
@@ -167,15 +167,15 @@ if __name__ == '__main__':
     # time.sleep(3)
     # rsc.set_corr_off()
     # rsc.close()
-    # hmp = HMP('192.168.2.105', '1', '24', '1')
-    # hmp.open()
-    # hmp.read_idn()
+    hmp = HMP('192.168.0.105', '1', '24', '1')
+    hmp.open()
+    hmp.read_idn()
     # hmp.reset()
     # time.sleep(3)
     # hmp.set_default()
     # time.sleep(3)
     # hmp.return_status()
-    # hmp.close()
+    hmp.close()
     # fsw = FSW('192.168.0.30')
     # fsw.open()
     # fsw.read_idn()
@@ -184,7 +184,25 @@ if __name__ == '__main__':
     # rto.open()
     # rto.read_idn()
     # rto.close()
-    smw = SMW('192.168.0.22')
-    smw.open()
-    smw.read_idn()
-    smw.close()
+    # smw = SMW('192.168.0.22')
+    # smw.open()
+    # smw.read_idn()
+    # smw.close()
+Traceback (most recent call last):
+  File "/Users/liuli/PycharmProjects/auto_test/machine_class.py", line 171, in <module>
+    hmp.open()
+  File "/Users/liuli/PycharmProjects/auto_test/machine_class.py", line 52, in open
+    self.instance = self.resourceManager.open_resource(self.address)
+  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/highlevel.py", line 1771, in open_resource
+    res.open(access_mode, open_timeout)
+  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/resources/resource.py", line 218, in open
+    self.session, status = self._resource_manager.open_bare_resource(self._resource_name, access_mode, open_timeout)
+  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/highlevel.py", line 1725, in open_bare_resource
+    return self.visalib.open(self.session, resource_name, access_mode, open_timeout)
+  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/ctwrapper/functions.py", line 1213, in open
+    ret = library.viOpen(session, resource_name, access_mode, open_timeout, byref(out_session))
+  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/ctwrapper/highlevel.py", line 193, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+
+Process finished with exit code 1
