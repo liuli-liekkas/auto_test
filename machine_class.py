@@ -188,21 +188,3 @@ if __name__ == '__main__':
     # smw.open()
     # smw.read_idn()
     # smw.close()
-Traceback (most recent call last):
-  File "/Users/liuli/PycharmProjects/auto_test/machine_class.py", line 171, in <module>
-    hmp.open()
-  File "/Users/liuli/PycharmProjects/auto_test/machine_class.py", line 52, in open
-    self.instance = self.resourceManager.open_resource(self.address)
-  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/highlevel.py", line 1771, in open_resource
-    res.open(access_mode, open_timeout)
-  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/resources/resource.py", line 218, in open
-    self.session, status = self._resource_manager.open_bare_resource(self._resource_name, access_mode, open_timeout)
-  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/highlevel.py", line 1725, in open_bare_resource
-    return self.visalib.open(self.session, resource_name, access_mode, open_timeout)
-  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/ctwrapper/functions.py", line 1213, in open
-    ret = library.viOpen(session, resource_name, access_mode, open_timeout, byref(out_session))
-  File "/Users/liuli/anaconda3/envs/tensorflow/lib/python3.6/site-packages/pyvisa/ctwrapper/highlevel.py", line 193, in _return_handler
-    raise errors.VisaIOError(ret_value)
-pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
-
-Process finished with exit code 1
