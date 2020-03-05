@@ -45,11 +45,11 @@ class HMP:
         self.chan = chan
         self.volt = volt
         self.curr = curr
-        self.address = 'TCPIP0::%s::inst0::INSTR' % self.ip
+        self.address = 'TCPIP::%s::5025::SOCKET' % self.ip
         self.resourceManager = pyvisa.ResourceManager()
 
     def open(self):
-        self.instance = self.resourceManager.open_resource(self.address)
+        self.instance = self.resourceManager.open_resource(self.address, read_termination='\n')
 
     def close(self):
         if self.instance is not None:
@@ -70,9 +70,9 @@ class HMP:
         self.instance.write('CURR %s' % self.curr)
 
     def return_status(self):
-        self.instance.query('INST:NSEL?')
-        self.instance.query('VOLT?')
-        self.instance.query('CURR?')
+        print(self.instance.query('INST:NSEL?'))
+        print(self.instance.query('VOLT?'))
+        print(self.instance.query('CURR?'))
 
     def set_att(self):
         self.instance.write('ATT1:ATT %s' % self.att)
@@ -105,10 +105,8 @@ class FSW:
         self.instance.write('*RST')
 
     def read_idn(self):
-        idn = self.instance.query('*IDN?')
+        idn = self.instance.query("*IDN?")
         print(idn)
-        return idn
-
 
 class RTO:
     def __init__(self, ip, *args):
@@ -136,7 +134,7 @@ class RTO:
 class SMW:
     def __init__(self, ip, *args):
         self.ip = ip
-        self.address = 'TCPIP::%s::5025::INSTR' % self.ip
+        self.address = 'TCPIP::%s::inst0::INSTR' % self.ip
         self.resourceManager = pyvisa.ResourceManager()
 
     def open(self):
@@ -169,12 +167,13 @@ if __name__ == '__main__':
     # rsc.close()
     hmp = HMP('192.168.0.105', '1', '24', '1')
     hmp.open()
+    # hmp.reset()
     hmp.read_idn()
     # hmp.reset()
     # time.sleep(3)
     # hmp.set_default()
     # time.sleep(3)
-    # hmp.return_status()
+    hmp.return_status()
     hmp.close()
     # fsw = FSW('192.168.0.30')
     # fsw.open()
