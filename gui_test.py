@@ -59,27 +59,50 @@ import tkinter as tk
 
 
 # Listbox
+# window = tk.Tk()
+# window.title('My Window')
+# window.geometry('500x300')
+# var1 = tk.StringVar()
+# l = tk.Label(window, bg='green', fg='yellow', font=('Arial', 12), width=10, textvariable=var1)
+# l.pack()
+# def print_selection():
+#     value = lb.get(lb.curselection())
+#     var1.set(value)
+# b1 = tk.Button(window, text='print selection', width=15, height=2, command=print_selection)
+# b1.pack()
+# var2 = tk.StringVar()
+# var2.set((1, 2, 3, 4))
+# lb = tk.Listbox(window, listvariable=var2)
+# list_items = [11, 22, 33, 44]
+# for item in list_items:
+#     lb.insert('end', item)
+# lb.insert(1, 'first')
+# lb.insert(2, 'second')
+# lb.delete(2)
+# lb.pack()
+
+
+# RadioButton
+# window = tk.Tk()
+# window.title('My Window')
+# window.geometry('500x300')
+# var = tk.StringVar()
+# l = tk.Label(window, bg='yellow', width=20, text='empty')
+# l.pack()
+# def print_selection():
+#     l.config(text='you have selected' + var.get())
+# r1 = tk.Radiobutton(window, text='Option A', variable=var, value='A', command=print_selection)
+# r1.pack()
+# r2 = tk.Radiobutton(window, text='Option B', variable=var, value='B', command=print_selection)
+# r2.pack()
+# r3 = tk.Radiobutton(window, text='Option C', variable=var, value='C', command=print_selection)
+# r3.pack()
+
+
+# Checkbutton
 window = tk.Tk()
 window.title('My Window')
 window.geometry('500x300')
-var1 = tk.StringVar()
-l = tk.Label(window, bg='green', fg='yellow', font=('Arial', 12), width=10, textvariable=var1)
-l.pack()
-def print_selection():
-    value = lb.get(lb.curselection())
-    var1.set(value)
-b1 = tk.Button(window, text='print selection', width=15, height=2, command=print_selection)
-b1.pack()
-var2 = tk.StringVar()
-var2.set((1, 2, 3, 4))
-lb = tk.Listbox(window, listvariable=var2)
-list_items = [11, 22, 33, 44]
-for item in list_items:
-    lb.insert('end', item)
-lb.insert(1, 'first')
-lb.insert(2, 'second')
-lb.delete(2)
-lb.pack()
 
 
 window.mainloop()
