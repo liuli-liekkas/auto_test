@@ -302,11 +302,11 @@ class Calendar:
             return False
 
 
-def date_str_gain():
-    for data in Calendar((x, y), 'ur').selection():
-        if date:
-            date_str.set(data)
-    return date_str
+# def date_str_gain():
+#     for data in Calendar((x, y), 'ur').selection():
+#         if date:
+#             date_str.set(data)
+#     return date_str
 
 
 if __name__ == '__main__':
@@ -319,7 +319,7 @@ if __name__ == '__main__':
     date = ttk.Entry(root, textvariable=date_str)
     date.place(x=0, y=0, relx=5 / 20, rely=1 / 6, relwidth=14 / 20, relheigh=2 / 3)
     # Calendar((x, y), 'ur').selection() 获取日期，x,y为点坐标
-    #date_str_gain = lambda: [date_str.set(date) for date in [Calendar((x, y), 'ur').selection()] if date]
-    date_str_gain()
+    date_str_gain = lambda: [date_str.set(date) for date in [Calendar((x, y), 'ur').selection()] if date]
+    # date_str_gain()
     tk.Button(root, text='日期:', command=date_str_gain).place(x=0, y=0, relx=1 / 20, rely=1 / 6, relwidth=4 / 20, relheigh=2 / 3)
     root.mainloop()
