@@ -108,6 +108,7 @@ class FSW:
         idn = self.instance.query("*IDN?")
         print(idn)
 
+
 class RTO:
     def __init__(self, ip, *args):
         self.ip = ip
@@ -132,7 +133,7 @@ class RTO:
 
 
 class SMW:
-    def __init__(self, ip, *args):
+    def __init__(self, ip):
         self.ip = ip
         self.address = 'TCPIP::%s::inst0::INSTR' % self.ip
         self.resourceManager = pyvisa.ResourceManager()
@@ -152,6 +153,7 @@ class SMW:
         idn = self.instance.query('*IDN?')
         print(idn)
         return idn
+
 
 if __name__ == '__main__':
     # rsc = RSC('192.168.0.101', 50, 2000000)
