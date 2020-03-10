@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>300</width>
+    <height>200</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>50</number>
+   </property>
+   <property name="topMargin">
+    <number>30</number>
+   </property>
+   <property name="rightMargin">
+    <number>50</number>
+   </property>
+   <property name="bottomMargin">
+    <number>30</number>
+   </property>
+   <property name="spacing">
+    <number>20</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="lable">
+     <property name="text">
+      <string>用户名</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="name_le">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>请输入用户名！</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_1">
+     <property name="text">
+      <string>密 码</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="password_le">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+     <property name="placeholderText">
+      <string>请输入密码！</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QPushButton" name="landing_btn">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>35</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	background-color: rgb(33, 174, 250);
+	border-radius:5px;
+	color:white
+}
+
+QPushButton:hover{
+	background-color: rgb(72,203,250);
+}
+
+QPushButton:pressed{
+	background-color: rgb(85,85,255);
+}
+
+QPushButton:disabled{
+	background-color: rgb(167,167,167);
+}</string>
+     </property>
+     <property name="text">
+      <string>登陆</string>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>name_le</tabstop>
+  <tabstop>password_le</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>name_le</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>Form</receiver>
+   <slot>btn_sate_le()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>180</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>364</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>password_le</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>Form</receiver>
+   <slot>btn_sate_le()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>98</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>121</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>landing_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>Form</receiver>
+   <slot>land_btn()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>181</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>333</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>btn_sate_le()</slot>
+  <slot>land_btn()</slot>
+ </slots>
+</ui>
