@@ -1,48 +1,49 @@
+# -*- coding: utf-8 -*-
+
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
+class TabDemo(QTabWidget):
+    def __init__(self, parent = None):
+        super(TabDemo, self).__init__(parent)
+        self.tab1 = QWidget()
+        self.tab2 = QWidget()
+        self.tab3 = QWidget()
+        self.addTab(self.tab1, "Tab 1")
+        self.addTab(self.tab2, "Tab 2")
+        self.addTab(self.tab3, "Tab 3")
+        self.setWindowTitle("Tab 例子")
+        self.tab1UI()
+        self.tab2UI()
+        self.tab3UI()
+    def tab1UI(self):
+        layout = QFormLayout()
+        layout.addRow("姓名", QLineEdit())
+        layout.addRow("地址", QLineEdit())
+        self.setTabText(0, "联系方式")
+        self.tab1.setLayout(layout)
+    def tab2UI(self):
+        layout = QFormLayout()
+        sex = QHBoxLayout()
+        sex.addWidget(QRadioButton("男"))
+        sex.addWidget(QRadioButton("女"))
+        layout.addRow(QLabel("性别"), sex)
+        layout.addRow("生日",QLineEdit())
+        self.setTabText(1,"个人详细信息")
+        self.tab2.setLayout(layout)
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        Form.setObjectName("Form")
-        Form.resize(400, 130)
-        self.comboBox = QtWidgets.QComboBox(Form)
-        self.comboBox.setGeometry(QtCore.QRect(80, 50, 69, 22))
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.okButton = QtWidgets.QPushButton(Form)
-        self.okButton.setGeometry(QtCore.QRect(190, 50, 75, 23))
-        self.okButton.setObjectName("okButton")
-        self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
+    def tab3UI(self):
+        layout = QHBoxLayout()
+        layout.addWidget(QLabel("科目"))
+        layout.addWidget(QCheckBox("物理"))
+        layout.addWidget(QCheckBox("高数"))
+        self.setTabText(2,"教育程序")
+        self.tab3.setLayout(layout)
 
-    def retranslateUi(self, Form):
-        _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "ComboBox下拉框例子"))
-        self.comboBox.setItemText(0, _translate("Form", "Python"))
-        self.comboBox.setItemText(1, _translate("Form", "C++"))
-        self.comboBox.setItemText(2, _translate("Form", "Go"))
-        self.comboBox.setItemText(3, _translate("Form", "Java"))
-        self.okButton.setText(_translate("Form", "确定"))
-
-
-class MyMainForm(QMainWindow, Ui_Form):
-    def __init__(self, parent=None):
-        super(MyMainForm, self).__init__(parent)
-        self.setupUi(self)
-        self.okButton.clicked.connect(self.getComboxBoxValue)
-
-    def getComboxBoxValue(self):
-        select_value = self.comboBox.currentText()
-        QMessageBox.information(self, "消息框标题", "你要学%s,为师给你说道说道！" % (select_value,), QMessageBox.Yes | QMessageBox.No)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication(sys.argv)
-    myWin = MyMainForm()
-    myWin.show()
+    demo = TabDemo()
+    demo.show()
     sys.exit(app.exec_())
