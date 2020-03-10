@@ -94,10 +94,12 @@ class SelectWindow(QMainWindow, UiForm):
 
 
 class RadarTest(QMainWindow):
-    def __init__(self):
+    def __init__(self, parent=None):
+        super(RadarTest, self).__init__(parent)
         self.init_ui()
 
     def init_ui(self):
+        self._translate = QtCore.QCoreApplication.translate
         self.menu_init()
         self.tool_menu_init()
         self.tab_menu()
@@ -147,22 +149,17 @@ class RadarTest(QMainWindow):
         self.toolbar.addAction(exit_act)
 
     def tab_menu(self):
-        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget = QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1111, 721))
+        self.tabWidget.setGeometry(QtCore.QRect(210, 250, 691, 401))
         self.tabWidget.setObjectName("tabWidget")
-        self.tab = QWidget()
-        self.tab =
         self.tab1 = QWidget()
+        self.tab1.setObjectName("tab1")
         self.tab2 = QWidget()
+        self.tab2.setObjectName("tab2")
         self.tab3 = QWidget()
-        self.addTab(self.tab1, "Tab 1")
-        self.addTab(self.tab2, "Tab 2")
-        self.addTab(self.tab3, "Tab 3")
-        self.tab1UI()
-        self.tab2UI()
-        self.tab3UI()
+        self.tab3.setObjectName("tab3")
 
     def tab1UI(self):
         layout = QFormLayout()
