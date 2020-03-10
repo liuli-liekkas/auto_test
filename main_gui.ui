@@ -20,8 +20,8 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>250</y>
+      <x>180</x>
+      <y>230</y>
       <width>691</width>
       <height>401</height>
      </rect>
