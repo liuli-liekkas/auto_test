@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
+from PyQt5.QtGui import QFont
 
 
 class LoginWindow(QWidget):
@@ -102,6 +103,8 @@ class RadarTest(QMainWindow):
         self.setGeometry(100, 100, 1200, 800)
         self.statusBar().showMessage("测试人：刘力")
         self.setWindowTitle("毫米波雷达测试系统")
+
+        self.setFont(QFont('Menlo', 16))
         self.menu_init()
         # self.tool_menu_init()
         self.tab_menu()
@@ -148,14 +151,14 @@ class RadarTest(QMainWindow):
         if action == quit_act:
             qApp.quit()
 
-    # def tool_menu_init(self):
-    #     exit_act = QAction("退出", self)
-    #     exit_act.setShortcut("Ctrl+Q")
-    #     exit_act.triggered.connect(qApp.quit)
-    #     exit_act.setToolTip("退出应用")
-    #
-    #     self.toolbar = self.addToolBar("exit")
-    #     self.toolbar.addAction(exit_act)
+    def tool_menu_init(self):
+        exit_act = QAction("退出", self)
+        exit_act.setShortcut("Ctrl+Q")
+        exit_act.triggered.connect(qApp.quit)
+        exit_act.setToolTip("退出应用")
+
+        self.toolbar = self.addToolBar("exit")
+        self.toolbar.addAction(exit_act)
 
     def tab_menu(self):
         self.centralwidget = QWidget(self)
