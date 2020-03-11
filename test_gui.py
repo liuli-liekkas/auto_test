@@ -9,11 +9,18 @@ class LoginWindow(QWidget):
         super().__init__()
         self.setWindowTitle("智能传感器室自动化测试系统")
         self.resize(500, 200)
+        self.center()
         self.Password = "1"
         self.UserName = "ll"
         self.Co_Width = 40
         self.Co_Height = 20
         self.init_ui()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def init_ui(self):
         self.lab_l = QLabel("帐户:", self)
@@ -26,12 +33,12 @@ class LoginWindow(QWidget):
 
     def resizeEvent(self, evt):
         self.lab_l.resize(self.Co_Width, self.Co_Height)
-        self.lab_l.move(self.width()/3, self.height()/5)
+        self.lab_l.move(int(self.width()/3), int(self.height()/5))
         self.Lin_l.move(self.lab_l.x()+self.lab_l.width(), self.lab_l.y())
         self.lab_p.resize(self.Co_Width, self.Co_Height)
         self.lab_p.move(self.lab_l.x(), self.lab_l.y()+self.lab_l.height()*2)
         self.Lin_p.move(self.lab_p.x()+self.lab_p.width(), self.lab_p.y())
-        self.Pu_l.move(self.Lin_p.x()+self.Lin_p.width()/4, self.lab_p.y()+self.lab_p.height()*2)
+        self.Pu_l.move(int(self.Lin_p.x())+int(self.Lin_p.width()/4), self.lab_p.y()+self.lab_p.height()*2)
 
     def login(self):
         if self.Lin_l.text() == self.UserName and self.Lin_p.text() == self.Password:
@@ -51,47 +58,32 @@ class LoginWindow(QWidget):
         self.s.show()
 
 
-class UiForm(object):
-    def setupUi(self, Form):
-        Form.setObjectName("Form")
-        Form.resize(400, 130)
-        self.comboBox = QComboBox(Form)
-        self.comboBox.setGeometry(QtCore.QRect(30, 50, 170, 40))
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.okButton = QPushButton(Form)
-        self.okButton.setGeometry(QtCore.QRect(250, 50, 75, 40))
-        self.okButton.setObjectName("okButton")
-        self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
-
-    def retranslateUi(self, Form):
-        _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "选择测试分系统"))
-        self.comboBox.setItemText(0, _translate("Form", "毫米波雷达测试系统"))
-        self.comboBox.setItemText(1, _translate("Form", "导航模块测试系统"))
-        self.comboBox.setItemText(2, _translate("Form", "通信模块测试系统"))
-        self.comboBox.setItemText(3, _translate("Form", "保险杠测试系统"))
-        self.comboBox.setItemText(4, _translate("Form", "摄像头测试系统"))
-        self.okButton.setText(_translate("Form", "确定"))
-
-
-class SelectWindow(QMainWindow, UiForm):
-    def __init__(self, parent=None):
-        super(SelectWindow, self).__init__(parent)
-        self.setupUi(self)
+class SelectWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.init_ui()
         self.okButton.clicked.connect(self.slot_btn_function)
 
     def slot_btn_function(self):
-        select_value = self.comboBox.currentText()
+        select_value = self.combo.currentText()
         if select_value == "毫米波雷达测试系统":
             self.hide()
             self.r = RadarTest()
             self.r.show()
+
+    def init_ui(self):
+        self.combo = QComboBox(self)
+        self.combo.addItem("毫米波雷达测试系统")
+        self.combo.addItem("导航模块测试系统")
+        self.combo.addItem("通信模块测试系统")
+        self.combo.addItem("保险杠测试系统")
+        self.combo.addItem("摄像头测试系统")
+        self.okButton = QPushButton(self)
+        self.okButton.setText("确定")
+        self.okButton.move(250, 55)
+        self.combo.setGeometry(30, 50, 170, 40)
+        self.resize(400, 200)
+        self.setWindowTitle("选择测试分系统")
 
 
 class RadarTest(QMainWindow):
@@ -100,15 +92,21 @@ class RadarTest(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.setGeometry(100, 100, 1200, 800)
+        self.resize(1200, 800)
+        self.center()
         self.statusBar().showMessage("测试人：刘力")
         self.setWindowTitle("毫米波雷达测试系统")
-
         self.setFont(QFont('Menlo', 16))
         self.menu_init()
         # self.tool_menu_init()
         self.tab_menu()
         self.show()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def menu_init(self):
         menubar = self.menuBar()
@@ -127,10 +125,11 @@ class RadarTest(QMainWindow):
         exit_act.triggered.connect(qApp.quit)
         file_menu.addAction(exit_act)
 
-        open_menu = QMenu("打开", self)
-        new_act = QAction("New", self, checkable=True)
-        open_menu.addAction(new_act)
-        file_menu.addMenu(open_menu)
+        open_menu = QAction("打开", self)
+        open_menu.setShortcut('Ctrl+O')
+        exit_act.setStatusTip("打开文件")
+        open_menu.triggered.connect(self.show_dialog)
+        file_menu.addAction(open_menu)
 
         com_act = QAction("串口调试", self)
         com_act.setStatusTip("打开串口调试工具")
@@ -141,6 +140,9 @@ class RadarTest(QMainWindow):
         net_act.setStatusTip("打开网口调试工具")
         # net_act.triggered.connect()
         tool_menu.addAction(net_act)
+
+    def show_dialog(self):
+        QFileDialog.getOpenFileName(self, '打开文件', '/home')
 
     def contextMenuEvent(self, e):
         cmenu = QMenu(self)
@@ -208,7 +210,7 @@ class RadarTest(QMainWindow):
 
 if __name__ == '__main__':
     App = QApplication(sys.argv)
-    Win = RadarTest()
+    Win = SelectWindow()
     Win.show()
     sys.exit(App.exec_())
 
