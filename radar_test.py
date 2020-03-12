@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QAction, QFileDialog, qApp, QMenu, QWidget, QLineEdit, QRadioButton, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QCheckBox, QTabWidget, QApplication, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QAction, QFileDialog, qApp, QMenu, QWidget, QLineEdit, QRadioButton, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QCheckBox, QTabWidget, QApplication, QPushButton, QDateEdit, QComboBox
 from PyQt5.QtGui import QFont, QPixmap
 import sys
 
@@ -102,15 +102,36 @@ class RadarTest(QMainWindow):
         self.config_button = QPushButton('配置', self)
 
         self.name_label = QLabel('姓名')
+        self.department_label = QLabel('部门')
+        self.post_label = QLabel('岗位')
+        self.name_edit = QLineEdit()
+        self.department_edit = QLineEdit()
+        self.post_edit = QLineEdit()
 
-        self.button_h_layout = QHBoxLayout()
-        self.pic_h_layout = QHBoxLayout()
-        self.all_v_layout = QVBoxLayout()
+        self.time_label = QLabel('时间')
+        self.job_classify_label = QLabel('工作分类')
+        self.man_hour_label = QLabel('工时')
+        self.nature_label = QLabel('性质')
+        self.important_urgency_label = QLabel('重要/紧急')
+        self.status_label = QLabel('状态')
+        self.work_cop_label = QLabel('工作配合')
+        self.time_data_edit = QDateEdit()
+        self.job_classify_combo = QComboBox()
+        self.man_hour_combo = QComboBox()
+        self.nature_combo = QComboBox()
+        self.important_urgency_combo = QComboBox()
+        self.status_combo = QComboBox()
+        self.work_cop_combo = QComboBox()
+
+
         self.tab1_layout_init()
         self.radiobutton_init()
         self.label_init()
 
     def tab1_layout_init(self):
+        self.button_h_layout = QHBoxLayout()
+        self.pic_h_layout = QHBoxLayout()
+        self.all_v_layout = QVBoxLayout()
         self.pic_h_layout.addStretch(1)
         self.pic_h_layout.addWidget(self.pic_label)
         self.pic_h_layout.addStretch(1)
