@@ -1,6 +1,8 @@
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QAction, QFileDialog, qApp, QMenu, QWidget, QLineEdit, QRadioButton, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QCheckBox, QTabWidget, QApplication, QPushButton, QDateEdit, QComboBox
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QAction, QFileDialog, qApp, QMenu, QWidget, QLineEdit, QRadioButton, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QCheckBox, QTabWidget, QApplication, QPushButton, QDateEdit, QComboBox, QTextEdit, QTableWidget, QGridLayout
 from PyQt5.QtGui import QFont, QPixmap
+from PyQt5 import QtCore
 import sys
+import datetime
 
 
 class RadarTest(QMainWindow):
@@ -32,7 +34,7 @@ class RadarTest(QMainWindow):
         view_menu = menubar.addMenu("视图")
         config_menu = menubar.addMenu("配置")
         analysis_menu = menubar.addMenu("分析")
-        selftest_menu = menubar.addMenu("自检")
+        self_test_menu = menubar.addMenu("自检")
         tool_menu = menubar.addMenu("工具")
         help_menu = menubar.addMenu("帮助")
 
@@ -94,13 +96,6 @@ class RadarTest(QMainWindow):
         self.on_button = QRadioButton('on', self)
         self.pic_label = QLabel(self)
 
-        self.save_button = QPushButton('保存', self)
-        self.change_button = QPushButton('修改', self)
-        self.delete_button = QPushButton('删除', self)
-        self.submit_button = QPushButton('提交', self)
-        self.query_button = QPushButton('查询', self)
-        self.config_button = QPushButton('配置', self)
-
         self.name_label = QLabel('姓名')
         self.department_label = QLabel('部门')
         self.post_label = QLabel('岗位')
@@ -116,6 +111,8 @@ class RadarTest(QMainWindow):
         self.status_label = QLabel('状态')
         self.work_cop_label = QLabel('工作配合')
         self.time_data_edit = QDateEdit()
+        self.time_data_edit.setCalendarPopup(True)
+        self.time_data_edit.setDate(QtCore.QDate(2020, 1, 1))
         self.job_classify_combo = QComboBox()
         self.man_hour_combo = QComboBox()
         self.nature_combo = QComboBox()
@@ -123,22 +120,70 @@ class RadarTest(QMainWindow):
         self.status_combo = QComboBox()
         self.work_cop_combo = QComboBox()
 
+        self.content_label = QLabel()
+        self.question_label = QLabel()
+        self.content_edit = QTextEdit()
+        self.question_edit = QTextEdit()
+
+        self.save_button = QPushButton('保存', self)
+        self.change_button = QPushButton('修改', self)
+        self.delete_button = QPushButton('删除', self)
+        self.submit_button = QPushButton('提交', self)
+        self.query_button = QPushButton('查询', self)
+        self.config_button = QPushButton('配置', self)
+
+        self.message_table = QTableWidget()
+        self.message_table.setHorizontalHeaderLabels(['时间', '工作分类', '事项内容', '工时', '性质', '重要/紧急', '状态', '工作配合', '问题和困难', 'ID'])
 
         self.tab1_layout_init()
         self.radiobutton_init()
         self.label_init()
 
     def tab1_layout_init(self):
+        self.up_h_layout = QHBoxLayout()
+        self.up_h_layout.addWidget(self.name_label)
+        self.up_h_layout.addWidget(self.name_edit)
+        self.up_h_layout.addWidget(self.department_label)
+        self.up_h_layout.addWidget(self.department_edit)
+        self.up_h_layout.addWidget(self.post_label)
+        self.up_h_layout.addWidget(self.post_edit)
+        self.up_h_layout.addStretch(3)
+        self.up_h_layout.setStretch(3, 1)
+
+        self.l_grid_layout = QGridLayout()
+        self.l_grid_layout.addWidget(self.time_label, 0, 0, 1, 1)
+        self.l_grid_layout.addWidget(self.time_data_edit, 0, 1, 1, 1)
+        self.l_grid_layout.addWidget(self.job_classify_label, 1, 0, 1, 1)
+        self.l_grid_layout.addWidget(self.job_classify_combo, 1, 1, 1, 1)
+        self.l_grid_layout.addWidget(self.man_hour_label, 2, 0, 1, 1)
+        self.l_grid_layout.addWidget(self.man_hour_combo, 2, 1, 1, 1)
+        self.l_grid_layout.addWidget(self.nature_label, 3, 0, 1, 1)
+        self.l_grid_layout.addWidget(self.nature_combo, 3, 1, 1, 1)
+        self.l_grid_layout.addWidget(self.important_urgency_label, 4, 0, 1, 1)
+        self.l_grid_layout.addWidget(self.important_urgency_combo, 4, 1, 1, 1)
+        self.l_grid_layout.addWidget(self.status_label, 5, 0, 1, 1)
+        self.l_grid_layout.addWidget(self.status_combo, 5, 1, 1, 1)
+        self.l_grid_layout.addWidget(self.work_cop_label, 6, 0, 1, 1)
+        self.l_grid_layout.addWidget(self.work_cop_combo, 6, 1, 1, 1)
+
         self.button_h_layout = QHBoxLayout()
         self.pic_h_layout = QHBoxLayout()
-        self.all_v_layout = QVBoxLayout()
         self.pic_h_layout.addStretch(1)
         self.pic_h_layout.addWidget(self.pic_label)
         self.pic_h_layout.addStretch(1)
         self.button_h_layout.addWidget(self.off_button)
         self.button_h_layout.addWidget(self.on_button)
+        # self.all_v_layout.addLayout(self.up_h_layout)
+        # self.all_v_layout.addLayout(self.pic_h_layout)
+        # self.all_v_layout.addLayout(self.button_h_layout)
+        # self.tab1.setLayout(self.all_v_layout)
+
+        self.all_v_layout = QVBoxLayout()
+        self.all_v_layout.addLayout(self.up_h_layout)
+        self.all_v_layout.addLayout(self.l_grid_layout)
         self.all_v_layout.addLayout(self.pic_h_layout)
         self.all_v_layout.addLayout(self.button_h_layout)
+        self.all_v_layout.addWidget(self.message_table)
         self.tab1.setLayout(self.all_v_layout)
 
     def radiobutton_init(self):
