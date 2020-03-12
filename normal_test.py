@@ -1,53 +1,52 @@
 import sys
-from PyQt5.QtWidgets import QApplication,QWidget,QLabel,QComboBox,QFrame
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QWidget, QRadioButton, QLabel, QHBoxLayout, QVBoxLayout
 
-class MyClass(QWidget):
+
+class Demo(QWidget):
     def __init__(self):
-        super(MyClass, self).__init__()
-        self.initUI()
+        super(Demo, self).__init__()
+        self.off_button = QRadioButton('off', self)                 # 1
+        self.on_button = QRadioButton('on', self)                   # 2
 
-    def initUI(self):
-        self.setWindowTitle("刘金玉编程")
-        self.setGeometry(300,100,400,300)
+        self.pic_label = QLabel(self)                               # 3
 
-        myframe1=QFrame(self)
-        myframe1.move(50,50)
-        lbl1=QLabel("省",myframe1)
-        lbl1.move(0,3)
-        combo1=QComboBox(myframe1)
-        combo1.move(20,0)
-        # combo1.setEditable(True)
+        self.button_h_layout = QHBoxLayout()
+        self.pic_h_layout = QHBoxLayout()
+        self.all_v_layout = QVBoxLayout()
 
-        combo1.activated[str].connect(self.myActived)
+        self.layout_init()
+        self.radiobutton_init()
+        self.label_init()
 
-        #省份
-        combo1.addItem("选择省份")
-        combo1.addItem("浙江")
-        combo1.addItem("江苏")
-        combo1.addItem("安徽")
+    def layout_init(self):
+        self.pic_h_layout.addStretch(1)                             # 4
+        self.pic_h_layout.addWidget(self.pic_label)
+        self.pic_h_layout.addStretch(1)
+        self.button_h_layout.addWidget(self.off_button)
+        self.button_h_layout.addWidget(self.on_button)
+        self.all_v_layout.addLayout(self.pic_h_layout)
+        self.all_v_layout.addLayout(self.button_h_layout)
 
-        #市级
-        lbl1 = QLabel("市", myframe1)
-        lbl1.move(100, 3)
-        self.combo2 = QComboBox(myframe1)
-        self.combo2.move(120, 0)
+        self.setLayout(self.all_v_layout)
 
-        self.show()
+    def radiobutton_init(self):
+        self.off_button.setChecked(True)                            # 5
+        self.off_button.toggled.connect(self.on_off_bulb_func)      # 6
+        # self.on_button.toggled.connect(self.on_off_bulb_func)
 
-    def myActived(self,s):
-        self.combo2.clear()
-        if s=="浙江":
-            self.combo2.addItem("杭州")
-            self.combo2.addItem("宁波")
-            self.combo2.addItem("温州")
-        elif s=="江苏":
-            self.combo2.addItem("苏州")
-            self.combo2.addItem("无锡")
-            self.combo2.addItem("扬州")
-            self.combo2.addItem("南京")
+    def label_init(self):
+        self.pic_label.setPixmap(QPixmap('./image/light_off.png'))                # 7
+
+    def on_off_bulb_func(self):                                     # 8
+        if self.off_button.isChecked():
+            self.pic_label.setPixmap(QPixmap('./image/light_off.png'))
+        else:
+            self.pic_label.setPixmap(QPixmap('./image/light_on.png'))
 
 
-if __name__=="__main__":
-    app=QApplication(sys.argv)
-    mc=MyClass()
-    app.exec_()
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    demo = Demo()
+    demo.show()
+    sys.exit(app.exec_())

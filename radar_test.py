@@ -1,6 +1,5 @@
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QAction, QFileDialog, qApp, QMenu, QWidget, QLineEdit, QRadioButton, QHBoxLayout, QFormLayout, QLabel, QCheckBox, QTabWidget, QApplication
-from PyQt5 import QtCore
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QAction, QFileDialog, qApp, QMenu, QWidget, QLineEdit, QRadioButton, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QCheckBox, QTabWidget, QApplication, QPushButton
+from PyQt5.QtGui import QFont, QPixmap
 import sys
 
 
@@ -78,12 +77,12 @@ class RadarTest(QMainWindow):
     def tab_menu(self):
         self.central_widget = QWidget(self)
         self.tabWidget = QTabWidget(self.central_widget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, self.width(), self.height()))
+        self.tabWidget.setGeometry(0, 0, self.width()-100, self.height()-100)
         self.tab1 = QWidget()
-        self.tabWidget.addTab(self.tab1, "射频性能测试")
         self.tab2 = QWidget()
-        self.tabWidget.addTab(self.tab2, "探测性能测试")
         self.tab3 = QWidget()
+        self.tabWidget.addTab(self.tab1, "射频性能测试")
+        self.tabWidget.addTab(self.tab2, "探测性能测试")
         self.tabWidget.addTab(self.tab3, "天线性能测试")
         self.setCentralWidget(self.central_widget)
         self.tab1_ui()
@@ -91,7 +90,48 @@ class RadarTest(QMainWindow):
         self.tab3_ui()
 
     def tab1_ui(self):
-        pass
+        self.off_button = QRadioButton('off', self)
+        self.on_button = QRadioButton('on', self)
+        self.pic_label = QLabel(self)
+
+        self.save_button = QPushButton('保存', self)
+        self.change_button = QPushButton('修改', self)
+        self.delete_button = QPushButton('删除', self)
+        self.submit_button = QPushButton('提交', self)
+        self.query_button = QPushButton('查询', self)
+        self.config_button = QPushButton('配置', self)
+
+        self.name_label = QLabel('姓名')
+
+        self.button_h_layout = QHBoxLayout()
+        self.pic_h_layout = QHBoxLayout()
+        self.all_v_layout = QVBoxLayout()
+        self.tab1_layout_init()
+        self.radiobutton_init()
+        self.label_init()
+
+    def tab1_layout_init(self):
+        self.pic_h_layout.addStretch(1)
+        self.pic_h_layout.addWidget(self.pic_label)
+        self.pic_h_layout.addStretch(1)
+        self.button_h_layout.addWidget(self.off_button)
+        self.button_h_layout.addWidget(self.on_button)
+        self.all_v_layout.addLayout(self.pic_h_layout)
+        self.all_v_layout.addLayout(self.button_h_layout)
+        self.tab1.setLayout(self.all_v_layout)
+
+    def radiobutton_init(self):
+        self.off_button.setChecked(True)
+        self.off_button.toggled.connect(self.on_off_bulb_func)
+
+    def label_init(self):
+        self.pic_label.setPixmap((QPixmap('./image/light_off.png')))
+
+    def on_off_bulb_func(self):
+        if self.off_button.isChecked():
+            self.pic_label.setPixmap(QPixmap('./image/light_off.png'))
+        else:
+            self.pic_label.setPixmap(QPixmap('./image/light_on.png'))
 
     def tab2_ui(self):
         pass
