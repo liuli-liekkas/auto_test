@@ -253,16 +253,38 @@ class RadarTest(QMainWindow):
         self.tab2_speed_distinction_box = QCheckBox('速度区分度')
         self.tab2_test_start_button = QPushButton('开始测试')
         self.tab2_horizontal_power_config_button = QPushButton('设置')
+        self.tab2_horizontal_power_config_button.setEnabled(False)
+        self.tab2_horizontal_power_box.stateChanged.connect(self.tab2_horizontal_power_button_status)
         self.tab2_vertical_power_config_button = QPushButton('设置')
+        self.tab2_vertical_power_config_button.setEnabled(False)
+        self.tab2_vertical_power_box.stateChanged.connect(self.tab2_vertical_power_button_status)
         self.tab2_distance_resolution_config_button = QPushButton('设置')
+        self.tab2_distance_resolution_config_button.setEnabled(False)
+        self.tab2_distance_resolution_box.stateChanged.connect(self.tab2_distance_resolution_button_status)
         self.tab2_distance_distinction_config_button = QPushButton('设置')
+        self.tab2_distance_distinction_config_button.setEnabled(False)
+        self.tab2_distance_distinction_box.stateChanged.connect(self.tab2_distance_distinction_button_status)
         self.tab2_horizontal_angular_range_config_button = QPushButton('设置')
+        self.tab2_horizontal_angular_range_config_button.setEnabled(False)
+        self.tab2_horizontal_angular_range_box.stateChanged.connect(self.tab2_horizontal_angular_range_button_status)
         self.tab2_vertical_angular_range_config_button = QPushButton('设置')
+        self.tab2_vertical_angular_range_config_button.setEnabled(False)
+        self.tab2_vertical_angular_range_box.stateChanged.connect(self.tab2_vertical_angular_range_button_status)
         self.tab2_angular_resolution_config_button = QPushButton('设置')
+        self.tab2_angular_resolution_config_button.setEnabled(False)
+        self.tab2_angular_resolution_box.stateChanged.connect(self.tab2_angular_resolution_button_status)
         self.tab2_horizontal_distinction_config_button = QPushButton('设置')
+        self.tab2_horizontal_distinction_config_button.setEnabled(False)
+        self.tab2_horizontal_distinction_box.stateChanged.connect(self.tab2_horizontal_distinction_button_status)
         self.tab2_speed_range_config_button = QPushButton('设置')
+        self.tab2_speed_range_config_button.setEnabled(False)
+        self.tab2_speed_range_box.stateChanged.connect(self.tab2_speed_range_button_status)
         self.tab2_speed_resolution_config_button = QPushButton('设置')
+        self.tab2_speed_resolution_config_button.setEnabled(False)
+        self.tab2_speed_resolution_box.stateChanged.connect(self.tab2_speed_resolution_button_status)
         self.tab2_speed_distinction_config_button = QPushButton('设置')
+        self.tab2_speed_distinction_config_button.setEnabled(False)
+        self.tab2_speed_distinction_box.stateChanged.connect(self.tab2_speed_distinction_button_status)
         # 状态信息
         self.tab2_status_test_label = QLabel('测试状态')
         self.tab2_status_test_edit = QTextEdit()
@@ -338,6 +360,72 @@ class RadarTest(QMainWindow):
         self.all_h_layout.addLayout(self.tab2_left_v_layout)
         self.all_h_layout.addLayout(self.tab2_right_v_layout)
         self.tab2.setLayout(self.all_h_layout)
+
+    def tab2_horizontal_power_button_status(self):
+        if self.tab2_horizontal_power_box.checkState() == 2:
+            self.tab2_horizontal_power_config_button.setEnabled(True)
+        else:
+            self.tab2_horizontal_power_config_button.setEnabled(False)
+
+    def tab2_vertical_power_button_status(self):
+        if self.tab2_vertical_power_box.checkState() == 2:
+            self.tab2_vertical_power_config_button.setEnabled(True)
+        else:
+            self.tab2_vertical_power_config_button.setEnabled(False)
+
+    def tab2_distance_resolution_button_status(self):
+        if self.tab2_distance_resolution_box.checkState() == 2:
+            self.tab2_distance_resolution_config_button.setEnabled(True)
+        else:
+            self.tab2_distance_resolution_config_button.setEnabled(False)
+
+    def tab2_distance_distinction_button_status(self):
+        if self.tab2_distance_distinction_box.checkState() == 2:
+            self.tab2_distance_distinction_config_button.setEnabled(True)
+        else:
+            self.tab2_distance_distinction_config_button.setEnabled(False)
+
+    def tab2_horizontal_angular_range_button_status(self):
+        if self.tab2_horizontal_angular_range_box.checkState() == 2:
+            self.tab2_horizontal_angular_range_config_button.setEnabled(True)
+        else:
+            self.tab2_horizontal_angular_range_config_button.setEnabled(False)
+
+    def tab2_vertical_angular_range_button_status(self):
+        if self.tab2_vertical_angular_range_box.checkState() == 2:
+            self.tab2_vertical_angular_range_config_button.setEnabled(True)
+        else:
+            self.tab2_vertical_angular_range_config_button.setEnabled(False)
+
+    def tab2_angular_resolution_button_status(self):
+        if self.tab2_angular_resolution_box.checkState() == 2:
+            self.tab2_angular_resolution_config_button.setEnabled(True)
+        else:
+            self.tab2_angular_resolution_config_button.setEnabled(False)
+
+    def tab2_horizontal_distinction_button_status(self):
+        if self.tab2_horizontal_distinction_box.checkState() == 2:
+            self.tab2_horizontal_distinction_config_button.setEnabled(True)
+        else:
+            self.tab2_horizontal_distinction_config_button.setEnabled(False)
+
+    def tab2_speed_range_button_status(self):
+        if self.tab2_speed_range_box.checkState() == 2:
+            self.tab2_speed_range_config_button.setEnabled(True)
+        else:
+            self.tab2_speed_range_config_button.setEnabled(False)
+
+    def tab2_speed_resolution_button_status(self):
+        if self.tab2_speed_resolution_box.checkState() == 2:
+            self.tab2_speed_resolution_config_button.setEnabled(True)
+        else:
+            self.tab2_speed_resolution_config_button.setEnabled(False)
+
+    def tab2_speed_distinction_button_status(self):
+        if self.tab2_speed_distinction_box.checkState() == 2:
+            self.tab2_speed_distinction_config_button.setEnabled(True)
+        else:
+            self.tab2_speed_distinction_config_button.setEnabled(False)
 
     def tab3_ui(self):
         pass

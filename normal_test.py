@@ -1,71 +1,67 @@
-# code:utf-8
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
 import sys
-import time
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
 
 
-class MyTable(QTableWidget):
+class CheckBoxDemo(QWidget):
+
     def __init__(self, parent=None):
-        super(MyTable, self).__init__(parent)
-        self.setWindowTitle("各个市场比特币实时行情")  # 设置表格名称
-        self.setWindowIcon(QIcon("ok.png"))  # 设置图标（图片要存在）
-        self.resize(600, 200)  # 设置表格尺寸（整体大小）
-        self.setColumnCount(5)  # 设置列数
-        self.setRowCount(5)  # 设置行数
-        # self.setColumnWidth(0, 200)  # 设置列宽(第几列， 宽度)
-        # self.setRowHeight(0, 100)  # 设置行高(第几行， 行高)
+        super(CheckBoxDemo, self).__init__(parent)
 
-        column_name = [
-            'ETH/BIC',
-            'column1',
-            'column2',
-            'column3',
-            'column4',
-        ]
-        self.setHorizontalHeaderLabels(column_name)  # 设置列名称
-        row_name = [
-            'binance',
-            'okex',
-            'bitfinex',
-            'bittrex',
-            'bithumb',
-        ]
-        self.setVerticalHeaderLabels(row_name)  # 设置行名称
+        #创建一个GroupBox组
+        groupBox = QGroupBox("Checkboxes")
+        groupBox.setFlat(False)
 
-    def update_item_data(self, data):
-        """更新内容"""
-        self.setItem(0, 0, QTableWidgetItem(data))  # 设置表格内容(行， 列) 文字
+        #创建复选框1，并默认选中，当状态改变时信号触发事件
+        self.checkBox1 = QCheckBox("&Checkbox1")
+        self.checkBox1.setChecked(True)
+        self.checkBox1.stateChanged.connect(lambda: self.btnstate(self.checkBox1))
 
+        #创建复选框，标记状态改变时信号触发事件
+        self.checkBox2 = QCheckBox("Checkbox2")
+        self.checkBox2.toggled.connect(lambda: self.btnstate(self.checkBox2))
 
-class UpdateData(QThread):
-    """更新数据类"""
-    update_date = pyqtSignal(str)  # pyqt5 支持python3的str，没有Qstring
+        #创建复选框3，设置为3状态，设置默认选中状态为半选状态，当状态改变时信号触发事件
+        self.checkBox3 = QCheckBox("tristateBox")
+        self.checkBox3.setTristate(True)
+        self.checkBox3.setCheckState(Qt.PartiallyChecked)
+        self.checkBox3.stateChanged.connect(lambda: self.btnstate(self.checkBox3))
 
-    def run(self):
-        cnt = 0
-        while True:
-            cnt += 1
-            self.update_date.emit(str(cnt))  # 发射信号
-            time.sleep(1)
+        #水平布局
+        layout = QHBoxLayout()
+        #控件添加到水平布局中
+        layout.addWidget(self.checkBox1)
+        layout.addWidget(self.checkBox2)
+        layout.addWidget(self.checkBox3)
+
+        #设置QGroupBox组的布局方式
+        groupBox.setLayout(layout)
+
+        #设置主界面布局垂直布局
+        mainLayout = QVBoxLayout()
+        #QgroupBox的控件添加到主界面布局中
+        mainLayout.addWidget(groupBox)
+
+        #设置主界面布局
+        self.setLayout(mainLayout)
+        #设置主界面标题
+        self.setWindowTitle("checkbox demo")
+
+    #输出三个复选框当前的状态，0选中，1半选，2没选中
+    def btnstate(self, btn):
+        chk1Status = self.checkBox1.text() + ", isChecked=" + str(self.checkBox1.isChecked()) + ', chekState=' + str(
+            self.checkBox1.checkState()) + "\n"
+        chk2Status = self.checkBox2.text() + ", isChecked=" + str(self.checkBox2.isChecked()) + ', checkState=' + str(
+            self.checkBox2.checkState()) + "\n"
+        chk3Status = self.checkBox3.text() + ", isChecked=" + str(self.checkBox3.isChecked()) + ', checkState=' + str(
+            self.checkBox3.checkState()) + "\n"
+        print(chk1Status + chk2Status + chk3Status)
 
 
 if __name__ == '__main__':
-    # 实例化表格
     app = QApplication(sys.argv)
-    myTable = MyTable()
-    # 启动更新线程
-    update_data_thread = UpdateData()
-    update_data_thread.update_date.connect(myTable.update_item_data)  # 链接信号
-    update_data_thread.start()
-
-    # 显示在屏幕中央
-    desktop = QApplication.desktop()  # 获取坐标
-    x = (desktop.width() - myTable.width()) // 2
-    y = (desktop.height() - myTable.height()) // 2
-    myTable.move(x, y)  # 移动
-
-    # 显示表格
-    myTable.show()
-    app.exit(app.exec_())
+    checkboxDemo = CheckBoxDemo()
+    checkboxDemo.show()
+    sys.exit(app.exec_())
