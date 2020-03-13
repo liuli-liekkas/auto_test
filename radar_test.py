@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QAction, QFileDialog, qApp, QMenu, QWidget, QLineEdit, QRadioButton, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QCheckBox, QTabWidget, QApplication, QPushButton, QDateEdit, QComboBox, QTextEdit, QTableWidget, QGridLayout
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QAction, QFileDialog, qApp, QMenu, QWidget, QLineEdit, QRadioButton, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QCheckBox, QTabWidget, QApplication, QPushButton, QDateEdit, QComboBox, QTextEdit, QTableWidget, QGridLayout, QTextBrowser
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5 import QtCore
 import sys
@@ -120,8 +120,8 @@ class RadarTest(QMainWindow):
         self.status_combo = QComboBox()
         self.work_cop_combo = QComboBox()
 
-        self.content_label = QLabel()
-        self.question_label = QLabel()
+        self.content_label = QLabel('工作配合')
+        self.question_label = QLabel('问题及意见')
         self.content_edit = QTextEdit()
         self.question_edit = QTextEdit()
 
@@ -165,7 +165,6 @@ class RadarTest(QMainWindow):
         self.l_grid_layout.addWidget(self.status_combo, 5, 1, 1, 1)
         self.l_grid_layout.addWidget(self.work_cop_label, 6, 0, 1, 1)
         self.l_grid_layout.addWidget(self.work_cop_combo, 6, 1, 1, 1)
-
         self.button_h_layout = QHBoxLayout()
         self.pic_h_layout = QHBoxLayout()
         self.pic_h_layout.addStretch(1)
@@ -173,16 +172,31 @@ class RadarTest(QMainWindow):
         self.pic_h_layout.addStretch(1)
         self.button_h_layout.addWidget(self.off_button)
         self.button_h_layout.addWidget(self.on_button)
-        # self.all_v_layout.addLayout(self.up_h_layout)
-        # self.all_v_layout.addLayout(self.pic_h_layout)
-        # self.all_v_layout.addLayout(self.button_h_layout)
-        # self.tab1.setLayout(self.all_v_layout)
+        self.l_grid_layout.addLayout(self.pic_h_layout, 7, 0, 1, 2)
+        self.l_grid_layout.addLayout(self.button_h_layout, 8, 0, 1, 2)
 
+        self.m_grid_layout = QGridLayout()
+        self.m_grid_layout.addWidget(self.content_label, 0, 0, 1, 1)
+        self.m_grid_layout.addWidget(self.content_edit, 0, 1, 5, 50)
+        self.m_grid_layout.addWidget(self.question_label, 5, 0, 1, 1)
+        self.m_grid_layout.addWidget(self.question_edit, 5, 1, 5, 50)
+
+        self.r_v_layout = QVBoxLayout()
+        self.r_v_layout.addWidget(self.save_button)
+        self.r_v_layout.addWidget(self.change_button)
+        self.r_v_layout.addWidget(self.delete_button)
+        self.r_v_layout.addWidget(self.submit_button)
+        self.r_v_layout.addWidget(self.query_button)
+        self.r_v_layout.addWidget(self.config_button)
+        self.r_v_layout.addStretch(1)
+
+        self.m_h_layout = QHBoxLayout()
+        self.m_h_layout.addLayout(self.l_grid_layout)
+        self.m_h_layout.addLayout(self.m_grid_layout)
+        self.m_h_layout.addLayout(self.r_v_layout)
         self.all_v_layout = QVBoxLayout()
         self.all_v_layout.addLayout(self.up_h_layout)
-        self.all_v_layout.addLayout(self.l_grid_layout)
-        self.all_v_layout.addLayout(self.pic_h_layout)
-        self.all_v_layout.addLayout(self.button_h_layout)
+        self.all_v_layout.addLayout(self.m_h_layout)
         self.all_v_layout.addWidget(self.message_table)
         self.tab1.setLayout(self.all_v_layout)
 
@@ -200,7 +214,36 @@ class RadarTest(QMainWindow):
             self.pic_label.setPixmap(QPixmap('./image/light_on.png'))
 
     def tab2_ui(self):
-        pass
+        # 基本信息
+        self.tab2_sample_name_label = QLabel('样品名称')
+        self.tab2_sample_name_browser = QTextBrowser('毫米波雷达')
+        self.tab2_sample_number_label = QLabel('样品编号')
+        self.tab2_sample_number_browser = QTextBrowser('00001')
+        self.tab2_tester_name_label = QLabel('测试人员')
+        self.tab2_tester_name_browser = QTextBrowser('刘力')
+        self.tab2_supervisor_name_label = QLabel('复核/监督人员')
+        self.tab2_supervisor_name_combo = QComboBox()
+        self.tab2_test_data_label = QLabel('试验日期')
+        self.tab2_test_data_edit = QDateEdit()
+        self.tab2_test_data_edit.setCalendarPopup(True)
+        self.tab2_time_data_edit.setDate(QtCore.QDate(2020, 1, 1))
+        # 测试内容
+        self.tab2_horizontal_power_box = QCheckBox('水平探测威力')
+        self.tab2_vertical_power_box = QCheckBox('垂直探测威力')
+        self.tab2_distance_resolution_box = QCheckBox('距离分辨率')
+        self.tab2_distance_distinction_box = QCheckBox('距离区分度')
+        self.tab2_horizontal_angular_range_box = QCheckBox('水平角度范围')
+        self.tab2_vertical_angular_range_box = QCheckBox('垂直角度范围')
+        self.tab2_angular_resolution_box = QCheckBox('角度分辨率')
+        self.tab2_horizontal_distinction_box = QCheckBox('角度区分度')
+        self.tab2_speed_range_box = QCheckBox('速度范围')
+        self.tab2_speed_resolution_box = QCheckBox('速度分辨率')
+        self.tab2_speed_distinction_box = QCheckBox('速度区分度')
+        self.test_start_button = QPushButton('开始测试')
+        # 状态信息
+        self.
+
+
 
     def tab3_ui(self):
         pass
