@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QAction, QFileDialog, qApp, QMenu, QWidget, QLineEdit, QRadioButton, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QCheckBox, QTabWidget, QApplication, QPushButton, QDateEdit, QComboBox, QTextEdit, QTableWidget, QGridLayout, QTextBrowser
+from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5 import QtCore
 import sys
-import datetime
+import pyqtgraph as pg
 
 
 class RadarTest(QMainWindow):
@@ -11,9 +11,8 @@ class RadarTest(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.resize(1200, 800)
+        self.resize(1300, 700)
         self.center()
-        self.statusBar().showMessage("测试人：刘力")
         self.setWindowTitle("毫米波雷达测试系统")
         self.setFont(QFont('Menlo', 12))
         self.menu_init()
@@ -30,33 +29,35 @@ class RadarTest(QMainWindow):
     def menu_init(self):
         menubar = self.menuBar()
         file_menu = menubar.addMenu("文件")
-        edit_menu = menubar.addMenu("编辑")
+        mission_menu = menubar.addMenu("任务")
         view_menu = menubar.addMenu("视图")
         config_menu = menubar.addMenu("配置")
         analysis_menu = menubar.addMenu("分析")
         self_test_menu = menubar.addMenu("自检")
         tool_menu = menubar.addMenu("工具")
         help_menu = menubar.addMenu("帮助")
-
+        # 文件菜单
         open_act = QAction("打开", self)
         open_act.setShortcut('Ctrl+O')
         open_act.triggered.connect(self.open_file)
         file_menu.addAction(open_act)
-
         save_act = QAction("保存", self)
         save_act.setShortcut('Ctrl+S')
         save_act.triggered.connect(self.save_file)
         file_menu.addAction(save_act)
-
         exit_act = QAction("退出", self)
         exit_act.setShortcut("Ctrl+Q")
         exit_act.triggered.connect(qApp.quit)
         file_menu.addAction(exit_act)
-
+        # 任务菜单
+        new_mission_act = QAction('新建', self)
+        mission_menu.addAction(new_mission_act)
+        edit_mission_act = QAction('修改', self)
+        mission_menu.addAction(edit_mission_act)
+        # 工具菜单
         com_act = QAction("串口调试", self)
         # com_act.triggered.connect()
         tool_menu.addAction(com_act)
-
         net_act = QAction("网口调试", self)
         # net_act.triggered.connect()
         tool_menu.addAction(net_act)
@@ -79,7 +80,7 @@ class RadarTest(QMainWindow):
     def tab_menu(self):
         self.central_widget = QWidget(self)
         self.tabWidget = QTabWidget(self.central_widget)
-        self.tabWidget.setGeometry(0, 0, self.width()-100, self.height()-100)
+        self.tabWidget.setGeometry(0, 0, self.width(), self.height()-50)
         self.tab1 = QWidget()
         self.tab2 = QWidget()
         self.tab3 = QWidget()
@@ -216,17 +217,28 @@ class RadarTest(QMainWindow):
     def tab2_ui(self):
         # 基本信息
         self.tab2_sample_name_label = QLabel('样品名称')
-        self.tab2_sample_name_browser = QTextBrowser('毫米波雷达')
+        self.tab2_sample_name_browser = QTextBrowser()
+        self.tab2_sample_name_browser.setText('毫米波雷达')
+        self.tab2_sample_name_browser.setMaximumSize(1200, 20)
         self.tab2_sample_number_label = QLabel('样品编号')
-        self.tab2_sample_number_browser = QTextBrowser('00001')
+        self.tab2_sample_number_browser = QTextBrowser()
         self.tab2_tester_name_label = QLabel('测试人员')
-        self.tab2_tester_name_browser = QTextBrowser('刘力')
+        self.tab2_tester_name_browser = QTextBrowser()
+        self.tab2_tester_name_browser.setText('薛岩')
+        self.tab2_tester_name_browser.setMaximumSize(150, 20)
         self.tab2_supervisor_name_label = QLabel('复核/监督人员')
         self.tab2_supervisor_name_combo = QComboBox()
+        self.tab2_supervisor_name_combo.setMaximumSize(300, 20)
+        self.tab2_supervisor_name_combo.addItem('刘力')
+        self.tab2_supervisor_name_combo.addItem('申亚飞')
+        self.tab2_supervisor_name_combo.addItem('裴毓')
+        self.tab2_supervisor_name_combo.addItem('张晓蕾')
+        self.tab2_supervisor_name_combo.addItem('薛岩')
         self.tab2_test_data_label = QLabel('试验日期')
         self.tab2_test_data_edit = QDateEdit()
+        self.tab2_test_data_edit.setMaximumSize(800, 20)
         self.tab2_test_data_edit.setCalendarPopup(True)
-        self.tab2_time_data_edit.setDate(QtCore.QDate(2020, 1, 1))
+        self.tab2_test_data_edit.setDate(QtCore.QDate(2020, 1, 1))
         # 测试内容
         self.tab2_horizontal_power_box = QCheckBox('水平探测威力')
         self.tab2_vertical_power_box = QCheckBox('垂直探测威力')
@@ -239,11 +251,93 @@ class RadarTest(QMainWindow):
         self.tab2_speed_range_box = QCheckBox('速度范围')
         self.tab2_speed_resolution_box = QCheckBox('速度分辨率')
         self.tab2_speed_distinction_box = QCheckBox('速度区分度')
-        self.test_start_button = QPushButton('开始测试')
+        self.tab2_test_start_button = QPushButton('开始测试')
+        self.tab2_horizontal_power_config_button = QPushButton('设置')
+        self.tab2_vertical_power_config_button = QPushButton('设置')
+        self.tab2_distance_resolution_config_button = QPushButton('设置')
+        self.tab2_distance_distinction_config_button = QPushButton('设置')
+        self.tab2_horizontal_angular_range_config_button = QPushButton('设置')
+        self.tab2_vertical_angular_range_config_button = QPushButton('设置')
+        self.tab2_angular_resolution_config_button = QPushButton('设置')
+        self.tab2_horizontal_distinction_config_button = QPushButton('设置')
+        self.tab2_speed_range_config_button = QPushButton('设置')
+        self.tab2_speed_resolution_config_button = QPushButton('设置')
+        self.tab2_speed_distinction_config_button = QPushButton('设置')
         # 状态信息
-        self.
+        self.tab2_status_test_label = QLabel('测试状态')
+        self.tab2_status_test_edit = QTextEdit()
+        self.tab2_result_test_label = QLabel('试验结果')
+        self.tab2_result_test_edit = QTextEdit()
+        # 雷达目标信息
+        self.tab2_realtime_plot = pg.PlotWidget()
+        self.tab2_realtime_plot.showGrid(x=True, y=True)
+        self.tab2_realtime_plot.setRange(xRange=[-10, 10], yRange=[0, 300])
+        self.tab2_realtime_table = QTableWidget()
+        self.tab2_realtime_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.tab2_realtime_table.setColumnCount(6)
+        self.tab2_realtime_table.setRowCount(10)
+        self.tab2_realtime_table.setHorizontalHeaderLabels(['ID', '垂直距离', '水平距离', '方位角度', '相对速度', '目标RCS'])
+        # 位置初始化
+        self.tab2_layout_init()
 
+    def tab2_layout_init(self):
+        # 左侧顶层布局
+        self.tab2_lu_h_layout = QHBoxLayout()
+        self.tab2_lu_h_layout.addWidget(self.tab2_sample_name_label)
+        self.tab2_lu_h_layout.addWidget(self.tab2_sample_name_browser)
+        self.tab2_lu_h_layout.addWidget(self.tab2_tester_name_label)
+        self.tab2_lu_h_layout.addWidget(self.tab2_tester_name_browser)
+        self.tab2_lu_h_layout.addWidget(self.tab2_supervisor_name_label)
+        self.tab2_lu_h_layout.addWidget(self.tab2_supervisor_name_combo)
+        self.tab2_lu_h_layout.addWidget(self.tab2_test_data_label)
+        self.tab2_lu_h_layout.addWidget(self.tab2_test_data_edit)
+        # 左侧底部L布局
+        self.tab2_ldl_grid_layout = QGridLayout()
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_power_box, 0, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_power_config_button, 0, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_vertical_power_box, 1, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_vertical_power_config_button, 1, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_distance_resolution_box, 2, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_distance_resolution_config_button, 2, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_distance_distinction_box, 3, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_distance_distinction_config_button, 3, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_angular_range_box, 4, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_angular_range_config_button, 4, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_vertical_angular_range_box, 5, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_vertical_angular_range_config_button, 5, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_distinction_box, 6, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_distinction_config_button, 6, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_range_box, 7, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_range_config_button, 7, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_resolution_box, 8, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_resolution_config_button, 8, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_distinction_box, 9, 0, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_distinction_config_button, 9, 2, 1, 1)
+        self.tab2_ldl_grid_layout.addWidget(self.tab2_test_start_button, 10, 0, 1, 3)
+        # 左侧底部R布局
+        self.tab2_ldr_v_layout = QVBoxLayout()
+        self.tab2_ldr_v_layout.addWidget(self.tab2_status_test_label)
+        self.tab2_ldr_v_layout.addWidget(self.tab2_status_test_edit)
+        self.tab2_ldr_v_layout.addWidget(self.tab2_result_test_label)
+        self.tab2_ldr_v_layout.addWidget(self.tab2_result_test_edit)
+        self.tab2_ldr_v_layout.addWidget(self.tab2_realtime_table)
+        # 左侧底部布局
+        self.tab2_ld_h_layout = QHBoxLayout()
+        self.tab2_ld_h_layout.addLayout(self.tab2_ldl_grid_layout)
+        self.tab2_ld_h_layout.addLayout(self.tab2_ldr_v_layout)
+        # 右侧布局
+        self.tab2_right_v_layout = QVBoxLayout()
+        self.tab2_right_v_layout.addWidget(self.tab2_realtime_plot)
+        # 左侧布局
+        self.tab2_left_v_layout = QVBoxLayout()
+        self.tab2_left_v_layout.addLayout(self.tab2_lu_h_layout)
+        self.tab2_left_v_layout.addLayout(self.tab2_ld_h_layout)
 
+        # 完整布局
+        self.all_h_layout = QHBoxLayout()
+        self.all_h_layout.addLayout(self.tab2_left_v_layout)
+        self.all_h_layout.addLayout(self.tab2_right_v_layout)
+        self.tab2.setLayout(self.all_h_layout)
 
     def tab3_ui(self):
         pass
