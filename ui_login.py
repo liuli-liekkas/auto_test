@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QLabel, QLineEdit, QGridLayout, QVBoxLayout, QHBoxLayout, QMessageBox, QPushButton
-import select_ui
+import ui_select
 
 USER_PWD = {
     '刘力': 'liuli',
@@ -62,7 +62,7 @@ class LoginWindow(QWidget):
         self.sign_in_page.exec_()
 
     def check_login_func(self):
-        self.select_window = select_ui.SelectWindow()
+        self.select_window = ui_select.SelectWindow()
         if USER_PWD.get(self.user_line.text()) == self.pwd_line.text():
             QMessageBox.information(self, '信息', '登陆成功！')
             self.close()

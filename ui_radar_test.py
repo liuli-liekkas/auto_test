@@ -435,4 +435,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     radar_test = RadarTest()
     radar_test.show()
-    sys.exit(app.exec())
+    sys.exit(app._exec())
