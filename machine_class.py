@@ -3,7 +3,7 @@ import time
 
 
 class RSC:
-    def __init__(self, ip, att, freq, *args):
+    def __init__(self, ip, att, freq):
         self.ip = ip
         self.att = att
         self.freq = freq
@@ -40,7 +40,7 @@ class RSC:
 
 
 class HMP:
-    def __init__(self, ip, chan, volt, curr, *args):
+    def __init__(self, ip, chan, volt, curr):
         self.ip = ip
         self.chan = chan
         self.volt = volt
@@ -88,7 +88,7 @@ class HMP:
 
 
 class FSW:
-    def __init__(self, ip, *args):
+    def __init__(self, ip):
         self.ip = ip
         self.address = 'TCPIP0::%s::inst0::INSTR' % self.ip
         self.resourceManager = pyvisa.ResourceManager()
@@ -110,7 +110,7 @@ class FSW:
 
 
 class RTO:
-    def __init__(self, ip, *args):
+    def __init__(self, ip):
         self.ip = ip
         self.address = 'TCPIP0::%s::inst0::INSTR' % self.ip
         self.resourceManager = pyvisa.ResourceManager()
