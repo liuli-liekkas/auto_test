@@ -36,4 +36,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     select_window = SelectWindow()
     select_window.show()
-    sys.exit(app._exec())
+    sys.exit(app.exec())
