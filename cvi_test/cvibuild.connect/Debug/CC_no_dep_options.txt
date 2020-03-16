@@ -1,0 +1,1 @@
+-force-include-file "connect.c";"d:\files\python_learn\auto_test\cvi_test\connect.c" 
