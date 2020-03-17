@@ -1,6 +1,7 @@
 import pyvisa
 import time
 import ctypes
+import math
 
 
 class RSC:
@@ -185,6 +186,12 @@ class ARTS:
     def __init__(self):
         self.dll = ctypes.CDLL('./dll/D4ARTS6x64.dll')
         self.status = 0
+        self.output = 0
+        self.tr = 0
+        self.mode = 1
+        self.freq = 0
+        self.gain_s = 46
+        self.rut_distance = 0
 
     def connect(self, ip):
         if self.status == 0:
@@ -204,7 +211,173 @@ class ARTS:
 
     def check_connect_status(self):
         self.status = self.dll.CheckConnectionStatus()
+        if self.status == 1:
+            print('系统连接中......')
+        else:
+            print('系统未连接')
         return self.status
+
+    def reboot(self):
+        result = self.dll.Reboot()
+        if result == 0:
+            print('系统开始重启......')
+        return result
+
+    def set_freq(self, freq):
+        self.freq = freq
+        result = self.dll.SetRfFreq_kHz(freq)
+        if result == 0:
+            print('频率已设置为%dKHz' % freq)
+        return result
+
+    def set_trims(self, gain_trim, range_trim, rut_distance):
+        self.rut_distance = rut_distance
+        result = self.dll.SetTrims(gain_trim, gain_trim, gain_trim, gain_trim, range_trim, range_trim, range_trim, range_trim, rut_distance)
+        if result == 0:
+            print('已设置GainTrim为%ddB，已设置RangeTrim为%dm,已设置RUTDistance为%dm ' % (gain_trim, range_trim, rut_distance))
+        return result
+
+    def set_rx_attenuation(self, attenuation):
+        result = self.dll.SetRxAttn(attenuation)
+        if result == 0:
+            print('RF Attenuation已成功设置为%ddB' % attenuation)
+        return result
+
+    def set_adc_saturation_threshold(self, threshold):
+        result = self.dll.SetAdcSatThreshBackoff(threshold)
+        if result == 0:
+            print('ADC采样阈值已成功设置为%ddB' % threshold)
+        return result
+
+    def set_mode_static(self):
+        result = 1
+        if self.mode == 1:
+            print('当前为静态工作模式')
+        else:
+            result = self.dll.SetStaticMode(1)
+            if result == 0:
+                self.mode = 1
+                print('已设置为静态工作模式')
+
+    def set_mode_dynamic(self):
+        result = 1
+        if self.mode == 0:
+            print('当前为动态工作模式')
+        else:
+            result = self.dll.SetStaticMode(0)
+            if result == 0:
+                self.mode = 0
+                print('已设置为动态工作模式')
+        return result
+
+    def set_tx_chan_static(self, speed_ch1, speed_ch2, speed_ch3, rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4, range_ch1, range_ch2, range_ch3, range_ch4):
+        # Set Tx Channel Parameters in "normal operating units": Speed (kph), Gain (dB), Range (m).
+        wave_speed = 3*10**8
+        wave_period = 1/(self.freq*10**6)
+        gama = wave_speed * wave_period
+        gain_ch1 = rcs_ch1 * 4 * math.pi * range_ch1**4 / (self.gain_s**2 * gama**2 * (range_ch1 + self.rut_distance)**4)
+        gain_ch2 = rcs_ch2 * 4 * math.pi * range_ch2**4 / (self.gain_s**2 * gama**2 * (range_ch2 + self.rut_distance)**4)
+        gain_ch3 = rcs_ch3 * 4 * math.pi * range_ch3**4 / (self.gain_s**2 * gama**2 * (range_ch3 + self.rut_distance)**4)
+        gain_ch4 = rcs_ch4 * 4 * math.pi * range_ch4**4 / (self.gain_s**2 * gama**2 * (range_ch4 + self.rut_distance)**4)
+        result = self.dll.SetTxChanStaticCfg(speed_ch1, speed_ch2, speed_ch3, gain_ch1, gain_ch2, gain_ch3, gain_ch4, range_ch1, range_ch2, range_ch3, range_ch4)
+
+
+    def set_tx_chan_enable(self, tx1, tx2, tx3, tx4):
+        # Transmit Channel Enable. Enables (1) or disables (0) each of the four transmit channels.
+        result = self.dll.TxChanEnable(tx1, tx2, tx3, tx4)
+        if result == 0:
+            print('通道工作设置成功')
+            if tx1 == 1:
+                print('通道1打开')
+            else:
+                print('通道1关闭')
+            if tx2 == 1:
+                print('通道2打开')
+            else:
+                print('通道2关闭')
+            if tx3 == 1:
+                print('通道3打开')
+            else:
+                print('通道3关闭')
+            if tx4 == 1:
+                print('通道4打开')
+            else:
+                print('通道4关闭')
+        return result
+
+    def download_wave_form(self, waveform_format_code, waveform_filename):
+        # // 0=DLL internal memory; 1=binary file; 2=ASCII file
+        # // can be NULL if no file used
+        result = self.dll.DownloadWaveform(waveform_format_code, waveform_filename)
+        if result == 0:
+            print('波形入口已选择')
+            if waveform_format_code == 0:
+                print('波形入口为当前界面')
+
+    def run_wave_form(self, continuous, ext_trigger):
+        # // 0=one-shot playback; 1=continuously looping playback
+        # // 0=start playback immediately; 1=wait for external trigger
+        result = self.dll.RunWaveform(continuous, ext_trigger)
+        if result == 0:
+            print('波形模式已载入')
+            if continuous == 0:
+                print('已选择单次模式')
+            else:
+                print('已选择循环模式')
+            if ext_trigger == 0:
+                print('发射模式不载入外部触发信号')
+            else:
+                print('发射模式载入外部触发信号')
+
+    def reset(self):
+        result = self.dll.Reset()
+        if result == 0:
+            print('系统完成重置')
+        return result
+
+    def set_tr_on(self):
+        result = 1
+        if self.tr == 0:
+            result = self.dll.SetTrEn(1)
+            self.tr = 1
+            if result == 0:
+                print('ARTS成功打开T/R模块')
+        else:
+            print('ARTS已打开T/R模块')
+        return result
+
+    def set_tr_off(self):
+        result = 1
+        if self.tr == 1:
+            result = self.dll.SetTrEn(0)
+            self.tr = 0
+            if result == 0:
+                print('ARTS成功关闭T/R模块')
+        else:
+            print('ARTS未打开T/R模块')
+        return result
+
+    def set_output_on(self):
+        result = 1
+        if self.output == 0:
+            result = self.dll.SetSynthRFOutput(1)
+            self.output = 1
+            if result == 0:
+                print('ARTS成功打开RF发射')
+        else:
+            print('ARTS已打开RF发射')
+        return result
+
+    def set_output_off(self):
+        result = 1
+        if self.output == 1:
+            result = self.dll.SetSynthRFOutput(0)
+            self.output = 0
+            if result == 0:
+                print('ARTS成功关闭RF发射')
+        else:
+            print('ARTS已关闭RF发射')
+        return result
 
 
 class TurnTable:
