@@ -1,5 +1,6 @@
 import pyvisa
 import time
+import ctypes
 
 
 class RSC:
@@ -40,16 +41,12 @@ class RSC:
 
 
 class HMP:
-    def __init__(self, ip, chan, volt, curr):
-        self.ip = ip
-        self.chan = chan
-        self.volt = volt
-        self.curr = curr
-        self.address = 'TCPIP::%s::5025::SOCKET' % self.ip
+    def __init__(self):
         self.resourceManager = pyvisa.ResourceManager()
 
-    def open(self):
-        self.instance = self.resourceManager.open_resource(self.address, read_termination='\n')
+    def open(self, ip):
+        address = 'TCPIP::%s::5025::SOCKET' % ip
+        self.instance = self.resourceManager.open_resource(address, read_termination='\n')
 
     def close(self):
         if self.instance is not None:
@@ -59,22 +56,40 @@ class HMP:
     def reset(self):
         self.instance.write('*RST')
 
-    def read_idn(self):
-        idn = self.instance.query('*IDN?')
-        print(idn)
-        return idn
-
     def set_default(self):
         self.instance.write('INST:NSEL %s' % self.chan)
         self.instance.write('VOLT %s' % self.volt)
         self.instance.write('CURR %s' % self.curr)
 
-    def return_status(self):
-        print('当前选择的通道：' + self.instance.query('INST:NSEL?'))
-        print('电压设置：' + self.instance.query('VOLT?'))
-        print('电流设置：' + self.instance.query('CURR?'))
-        print('电流输出值：' + self.instance.query('MEAS:CURR?'))
-        print('电压输出值:' + self.instance.query('MEAS:VOLT?'))
+    def return_status_idn(self):
+        idn = self.instance.query('*IDN?')
+        print('设备IDN号为：' + idn)
+        return idn
+
+    def return_status_chan(self):
+        chan = self.instance.query('INST:NSEL?')
+        print('当前选择的通道：' + chan)
+        return chan
+
+    def return_status_volt(self):
+        volt = self.instance.query('VOLT?')
+        print('当前设置的电压值：' + volt)
+        return volt
+
+    def return_status_curr(self):
+        curr = self.instance.query('CURR?')
+        print('当前设置的电流值：' + curr)
+        return curr
+
+    def return_status_volt_output(self):
+        volt = self.instance.query('MEAS:VOLT?')
+        print('当前输出的电压值：' + volt)
+        return volt
+
+    def return_status_curr_output(self):
+        curr = self.instance.query('MEAS:CURR?')
+        print('当前输出的电流值：' + curr)
+        return curr
 
     def select_chan(self, chan):
         self.instance.write('INST:NSEL %s' % chan)
@@ -167,9 +182,26 @@ class SMW:
 
 
 class ARTS:
-    def __init__(self, ip):
-        self.ip = ip
-        self.address = 'TCPIP::%s::inst0::INSTR' % self.ip
+    def __init__(self):
+        self.dll = ctypes.CDLL('./dll/D4ARTS6x64.dll')
+
+    def connect(self, ip):
+        self.status = self.dll.Connect(ip.encode('utf-8'))
+        print('ARTS已连接')
+        return self.status
+
+    def disconnect(self):
+        if self.status == 0:
+            self.dll.Disconnect()
+            print('ARTS已断开连接')
+        else:
+            print('ARTS未连接')
+
+
+    def close(self):
+        if self.instance is not None:
+            self.instance.close()
+            self.instance = None
 
 if __name__ == '__main__':
     # rsc = RSC('192.168.0.101', 50, 2000000)
