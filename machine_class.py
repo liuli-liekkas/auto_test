@@ -56,10 +56,10 @@ class HMP:
     def reset(self):
         self.instance.write('*RST')
 
-    def set_default(self):
-        self.instance.write('INST:NSEL %s' % self.chan)
-        self.instance.write('VOLT %s' % self.volt)
-        self.instance.write('CURR %s' % self.curr)
+    def set_default(self, chan, volt, curr):
+        self.instance.write('INST:NSEL %s' % chan)
+        self.instance.write('VOLT %s' % volt)
+        self.instance.write('CURR %s' % curr)
 
     def return_status_idn(self):
         idn = self.instance.query('*IDN?')
@@ -184,24 +184,158 @@ class SMW:
 class ARTS:
     def __init__(self):
         self.dll = ctypes.CDLL('./dll/D4ARTS6x64.dll')
+        self.status = 0
 
     def connect(self, ip):
-        self.status = self.dll.Connect(ip.encode('utf-8'))
-        print('ARTS已连接')
-        return self.status
+        if self.status == 0:
+            self.dll.Connect(ip.encode('utf-8'))
+            self.status = 1
+            print('ARTS连接成功')
+        else:
+            print('ARTS已连接')
 
     def disconnect(self):
-        if self.status == 0:
+        if self.status == 1:
             self.dll.Disconnect()
-            print('ARTS已断开连接')
+            self.status = 0
+            print('ARTS成功断开连接')
         else:
             print('ARTS未连接')
 
+    def check_connect_status(self):
+        self.status = self.dll.CheckConnectionStatus()
+        return self.status
 
-    def close(self):
-        if self.instance is not None:
-            self.instance.close()
-            self.instance = None
+
+class TurnTable:
+    # nAxis - 轴：nAxis == 2 时为俯仰轴；
+    # nAxis - 轴：nAxis == 1 时为方位轴；
+    # fSetPos：单位为°（对转台而言）或者mm(对扫描架而言)
+    # fSetVel：° / s（对转台而言）或者mm / s(对扫描架而言)
+    # iDevice：设备地址号，转台iDevice = 0。
+    def __init__(self):
+        self.dll = ctypes.CDLL('./dll/PcommDllx64.dll')
+        self.status = 0
+
+    def connect(self):
+        # // 参数：iDevice –设备地址号，对本扫描架来说iDevice = 0；
+        # // 返回值：true - 成功、false - 失败
+        if self.status == 0:
+            self.dll.ConnectImac(0)
+            self.status = 1
+            print('转台连接成功')
+        else:
+            print('转台已连接')
+
+    def disconnect(self):
+        # // 参数：iDevice –设备地址号；
+        # // 返回值：true - 成功、false - 失败
+        if self.status == 1:
+            self.dll.DisConnectImac()
+            self.status = 0
+            print('转台成功断开连接')
+        else:
+            print('转台未连接')
+
+    def move_to_position(self, n_axis, set_pos, set_vel, b_abs=True):
+        # // 参数：iDevice –设备地址号；
+        # // 参数：nAxis  –轴号；
+        # // 参数：fSetPos –对应轴号所设置的位置值；
+        # // 参数：fSetVel –对应轴号所设置的速度值；
+        # // 参数：bIsAbs –对于轴号运动方式，true - 绝对运动，false - 相对运动；
+        # // 返回值：true - 成功、false - 失败
+        result = 0
+        if self.status == 1:
+            result = self.dll.MoveDeviceToPos(0, n_axis, set_pos, set_vel, b_abs)
+            if result == 1:
+                print('开始常规模式转动')
+        return result
+
+    def move_to_position_by_type(self, device, n_axis, to_start, to_end, to_speed, start_equ, end_equ, step_pos, speed, delta_step, i_time):
+        # // 参数：iDevice –设备地址号；
+        # // 参数：nAxis –轴号；
+        # // 参数：fToStart - ---各个轴所要运动的距离值，位置值在发送脉冲起始角之前，单位为mm
+        # // 参数：fToEnd - ---各个轴所要运动的距离值，位置值在发送脉冲起始角之前，单位为mm
+        # // 参数：fToSpeed - ---各个轴到fToStart位置时的速度，单位为mm / s
+        # // 参数：fStartEqu - ---各个轴发送脉冲的起始位置值，单位为mm
+        # // 参数：fEndEqu - ---各个轴发送脉冲的终止位置值，单位为mm
+        # // 参数：fStepPos - ---各个轴发送脉冲的间隔值，单位为mm
+        # // 参数：fSpeed - ---各个轴发送脉冲运动过程中的速度值，单位为mm / s
+        # // 参数：fDeltaStep - ---默认为0
+        # // 参数：iTime - ---默认为0
+        # // 返回值：true - 成功、false - 失败
+        result = 0
+        if self.status == 1:
+            result = self.dll.MoveToPosByType(device, n_axis, to_start, to_end, to_speed, start_equ, end_equ, step_pos, speed, delta_step, i_time)
+            if result == 1:
+                print('开始TTL模式转动')
+        return result
+
+    def get_motor_idle(self, device, n_axis):
+        # // 电机运动状态
+        # // 是否停止，TRUE - 停止1，FALSE - 运动；
+        result = self.dll.GetMotorIdle(device, n_axis)
+        if result == 1:
+            print('电机处于停止状态')
+        else:
+            print('电机处于运动状态')
+        return result
+
+    def get_pos_limit(self, device, n_axis):
+        # // 是否正限位，TRUE - 正限位，FALSE - 未正限位；
+        result = self.dll.GetPosLimit(device, n_axis)
+        if result == 1:
+            print('电机已正限位')
+        else:
+            print('电机未正限位')
+        return result
+
+    def get_neg_limit(self, device, n_axis):
+        # // 是否负限位，TRUE - 负限位，FALSE - 未负限位；
+        result = self.dll.GetNegLimit(device, n_axis)
+        if result == 1:
+            print('电机已负限位')
+        else:
+            print('电机未负限位')
+        return result
+
+    def get_home_complete(self, device, n_axis):
+        # // 寻零是否完成，TRUE - 寻零完成，FALSE - 寻零未完成；
+        result = self.dll.GetHomeComplete(device, n_axis)
+        if result == 1:
+            print('电机已完成寻零')
+        else:
+            print('电机未完成寻零')
+        return result
+
+    def stop(self, device, n_axis):
+        # // 停止转动；nAxis - 轴，详见前文说明；
+        # // 返回值：true - 成功、false - 失败
+        result = 0
+        if self.status == 1:
+            result = self.dll.Stop(device, n_axis)
+            if result == 1:
+                print('设备已停止转动')
+        return result
+
+    def s_home(self, device, n_axis):
+        # // 停止转动；nAxis - 轴，详见前文说明；
+        # // 返回值：true - 成功、false - 失败
+        result = 0
+        if self.status == 1:
+            result = self.dll.SHome(device, n_axis)
+            if result == 1:
+                print('设备开始寻零')
+        return result
+
+    def get_position(self, device, n_axis):
+        # // 获取位置；nAxis - 轴，详见前文说明；
+        # // 参数iDevice恒定为0；
+        # // 返回值：实时位置值，单位为°。
+        result = self.dll.GetPos(device, n_axis)
+        print('当前角度为：%f°' % result)
+        return result
+
 
 if __name__ == '__main__':
     # rsc = RSC('192.168.0.101', 50, 2000000)
