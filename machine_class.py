@@ -41,7 +41,7 @@ class RSC:
         self.instance.write('ATT1:CORR OFF')
 
 
-class  HMP:
+class HMP:
     def __init__(self):
         self.resourceManager = pyvisa.ResourceManager()
 
@@ -261,6 +261,7 @@ class ARTS:
             if result == 0:
                 self.mode = 1
                 print('已设置为静态工作模式')
+        return result
 
     def set_mode_dynamic(self):
         result = 1
@@ -280,14 +281,10 @@ class ARTS:
         wave_speed = 3*10**8
         wave_period = 1/(self.freq*10**6)
         gama = wave_speed * wave_period
-        gain_ch1 = rcs_ch1 * 4 * math.pi * range_ch1**4 /\
-                   (self.gain_s**2 * gama**2 * (range_ch1 + self.rut_distance)**4)
-        gain_ch2 = rcs_ch2 * 4 * math.pi * range_ch2**4 / \
-                   (self.gain_s**2 * gama**2 * (range_ch2 + self.rut_distance)**4)
-        gain_ch3 = rcs_ch3 * 4 * math.pi * range_ch3**4 / \
-                   (self.gain_s**2 * gama**2 * (range_ch3 + self.rut_distance)**4)
-        gain_ch4 = rcs_ch4 * 4 * math.pi * range_ch4**4 / \
-                   (self.gain_s**2 * gama**2 * (range_ch4 + self.rut_distance)**4)
+        gain_ch1 = rcs_ch1 * 4 * math.pi * range_ch1**4 / (self.gain_s**2 * gama**2 * (range_ch1 + self.rut_distance)**4)
+        gain_ch2 = rcs_ch2 * 4 * math.pi * range_ch2**4 / (self.gain_s**2 * gama**2 * (range_ch2 + self.rut_distance)**4)
+        gain_ch3 = rcs_ch3 * 4 * math.pi * range_ch3**4 / (self.gain_s**2 * gama**2 * (range_ch3 + self.rut_distance)**4)
+        gain_ch4 = rcs_ch4 * 4 * math.pi * range_ch4**4 / (self.gain_s**2 * gama**2 * (range_ch4 + self.rut_distance)**4)
         result = self.dll.SetTxChanStaticCfg(speed_ch1, speed_ch2, speed_ch3, speed_ch4,
                                              gain_ch1, gain_ch2, gain_ch3, gain_ch4,
                                              range_ch1, range_ch2, range_ch3, range_ch4)
@@ -308,28 +305,24 @@ class ARTS:
                          start_range_ch1, start_range_ch2, start_range_ch3, start_range_ch4,
                          stop_range_ch1, stop_range_ch2, stop_range_ch3, stop_range_ch4,
                          rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4,
-                         r4_enable, waveform_formate_code, waveform_filename):
+                         r4_enable, waveform_code, waveform_filename):
         # // enable 1/R^4 power attenuation
         # // 0=no file created; 1=binary file; 2=ASCII file
         # // can be NULL if no file created
         wave_speed = 3 * 10 ** 8
         wave_period = 1 / (self.freq * 10 ** 6)
         gama = wave_speed * wave_period
-        gain_ch1 = rcs_ch1 * 4 * math.pi * start_range_ch1 ** 4 / \
-                   (self.gain_s ** 2 * gama ** 2 * (start_range_ch1 + self.rut_distance) ** 4)
-        gain_ch2 = rcs_ch2 * 4 * math.pi * start_range_ch2 ** 4 / \
-                   (self.gain_s ** 2 * gama ** 2 * (start_range_ch2 + self.rut_distance) ** 4)
-        gain_ch3 = rcs_ch3 * 4 * math.pi * start_range_ch3 ** 4 / \
-                   (self.gain_s ** 2 * gama ** 2 * (start_range_ch3 + self.rut_distance) ** 4)
-        gain_ch4 = rcs_ch4 * 4 * math.pi * start_range_ch4 ** 4 / \
-                   (self.gain_s ** 2 * gama ** 2 * (start_range_ch4 + self.rut_distance) ** 4)
+        gain_ch1 = rcs_ch1 * 4 * math.pi * start_range_ch1 ** 4 / (self.gain_s ** 2 * gama ** 2 * (start_range_ch1 + self.rut_distance) ** 4)
+        gain_ch2 = rcs_ch2 * 4 * math.pi * start_range_ch2 ** 4 / (self.gain_s ** 2 * gama ** 2 * (start_range_ch2 + self.rut_distance) ** 4)
+        gain_ch3 = rcs_ch3 * 4 * math.pi * start_range_ch3 ** 4 / (self.gain_s ** 2 * gama ** 2 * (start_range_ch3 + self.rut_distance) ** 4)
+        gain_ch4 = rcs_ch4 * 4 * math.pi * start_range_ch4 ** 4 / (self.gain_s ** 2 * gama ** 2 * (start_range_ch4 + self.rut_distance) ** 4)
         result = self.dll.GenerateTargetWaveform(
             start_speed_ch1, start_speed_ch2, start_speed_ch3, start_speed_ch4,
             stop_speed_ch1, stop_speed_ch2, stop_speed_ch3, stop_speed_ch4,
             start_range_ch1, start_range_ch2, start_range_ch3, start_range_ch4,
             stop_range_ch1, stop_range_ch2, stop_range_ch3, stop_range_ch4,
-            rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4,
-            r4_enable, waveform_formate_code, waveform_filename)
+            gain_ch1, gain_ch2, gain_ch3, gain_ch4,
+            r4_enable, waveform_code, waveform_filename)
         if result == 0:
             print('静态目标设置成功\r'
                   '目标1：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\r'

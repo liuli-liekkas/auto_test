@@ -5,9 +5,9 @@ import sys
 import pyqtgraph as pg
 
 
-class RadarTest(QMainWindow):
+class RadarTestMain(QMainWindow):
     def __init__(self):
-        super(RadarTest, self).__init__()
+        super(RadarTestMain, self).__init__()
         self.init_ui()
 
     def init_ui(self):
@@ -256,6 +256,8 @@ class RadarTest(QMainWindow):
         self.tab2_test_start_button = QPushButton('开始测试')
         self.tab2_horizontal_power_config_button = QPushButton('设置')
         self.tab2_horizontal_power_config_button.setEnabled(False)
+        self.horizontal_power_config_menu_window = HorizontalPowerMenu()
+        self.tab2_horizontal_power_config_button.clicked.connect(self.horizontal_power_config_menu_window.show)
         self.tab2_horizontal_power_box.stateChanged.connect(self.tab2_horizontal_power_button_status)
         self.tab2_vertical_power_config_button = QPushButton('设置')
         self.tab2_vertical_power_config_button.setEnabled(False)
@@ -305,6 +307,7 @@ class RadarTest(QMainWindow):
         self.tab2_layout_init()
 
     def tab2_layout_init(self):
+        # ---底层界面布局---
         # 左侧顶层布局
         self.tab2_lu_h_layout = QHBoxLayout()
         self.tab2_lu_h_layout.addWidget(self.tab2_sample_name_label)
@@ -356,7 +359,6 @@ class RadarTest(QMainWindow):
         self.tab2_left_v_layout = QVBoxLayout()
         self.tab2_left_v_layout.addLayout(self.tab2_lu_h_layout)
         self.tab2_left_v_layout.addLayout(self.tab2_ld_h_layout)
-
         # 完整布局
         self.all_h_layout = QHBoxLayout()
         self.all_h_layout.addLayout(self.tab2_left_v_layout)
@@ -433,8 +435,96 @@ class RadarTest(QMainWindow):
         pass
 
 
+class HorizontalPowerMenu(QWidget):
+    def __init__(self):
+        super(HorizontalPowerMenu, self).__init__()
+        self.resize(200, 200)
+        self.setWindowTitle('水平威力范围设置')
+        self.min_range_label = QLabel('最小测试距离')
+        self.min_range_edit = QTextEdit()
+        self.min_range_edit.setMaximumSize(50, 25)
+        self.min_range_edit.setAlignment(QtCore.Qt.AlignCenter)
+        self.min_range_unit_label = QLabel('m')
+        self.max_range_label = QLabel('最大测试距离')
+        self.max_range_edit = QTextEdit()
+        self.max_range_edit.setMaximumSize(50, 25)
+        self.max_range_edit.setAlignment(QtCore.Qt.AlignCenter)
+        self.max_range_unit_label = QLabel('m')
+        self.min_angle_label = QLabel('最小测试角度')
+        self.min_angle_edit = QTextEdit()
+        self.min_angle_edit.setMaximumSize(50, 25)
+        self.min_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
+        self.min_angle_unit_label = QLabel('°')
+        self.max_angle_label = QLabel('最大测试角度')
+        self.max_angle_edit = QTextEdit()
+        self.max_angle_edit.setMaximumSize(50, 25)
+        self.max_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
+        self.max_angle_unit_label = QLabel('°')
+        self.step_range_label = QLabel('距离步进')
+        self.step_range_edit = QTextEdit()
+        self.step_range_edit.setMaximumSize(50, 25)
+        self.step_range_edit.setAlignment(QtCore.Qt.AlignCenter)
+        self.step_range_unit_label = QLabel('m')
+        self.step_angle_label = QLabel('角度步进')
+        self.step_angle_edit = QTextEdit()
+        self.step_angle_edit.setMaximumSize(50, 25)
+        self.step_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
+        self.step_angle_unit_label = QLabel('°')
+        self.motor_pattern_one_way_button = QRadioButton('单向运动')
+        self.motor_pattern_round_trip_button = QRadioButton('往返运动')
+        self.motor_pattern_one_way_combo = QComboBox()
+        self.motor_pattern_one_way_combo.addItems(('远离', '靠近'))
+        self.test_mode_combo = QComboBox()
+        self.test_mode_combo.addItems(('先距离后角度', '先角度后距离'))
+        self.confirm_button = QPushButton('确认')
+        self.layout_init()
+        self.radiobutton_init()
+
+    def layout_init(self):
+        self.grid_layout = QGridLayout()
+        self.h_layout = QHBoxLayout()
+        self.v_layout = QVBoxLayout()
+        self.grid_layout.addWidget(self.min_range_label, 0, 0, 1, 1)
+        self.grid_layout.addWidget(self.min_range_edit, 0, 1, 1, 2)
+        self.grid_layout.addWidget(self.min_range_unit_label, 0, 3, 1, 1)
+        self.grid_layout.addWidget(self.max_range_label, 1, 0, 1, 1)
+        self.grid_layout.addWidget(self.max_range_edit, 1, 1, 1, 2)
+        self.grid_layout.addWidget(self.max_range_unit_label, 1, 3, 1, 1)
+        self.grid_layout.addWidget(self.min_angle_label, 2, 0, 1, 1)
+        self.grid_layout.addWidget(self.min_angle_edit, 2, 1, 1, 2)
+        self.grid_layout.addWidget(self.min_angle_unit_label, 2, 3, 1, 1)
+        self.grid_layout.addWidget(self.max_angle_label, 3, 0, 1, 1)
+        self.grid_layout.addWidget(self.max_angle_edit, 3, 1, 1, 2)
+        self.grid_layout.addWidget(self.max_angle_unit_label, 3, 3, 1, 1)
+        self.grid_layout.addWidget(self.step_range_label, 4, 0, 1, 1)
+        self.grid_layout.addWidget(self.step_range_edit, 4, 1, 1, 2)
+        self.grid_layout.addWidget(self.step_range_unit_label, 4, 3, 1, 1)
+        self.grid_layout.addWidget(self.step_angle_label, 5, 0, 1, 1)
+        self.grid_layout.addWidget(self.step_angle_edit, 5, 1, 1, 2)
+        self.grid_layout.addWidget(self.step_angle_unit_label, 5, 3, 1, 1)
+        self.v_layout.addWidget(self.motor_pattern_round_trip_button)
+        self.v_layout.addWidget(self.motor_pattern_one_way_button)
+        self.v_layout.addWidget(self.motor_pattern_one_way_combo)
+        self.v_layout.addWidget(self.test_mode_combo)
+        self.v_layout.addWidget(self.confirm_button)
+        self.h_layout.addLayout(self.grid_layout)
+        self.h_layout.addLayout(self.v_layout)
+        self.setLayout(self.h_layout)
+
+    def radiobutton_init(self):
+        self.motor_pattern_round_trip_button.setChecked(True)
+        self.motor_pattern_one_way_combo.setEnabled(False)
+        self.motor_pattern_round_trip_button.toggled.connect(self.radiobutton_select)
+
+    def radiobutton_select(self):
+        if self.motor_pattern_round_trip_button.isChecked():
+            self.motor_pattern_one_way_combo.setEnabled(False)
+        else:
+            self.motor_pattern_one_way_combo.setEnabled(True)
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    radar_test = RadarTest()
+    radar_test = RadarTestMain()
     radar_test.show()
     sys.exit(app.exec())

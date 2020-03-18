@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QComboBox, QPushButton, QApplication, QListView
-import ui_radar_test
+import UIRadarTest
 import sys
 
 
@@ -29,7 +29,7 @@ class SelectWindow(QMainWindow):
         select_value = self.combo.currentText()
         if select_value == "毫米波雷达测试系统":
             self.close()
-            self.radar_test = ui_radar_test.RadarTest()
+            self.radar_test = UIRadarTest.RadarTest()
 
 
 if __name__ == '__main__':
