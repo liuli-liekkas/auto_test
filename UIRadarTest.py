@@ -11,7 +11,7 @@ class RadarTestMain(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.resize(1000, 700)
+        self.resize(1200, 800)
         self.center()
         self.setWindowTitle("毫米波雷达测试系统")
         self.setFont(QFont('Menlo', 12))
@@ -218,17 +218,17 @@ class RadarTestMain(QMainWindow):
 
     def tab2_ui(self):
         # 基本信息
-        self.tab2_sample_name_label = QLabel('样品名称')
-        self.tab2_sample_name_browser = QTextBrowser()
-        self.tab2_sample_name_browser.setText('毫米波雷达')
-        self.tab2_sample_name_browser.setMaximumSize(500, 20)
-        self.tab2_sample_number_label = QLabel('样品编号')
+        self.tab2_sample_number_label = QLabel('样品编号:')
         self.tab2_sample_number_browser = QTextBrowser()
-        self.tab2_tester_name_label = QLabel('测试人员')
+        self.tab2_sample_number_browser.setText('00001')
+        self.tab2_sample_number_browser.setMinimumSize(80, 20)
+        self.tab2_sample_number_browser.setMaximumSize(100, 20)
+        self.tab2_tester_name_label = QLabel('测试人员:')
         self.tab2_tester_name_browser = QTextBrowser()
         self.tab2_tester_name_browser.setText('薛岩')
-        self.tab2_tester_name_browser.setMaximumSize(50, 20)
-        self.tab2_supervisor_name_label = QLabel('复核/监督人员')
+        self.tab2_tester_name_browser.setMinimumSize(80, 20)
+        self.tab2_tester_name_browser.setMaximumSize(100, 20)
+        self.tab2_supervisor_name_label = QLabel('复核/监督人员:')
         self.tab2_supervisor_name_combo = QComboBox()
         self.tab2_supervisor_name_combo.setMaximumSize(80, 20)
         self.tab2_supervisor_name_combo.addItem('刘力')
@@ -310,8 +310,8 @@ class RadarTestMain(QMainWindow):
         # ---底层界面布局---
         # 左侧顶层布局
         self.tab2_lu_h_layout = QHBoxLayout()
-        self.tab2_lu_h_layout.addWidget(self.tab2_sample_name_label)
-        self.tab2_lu_h_layout.addWidget(self.tab2_sample_name_browser)
+        self.tab2_lu_h_layout.addWidget(self.tab2_sample_number_label)
+        self.tab2_lu_h_layout.addWidget(self.tab2_sample_number_browser)
         self.tab2_lu_h_layout.addWidget(self.tab2_tester_name_label)
         self.tab2_lu_h_layout.addWidget(self.tab2_tester_name_browser)
         self.tab2_lu_h_layout.addWidget(self.tab2_supervisor_name_label)
@@ -441,44 +441,47 @@ class HorizontalPowerMenu(QWidget):
         self.resize(200, 200)
         self.setWindowTitle('水平威力范围设置')
         self.min_range_label = QLabel('最小测试距离')
-        self.min_range_edit = QTextEdit()
+        self.min_range_edit = QTextEdit('30')
         self.min_range_edit.setMaximumSize(50, 25)
         self.min_range_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.min_range_unit_label = QLabel('m')
         self.max_range_label = QLabel('最大测试距离')
-        self.max_range_edit = QTextEdit()
+        self.max_range_edit = QTextEdit('200')
         self.max_range_edit.setMaximumSize(50, 25)
         self.max_range_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.max_range_unit_label = QLabel('m')
         self.min_angle_label = QLabel('最小测试角度')
-        self.min_angle_edit = QTextEdit()
+        self.min_angle_edit = QTextEdit('-60')
         self.min_angle_edit.setMaximumSize(50, 25)
         self.min_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.min_angle_unit_label = QLabel('°')
         self.max_angle_label = QLabel('最大测试角度')
-        self.max_angle_edit = QTextEdit()
+        self.max_angle_edit = QTextEdit('60')
         self.max_angle_edit.setMaximumSize(50, 25)
         self.max_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.max_angle_unit_label = QLabel('°')
         self.step_range_label = QLabel('距离步进')
-        self.step_range_edit = QTextEdit()
+        self.step_range_edit = QTextEdit('1')
         self.step_range_edit.setMaximumSize(50, 25)
         self.step_range_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.step_range_unit_label = QLabel('m')
         self.step_angle_label = QLabel('角度步进')
-        self.step_angle_edit = QTextEdit()
+        self.step_angle_edit = QTextEdit('1')
         self.step_angle_edit.setMaximumSize(50, 25)
         self.step_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.step_angle_unit_label = QLabel('°')
         self.motor_pattern_one_way_button = QRadioButton('单向运动')
         self.motor_pattern_round_trip_button = QRadioButton('往返运动')
+        self.motor_pattern_round_trip_button.setChecked(True)
+        self.motor_pattern_round_trip_button.toggled.connect(self.radiobutton_select)
         self.motor_pattern_one_way_combo = QComboBox()
         self.motor_pattern_one_way_combo.addItems(('远离', '靠近'))
+        self.motor_pattern_one_way_combo.setEnabled(False)
         self.test_mode_combo = QComboBox()
         self.test_mode_combo.addItems(('先距离后角度', '先角度后距离'))
         self.confirm_button = QPushButton('确认')
+        self.confirm_button.clicked.connect(self.set_result__output)
         self.layout_init()
-        self.radiobutton_init()
 
     def layout_init(self):
         self.grid_layout = QGridLayout()
@@ -511,16 +514,56 @@ class HorizontalPowerMenu(QWidget):
         self.h_layout.addLayout(self.v_layout)
         self.setLayout(self.h_layout)
 
-    def radiobutton_init(self):
-        self.motor_pattern_round_trip_button.setChecked(True)
-        self.motor_pattern_one_way_combo.setEnabled(False)
-        self.motor_pattern_round_trip_button.toggled.connect(self.radiobutton_select)
-
     def radiobutton_select(self):
         if self.motor_pattern_round_trip_button.isChecked():
             self.motor_pattern_one_way_combo.setEnabled(False)
         else:
             self.motor_pattern_one_way_combo.setEnabled(True)
+
+    def set_result__output(self):
+        if self.motor_pattern_round_trip_button.isChecked():
+            motor_pattern = '往返运动'
+            motor_pattern_one_way = ''
+        else:
+            motor_pattern = '单向运动'
+            motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
+        print('最小测试距离设置为：%sm\n'
+              '最大测试距离设置为：%sm\n'
+              '最小测试角度设置为：%s°\n'
+              '最大测试角度设置为：%s°\n'
+              '步进距离设置为：%sm\n'
+              '步进角度设置为：%sm\n'
+              '运动模式设置为：%s\n'
+              '单向运动模式设置为：%s\n'
+              '测试模式设置为：%s\n' % (
+                self.min_range_edit.toPlainText(),
+                self.max_range_edit.toPlainText(),
+                self.min_angle_edit.toPlainText(),
+                self.max_angle_edit.toPlainText(),
+                self.step_range_edit.toPlainText(),
+                self.step_angle_edit.toPlainText(),
+                motor_pattern,
+                motor_pattern_one_way,
+                self.test_mode_combo.currentText()))
+        file = open('./config/HorizontalPowerTest.txt', 'w+')
+        file.write('最小测试距离设置为：%sm\n'
+                   '最大测试距离设置为：%sm\n'
+                   '最小测试角度设置为：%s°\n'
+                   '最大测试角度设置为：%s°\n'
+                   '步进距离设置为：%sm\n'
+                   '步进角度设置为：%sm\n'
+                   '运动模式设置为：%s\n'
+                   '单向运动模式设置为：%s\n'
+                   '测试模式设置为：%s\n' % (
+                    self.min_range_edit.toPlainText(),
+                    self.max_range_edit.toPlainText(),
+                    self.min_angle_edit.toPlainText(),
+                    self.max_angle_edit.toPlainText(),
+                    self.step_range_edit.toPlainText(),
+                    self.step_angle_edit.toPlainText(),
+                    motor_pattern,
+                    motor_pattern_one_way,
+                    self.test_mode_combo.currentText()))
 
 
 if __name__ == '__main__':

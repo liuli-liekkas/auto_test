@@ -289,11 +289,11 @@ class ARTS:
                                              gain_ch1, gain_ch2, gain_ch3, gain_ch4,
                                              range_ch1, range_ch2, range_ch3, range_ch4)
         if result == 0:
-            print('静态目标设置成功\r'
-                  '目标1：速度%dkm/h，距离%dm，RCS%ddBsm\r'
-                  '目标2：速度%dkm/h，距离%dm，RCS%ddBsm\r'
-                  '目标3：速度%dkm/h，距离%dm，RCS%ddBsm\r'
-                  '目标4：速度%dkm/h，距离%dm，RCS%ddBsm\r' %
+            print('静态目标设置成功\n'
+                  '目标1：速度%dkm/h，距离%dm，RCS%ddBsm\n'
+                  '目标2：速度%dkm/h，距离%dm，RCS%ddBsm\n'
+                  '目标3：速度%dkm/h，距离%dm，RCS%ddBsm\n'
+                  '目标4：速度%dkm/h，距离%dm，RCS%ddBsm\n' %
                   (speed_ch1, range_ch1, rcs_ch1,
                    speed_ch2, range_ch2, rcs_ch2,
                    speed_ch3, range_ch3, rcs_ch3,
@@ -324,11 +324,11 @@ class ARTS:
             gain_ch1, gain_ch2, gain_ch3, gain_ch4,
             r4_enable, waveform_code, waveform_filename)
         if result == 0:
-            print('静态目标设置成功\r'
-                  '目标1：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\r'
-                  '目标2：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\r'
-                  '目标3：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\r'
-                  '目标4：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\r' %
+            print('静态目标设置成功\n'
+                  '目标1：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
+                  '目标2：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
+                  '目标3：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
+                  '目标4：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n' %
                   (start_speed_ch1, stop_speed_ch1, start_range_ch1, stop_range_ch1, rcs_ch1,
                    start_speed_ch2, stop_speed_ch2, start_range_ch2, stop_range_ch2, rcs_ch2,
                    start_speed_ch3, stop_speed_ch3, start_range_ch3, stop_range_ch3, rcs_ch3,
