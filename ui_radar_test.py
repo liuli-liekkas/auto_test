@@ -168,7 +168,7 @@ class RadarTest(QMainWindow):
         self.l_grid_layout.addWidget(self.work_cop_combo, 6, 1, 1, 1)
         self.button_h_layout = QHBoxLayout()
         self.pic_h_layout = QHBoxLayout()
-        self.pic_h_layout.addStretch(1)
+        self.pic_h_layout.addStretch(2)
         self.pic_h_layout.addWidget(self.pic_label)
         self.pic_h_layout.addStretch(1)
         self.button_h_layout.addWidget(self.off_button)
@@ -189,7 +189,6 @@ class RadarTest(QMainWindow):
         self.r_v_layout.addWidget(self.submit_button)
         self.r_v_layout.addWidget(self.query_button)
         self.r_v_layout.addWidget(self.config_button)
-        self.r_v_layout.addStretch(1)
 
         self.m_h_layout = QHBoxLayout()
         self.m_h_layout.addLayout(self.l_grid_layout)
@@ -207,12 +206,15 @@ class RadarTest(QMainWindow):
 
     def label_init(self):
         self.pic_label.setPixmap((QPixmap('./image/light_off.png')))
+        self.pic_label.setScaledContents(True)
 
     def on_off_bulb_func(self):
         if self.off_button.isChecked():
             self.pic_label.setPixmap(QPixmap('./image/light_off.png'))
+            self.pic_label.setScaledContents(True)
         else:
             self.pic_label.setPixmap(QPixmap('./image/light_on.png'))
+            self.pic_label.setScaledContents(True)
 
     def tab2_ui(self):
         # 基本信息
