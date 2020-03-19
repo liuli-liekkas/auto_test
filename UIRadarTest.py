@@ -83,12 +83,12 @@ class RadarTestMain(QMainWindow):
         self.tabWidget.setStyleSheet("QTabBar::tab:selected{color:red;background-color:rbg(200,200,255);} ")
         self.tabWidget.setFont(QFont('KaiTi', 16))
         # self.tabWidget.set
-        self.tab1 = QWidget()
-        self.tab2 = QWidget()
-        self.tab3 = QWidget()
-        self.tabWidget.addTab(self.tab1, "射频性能测试")
-        self.tabWidget.addTab(self.tab2, "探测性能测试")
-        self.tabWidget.addTab(self.tab3, "天线性能测试")
+        self.tab1_central_widget = QWidget()
+        self.tab2_central_widget = QWidget()
+        self.tab3_central_widget = QWidget()
+        self.tabWidget.addTab(self.tab1_central_widget, "射频性能测试")
+        self.tabWidget.addTab(self.tab2_central_widget, "探测性能测试")
+        self.tabWidget.addTab(self.tab3_central_widget, "天线性能测试")
         self.setCentralWidget(self.central_widget)
         self.tab1_ui()
         self.tab2_ui()
@@ -102,7 +102,11 @@ class RadarTestMain(QMainWindow):
 
     def tab2_ui(self):
         # 基本信息
-        self.tab2_sample_number_label = QLabel('样品编号:')
+        self.left_frame = QFrame(self.tab2_central_widget)
+        self.middle_frame = QFrame(self.tab2_central_widget)
+        self.right_frame = QFrame(self.tab2_central_widget)
+        self.tab2_sample_number_label = QLabel(self.left_frame)
+        self.tab2_sample_number_label.setText('样品编号:')
         self.tab2_sample_number_browser = QTextBrowser()
         self.tab2_sample_number_browser.setText('00001')
         self.tab2_sample_number_browser.setMinimumSize(80, 20)
@@ -251,7 +255,7 @@ class RadarTestMain(QMainWindow):
         self.all_h_layout = QHBoxLayout()
         self.all_h_layout.addLayout(self.tab2_left_v_layout)
         self.all_h_layout.addLayout(self.tab2_right_v_layout)
-        self.tab2.setLayout(self.all_h_layout)
+        self.tab2_central_widget.setLayout(self.all_h_layout)
 
     def tab2_horizontal_power_button_status(self):
         if self.tab2_horizontal_power_box.checkState() == 2:
