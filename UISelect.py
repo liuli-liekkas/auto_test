@@ -29,7 +29,8 @@ class SelectWindow(QMainWindow):
         select_value = self.combo.currentText()
         if select_value == "毫米波雷达测试系统":
             self.close()
-            self.radar_test = UIRadarTest.RadarTest()
+            self.radar_test = UIRadarTest.RadarTestMain()
+            self.radar_test.show()
 
 
 if __name__ == '__main__':
