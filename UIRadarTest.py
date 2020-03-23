@@ -79,7 +79,7 @@ class RadarTestMain(QMainWindow):
     def tab_menu_init(self):
         self.central_widget = QWidget(self)
         self.tabWidget = QTabWidget(self.central_widget)
-        # self.tabWidget.setGeometry(0, 0, self.width(), self.height()-50)
+        self.tabWidget.setGeometry(0, 0, self.geometry().width(), self.geometry().height()-50)
         self.tabWidget.setStyleSheet("QTabBar::tab:selected{color:red;background-color:rbg(200,200,255);} ")
         self.tabWidget.setFont(QFont('KaiTi', 16))
         # self.tabWidget.set
