@@ -189,23 +189,30 @@ class ARTS:
         self.output = 0
         self.tr = 0
         self.mode = 1
-        self.freq = 0
+        self.freq = 76250000
         self.gain_s = 46
         self.rut_distance = 0
 
     def connect(self, ip):
+        self.ip = ctypes.c_char_p(ip.encode('utf-8'))
         if self.status == 0:
-            self.dll.Connect(ip.encode('utf-8'))
-            self.status = 1
-            print('ARTS连接成功')
+            result = self.dll.Connect(self.ip)
+            if result == 0:
+                self.status = 1
+                print('ARTS连接成功')
+            else:
+                print('连接失败')
         else:
             print('ARTS已连接')
 
     def disconnect(self):
         if self.status == 1:
-            self.dll.Disconnect()
-            self.status = 0
-            print('ARTS成功断开连接')
+            result = self.dll.Disconnect()
+            if result == 0:
+                self.status = 0
+                print('ARTS成功断开连接')
+            else:
+                print('断开连接失败')
         else:
             print('ARTS未连接')
 
@@ -225,19 +232,22 @@ class ARTS:
 
     def set_freq(self, freq):
         self.freq = freq
-        result = self.dll.SetRfFreq_kHz(freq)
+        result = self.dll.SetRfFreq_kHz(ctypes.byref(ctypes.c_int(freq)))
         if result == 0:
             print('频率已设置为%dKHz' % freq)
         return result
 
     def set_trims(self, gain_trim, range_trim, rut_distance):
+        self.gain_trim = ctypes.c_double(gain_trim)
+        self.range_trim = ctypes.c_double(range_trim)
         self.rut_distance = rut_distance
-        result = self.dll.SetTrims(gain_trim, gain_trim, gain_trim, gain_trim,
-                                   range_trim, range_trim, range_trim, range_trim,
-                                   rut_distance)
+        result = self.dll.SetTrims(
+            self.gain_trim, self.gain_trim, self.gain_trim, self.gain_trim,
+            self.range_trim, self.range_trim, self.range_trim, self.range_trim,
+            self.rut_distance)
         if result == 0:
             print('已设置GainTrim为%ddB，已设置RangeTrim为%dm,已设置RUTDistance为%dm ' %
-                  (gain_trim, range_trim, rut_distance))
+                  (gain_trim, range_trim, ctypes.c_double(rut_distance)))
         return result
 
     def set_rx_attenuation(self, attenuation):
@@ -253,25 +263,16 @@ class ARTS:
         return result
 
     def set_mode_static(self):
-        result = 1
-        if self.mode == 1:
-            print('当前为静态工作模式')
-        else:
-            result = self.dll.SetStaticMode(1)
-            if result == 0:
-                self.mode = 1
-                print('已设置为静态工作模式')
+        result = self.dll.SetStaticMode(1)
+        if result == 0:
+            print('已设置为静态工作模式')
         return result
 
     def set_mode_dynamic(self):
-        result = 1
-        if self.mode == 0:
-            print('当前为动态工作模式')
-        else:
-            result = self.dll.SetStaticMode(0)
-            if result == 0:
-                self.mode = 0
-                print('已设置为动态工作模式')
+        result = self.dll.SetStaticMode(0)
+        if result == 0:
+            self.mode = 0
+            print('已设置为动态工作模式')
         return result
 
     def set_tx_chan_static(self, speed_ch1, speed_ch2, speed_ch3, speed_ch4,
@@ -279,15 +280,37 @@ class ARTS:
                            range_ch1, range_ch2, range_ch3, range_ch4):
         # Set Tx Channel Parameters in "normal operating units": Speed (kph), Gain (dB), Range (m).
         wave_speed = 3*10**8
-        wave_period = 1/(self.freq*10**6)
+        wave_period = 1/(self.freq*10**3)
         gama = wave_speed * wave_period
         gain_ch1 = rcs_ch1 * 4 * math.pi * range_ch1**4 / (self.gain_s**2 * gama**2 * (range_ch1 + self.rut_distance)**4)
         gain_ch2 = rcs_ch2 * 4 * math.pi * range_ch2**4 / (self.gain_s**2 * gama**2 * (range_ch2 + self.rut_distance)**4)
         gain_ch3 = rcs_ch3 * 4 * math.pi * range_ch3**4 / (self.gain_s**2 * gama**2 * (range_ch3 + self.rut_distance)**4)
         gain_ch4 = rcs_ch4 * 4 * math.pi * range_ch4**4 / (self.gain_s**2 * gama**2 * (range_ch4 + self.rut_distance)**4)
-        result = self.dll.SetTxChanStaticCfg(speed_ch1, speed_ch2, speed_ch3, speed_ch4,
-                                             gain_ch1, gain_ch2, gain_ch3, gain_ch4,
-                                             range_ch1, range_ch2, range_ch3, range_ch4)
+        self.speed_ch1 = ctypes.c_double(speed_ch1)
+        self.speed_ch2 = ctypes.c_double(speed_ch2)
+        self.speed_ch3 = ctypes.c_double(speed_ch3)
+        self.speed_ch4 = ctypes.c_double(speed_ch4)
+        self.rcs_ch1 = ctypes.c_double(rcs_ch1)
+        self.rcs_ch2 = ctypes.c_double(rcs_ch2)
+        self.rcs_ch3 = ctypes.c_double(rcs_ch3)
+        self.rcs_ch4 = ctypes.c_double(rcs_ch4)
+        self.range_ch1 = ctypes.c_double(range_ch1)
+        self.range_ch2 = ctypes.c_double(range_ch2)
+        self.range_ch3 = ctypes.c_double(range_ch3)
+        self.range_ch4 = ctypes.c_double(range_ch4)
+        result = self.dll.SetTxChanStaticCfg(
+            ctypes.byref(self.speed_ch1),
+            ctypes.byref(self.speed_ch2),
+            ctypes.byref(self.speed_ch3),
+            ctypes.byref(self.speed_ch4),
+            ctypes.byref(self.rcs_ch1),
+            ctypes.byref(self.rcs_ch2),
+            ctypes.byref(self.rcs_ch3),
+            ctypes.byref(self.rcs_ch4),
+            ctypes.byref(self.range_ch1),
+            ctypes.byref(self.range_ch2),
+            ctypes.byref(self.range_ch3),
+            ctypes.byref(self.range_ch4))
         if result == 0:
             print('静态目标设置成功\n'
                   '目标1：速度%dkm/h，距离%dm，RCS%ddBsm\n'
@@ -300,12 +323,12 @@ class ARTS:
                    speed_ch4, range_ch4, rcs_ch4))
         return result
 
-    def set_chan_dynamic(self, start_speed_ch1, start_speed_ch2, start_speed_ch3, start_speed_ch4,
-                         stop_speed_ch1, stop_speed_ch2, stop_speed_ch3, stop_speed_ch4,
-                         start_range_ch1, start_range_ch2, start_range_ch3, start_range_ch4,
-                         stop_range_ch1, stop_range_ch2, stop_range_ch3, stop_range_ch4,
-                         rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4,
-                         r4_enable, waveform_code, waveform_filename):
+    def set_tx_chan_dynamic(self,
+                            start_speed_ch1, start_speed_ch2, start_speed_ch3, start_speed_ch4,
+                            stop_speed_ch1, stop_speed_ch2, stop_speed_ch3, stop_speed_ch4,
+                            start_range_ch1, start_range_ch2, start_range_ch3, start_range_ch4,
+                            stop_range_ch1, stop_range_ch2, stop_range_ch3, stop_range_ch4,
+                            rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4):
         # // enable 1/R^4 power attenuation
         # // 0=no file created; 1=binary file; 2=ASCII file
         # // can be NULL if no file created
@@ -316,13 +339,48 @@ class ARTS:
         gain_ch2 = rcs_ch2 * 4 * math.pi * start_range_ch2 ** 4 / (self.gain_s ** 2 * gama ** 2 * (start_range_ch2 + self.rut_distance) ** 4)
         gain_ch3 = rcs_ch3 * 4 * math.pi * start_range_ch3 ** 4 / (self.gain_s ** 2 * gama ** 2 * (start_range_ch3 + self.rut_distance) ** 4)
         gain_ch4 = rcs_ch4 * 4 * math.pi * start_range_ch4 ** 4 / (self.gain_s ** 2 * gama ** 2 * (start_range_ch4 + self.rut_distance) ** 4)
+        self.start_speed_ch1 = ctypes.c_double(start_speed_ch1)
+        self.start_speed_ch2 = ctypes.c_double(start_speed_ch2)
+        self.start_speed_ch3 = ctypes.c_double(start_speed_ch3)
+        self.start_speed_ch4 = ctypes.c_double(start_speed_ch4)
+        self.stop_speed_ch1 = ctypes.c_double(stop_speed_ch1)
+        self.stop_speed_ch2 = ctypes.c_double(stop_speed_ch2)
+        self.stop_speed_ch3 = ctypes.c_double(stop_speed_ch3)
+        self.stop_speed_ch4 = ctypes.c_double(stop_speed_ch4)
+        self.start_range_ch1 = ctypes.c_double(start_range_ch1)
+        self.start_range_ch2 = ctypes.c_double(start_range_ch2)
+        self.start_range_ch3 = ctypes.c_double(start_range_ch3)
+        self.start_range_ch4 = ctypes.c_double(start_range_ch4)
+        self.stop_range_ch1 = ctypes.c_double(stop_range_ch1)
+        self.stop_range_ch2 = ctypes.c_double(stop_range_ch2)
+        self.stop_range_ch3 = ctypes.c_double(stop_range_ch3)
+        self.stop_range_ch4 = ctypes.c_double(stop_range_ch4)
+        self.gain_ch1 = ctypes.c_double(rcs_ch1)
+        self.gain_ch2 = ctypes.c_double(rcs_ch2)
+        self.gain_ch3 = ctypes.c_double(rcs_ch3)
+        self.gain_ch4 = ctypes.c_double(rcs_ch4)
         result = self.dll.GenerateTargetWaveform(
-            start_speed_ch1, start_speed_ch2, start_speed_ch3, start_speed_ch4,
-            stop_speed_ch1, stop_speed_ch2, stop_speed_ch3, stop_speed_ch4,
-            start_range_ch1, start_range_ch2, start_range_ch3, start_range_ch4,
-            stop_range_ch1, stop_range_ch2, stop_range_ch3, stop_range_ch4,
-            gain_ch1, gain_ch2, gain_ch3, gain_ch4,
-            r4_enable, waveform_code, waveform_filename)
+            ctypes.byref(self.start_speed_ch1),
+            ctypes.byref(self.start_speed_ch2),
+            ctypes.byref(self.start_speed_ch3),
+            ctypes.byref(self.start_speed_ch4),
+            ctypes.byref(self.stop_speed_ch1),
+            ctypes.byref(self.stop_speed_ch2),
+            ctypes.byref(self.stop_speed_ch3),
+            ctypes.byref(self.stop_speed_ch4),
+            ctypes.byref(self.start_range_ch1),
+            ctypes.byref(self.start_range_ch2),
+            ctypes.byref(self.start_range_ch3),
+            ctypes.byref(self.start_range_ch4),
+            ctypes.byref(self.stop_range_ch1),
+            ctypes.byref(self.stop_range_ch2),
+            ctypes.byref(self.stop_range_ch3),
+            ctypes.byref(self.stop_range_ch4),
+            ctypes.byref(self.gain_ch1),
+            ctypes.byref(self.gain_ch2),
+            ctypes.byref(self.gain_ch3),
+            ctypes.byref(self.gain_ch4),
+            1, 0)
         if result == 0:
             print('静态目标设置成功\n'
                   '目标1：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
@@ -334,8 +392,8 @@ class ARTS:
                    start_speed_ch3, stop_speed_ch3, start_range_ch3, stop_range_ch3, rcs_ch3,
                    start_speed_ch4, stop_speed_ch4, start_range_ch4, stop_range_ch4, rcs_ch4,
                    ))
-            if r4_enable == 1:
-                print('功率距离自适应开启')
+            # if r4_enable == 1:
+            #     print('功率距离自适应开启')
         return result
 
     def set_tx_chan_enable(self, tx1, tx2, tx3, tx4):
@@ -361,10 +419,10 @@ class ARTS:
                 print('通道4关闭')
         return result
 
-    def download_wave_form(self, waveform_format_code, waveform_filename):
+    def download_wave_form(self, waveform_format_code):
         # // 0=DLL internal memory; 1=binary file; 2=ASCII file
         # // can be NULL if no file used
-        result = self.dll.DownloadWaveform(waveform_format_code, waveform_filename)
+        result = self.dll.DownloadWaveform(waveform_format_code)
         if result == 0:
             print('波形入口已选择')
             if waveform_format_code == 0:
@@ -392,48 +450,47 @@ class ARTS:
         return result
 
     def set_tr_on(self):
-        result = 1
-        if self.tr == 0:
+        if self.dll.CheckConnectionStatus() == 1:
             result = self.dll.SetTrEn(1)
             self.tr = 1
             if result == 0:
                 print('ARTS成功打开T/R模块')
         else:
-            print('ARTS已打开T/R模块')
+            print('ARTS未连接')
         return result
 
     def set_tr_off(self):
-        result = 1
-        if self.tr == 1:
+        if self.dll.CheckConnectionStatus() == 1:
             result = self.dll.SetTrEn(0)
             self.tr = 0
             if result == 0:
                 print('ARTS成功关闭T/R模块')
         else:
-            print('ARTS未打开T/R模块')
+            print('ARTS未连接')
         return result
 
     def set_output_on(self):
-        result = 1
-        if self.output == 0:
+        if self.dll.CheckConnectionStatus() == 1:
             result = self.dll.SetSynthRFOutput(1)
             self.output = 1
             if result == 0:
                 print('ARTS成功打开RF发射')
         else:
-            print('ARTS已打开RF发射')
+            print('ARTS未连接')
         return result
 
     def set_output_off(self):
-        result = 1
-        if self.output == 1:
+        if self.dll.CheckConnectionStatus() == 1:
             result = self.dll.SetSynthRFOutput(0)
             self.output = 0
             if result == 0:
                 print('ARTS成功关闭RF发射')
         else:
-            print('ARTS已关闭RF发射')
+            print('ARTS未连接')
         return result
+
+    def get_system_status(self):
+        self.dll.GetSystemStatus()
 
 
 class TurnTable:
@@ -444,13 +501,14 @@ class TurnTable:
     # iDevice：设备地址号，转台iDevice = 0。
     def __init__(self):
         self.dll = ctypes.CDLL('./dll/PcommDllx64.dll')
+        self.i_device = ctypes.c_short(0)
         self.status = 0
 
     def connect(self):
         # // 参数：iDevice –设备地址号，对本扫描架来说iDevice = 0；
         # // 返回值：true - 成功、false - 失败
         if self.status == 0:
-            self.dll.ConnectImac(0)
+            self.dll.ConnectImac(self.i_device)
             self.status = 1
             print('转台连接成功')
         else:
@@ -473,14 +531,20 @@ class TurnTable:
         # // 参数：fSetVel –对应轴号所设置的速度值；
         # // 参数：bIsAbs –对于轴号运动方式，true - 绝对运动，false - 相对运动；
         # // 返回值：true - 成功、false - 失败
+        # nAxis - 轴：nAxis == 2 时为俯仰轴；
+        # nAxis - 轴：nAxis == 1 时为方位轴；
+        # fSetPos：单位为°（对转台而言）或者mm(对扫描架而言)
+        # fSetVel：° / s（对转台而言）或者mm / s(对扫描架而言)
+        # iDevice：设备地址号，转台iDevice = 0。
         result = 0
         if self.status == 1:
-            result = self.dll.MoveDeviceToPos(0, n_axis, set_pos, set_vel, b_abs)
+            result = self.dll.MoveDeviceToPos(self.i_device, ctypes.c_short(n_axis), ctypes.c_double(set_pos), ctypes.c_double(set_vel), b_abs)
+            print('发送指令......')
             if result == 1:
                 print('开始常规模式转动')
         return result
 
-    def move_to_position_by_type(self, device, n_axis, to_start, to_end, to_speed, start_equ, end_equ, step_pos, speed, delta_step, i_time):
+    def move_to_position_by_type(self, n_axis, to_start, to_end, to_speed, start_equ, end_equ, step_pos, speed, delta_step, i_time):
         # // 参数：iDevice –设备地址号；
         # // 参数：nAxis –轴号；
         # // 参数：fToStart - ---各个轴所要运动的距离值，位置值在发送脉冲起始角之前，单位为mm
@@ -495,78 +559,80 @@ class TurnTable:
         # // 返回值：true - 成功、false - 失败
         result = 0
         if self.status == 1:
-            result = self.dll.MoveToPosByType(device, n_axis, to_start, to_end, to_speed, start_equ, end_equ, step_pos, speed, delta_step, i_time)
+            result = self.dll.MoveToPosByType(self.i_device, ctypes.c_short(n_axis), to_start, to_end, to_speed, start_equ, end_equ, step_pos, speed, delta_step, i_time)
             if result == 1:
                 print('开始TTL模式转动')
         return result
 
-    def get_motor_idle(self, device, n_axis):
+    def get_motor_idle(self, n_axis):
         # // 电机运动状态
         # // 是否停止，TRUE - 停止1，FALSE - 运动；
-        result = self.dll.GetMotorIdle(device, n_axis)
+        result = self.dll.GetMotorIdle(self.i_device, ctypes.c_short(n_axis))
         if result == 1:
             print('电机处于停止状态')
         else:
             print('电机处于运动状态')
         return result
 
-    def get_pos_limit(self, device, n_axis):
+    def get_pos_limit(self, n_axis):
         # // 是否正限位，TRUE - 正限位，FALSE - 未正限位；
-        result = self.dll.GetPosLimit(device, n_axis)
+        result = self.dll.GetPosLimit(self.i_device, ctypes.c_short(n_axis))
         if result == 1:
             print('电机已正限位')
         else:
             print('电机未正限位')
         return result
 
-    def get_neg_limit(self, device, n_axis):
+    def get_neg_limit(self, n_axis):
         # // 是否负限位，TRUE - 负限位，FALSE - 未负限位；
-        result = self.dll.GetNegLimit(device, n_axis)
+        result = self.dll.GetNegLimit(self.i_device, ctypes.c_short(n_axis))
         if result == 1:
             print('电机已负限位')
         else:
             print('电机未负限位')
         return result
 
-    def get_home_complete(self, device, n_axis):
+    def get_home_complete(self, n_axis):
         # // 寻零是否完成，TRUE - 寻零完成，FALSE - 寻零未完成；
-        result = self.dll.GetHomeComplete(device, n_axis)
+        result = self.dll.GetHomeComplete(self.i_device, ctypes.c_short(n_axis))
         if result == 1:
             print('电机已完成寻零')
         else:
             print('电机未完成寻零')
         return result
 
-    def stop(self, device, n_axis):
+    def stop(self, n_axis):
         # // 停止转动；nAxis - 轴，详见前文说明；
         # // 返回值：true - 成功、false - 失败
         result = 0
         if self.status == 1:
-            result = self.dll.Stop(device, n_axis)
+            result = self.dll.Stop(self.i_device, ctypes.c_short(n_axis))
             if result == 1:
                 print('设备已停止转动')
         return result
 
-    def s_home(self, device, n_axis):
+    def s_home(self, n_axis):
         # // 停止转动；nAxis - 轴，详见前文说明；
         # // 返回值：true - 成功、false - 失败
         result = 0
         if self.status == 1:
-            result = self.dll.SHome(device, n_axis)
+            result = self.dll.SHome(self.i_device, ctypes.c_short(n_axis))
             if result == 1:
                 print('设备开始寻零')
         return result
 
-    def get_position(self, device, n_axis):
+    def get_position(self, n_axis):
         # // 获取位置；nAxis - 轴，详见前文说明；
         # // 参数iDevice恒定为0；
         # // 返回值：实时位置值，单位为°。
-        result = self.dll.GetPos(device, n_axis)
+        self.dll.GetPos.restype = ctypes.c_double
+        result = self.dll.GetPos(self.i_device, ctypes.c_short(n_axis))
         print('当前角度为：%f°' % result)
         return result
 
 
 if __name__ == '__main__':
+    # RCS连接测试
     # rsc = RSC('192.168.0.101', 50, 2000000)
     # rsc.open()
     # rsc.reset()
@@ -578,6 +644,8 @@ if __name__ == '__main__':
     # time.sleep(3)
     # rsc.set_corr_off()
     # rsc.close()
+
+    # HMP连接测试
     # hmp = HMP('192.168.0.105', '1', '24', '1')
     # hmp.open()
     # hmp.reset()
@@ -590,19 +658,70 @@ if __name__ == '__main__':
     # hmp.read_idn()
     # hmp.return_status()
     # hmp.close()
-    fsw = FSW('192.168.0.30')
-    fsw.open()
-    time.sleep(2)
-    fsw.reset()
-    fsw.read_idn()
 
+    # FSW连接测试
+    # fsw = FSW('192.168.0.30')
+    # fsw.open()
+    # time.sleep(2)
+    # fsw.reset()
+    # fsw.read_idn()
+    # fsw.close()
 
-    fsw.close()
+    #RTO连接测试
     # rto = RTO('192.168.0.33')
     # rto.open()
     # rto.read_idn()
     # rto.close()
+
+    # SMW连接测试
     # smw = SMW('192.168.0.22')
     # smw.open()
     # smw.read_idn()
     # smw.close()
+
+    # turntable连接测试
+    # turntable = TurnTable()
+    # turntable.connect()
+    # time.sleep(2)
+    # # turntable.move_to_position(1, 20, 1)
+    # # time.sleep(2)
+    # turntable.get_position(1)
+    # turntable.s_home(1)
+    # turntable.s_home(2)
+
+    # ARTS连接测试
+    arts = ARTS()
+    arts.connect('192.168.0.20')
+    time.sleep(1)
+    # arts.set_freq(76250000)
+    # arts.set_tr_on()
+    # time.sleep(2)
+    # arts.set_tr_off()
+    # time.sleep(2)
+    # arts.reset()
+    # arts.set_mode_dynamic()
+    # arts.set_trims(10, 10, 5)
+    # arts.set_mode_static()
+    # time.sleep(2)
+    # arts.set_tx_chan_static(10,20,40,50,-10,-30,-30,-30,50,80,120,140)
+    # arts.set_tx_chan_dynamic(10,20,30,40,10,20,30,40,30,40,50,60,180,190,200,210,-30,-30,-30,-30)
+    # time.sleep(2)
+    # time.sleep(1)
+    # arts.download_wave_form(0)
+    # time.sleep(1)
+    # arts.run_wave_form(1,0)
+    # arts.reset()
+    # time.sleep(4)
+    arts.set_tx_chan_enable(1,1,1,1)
+    # time.sleep(4)
+    # arts.set_tr_on()
+    # time.sleep(2)
+    # arts.set_output_on()
+    time.sleep(4)
+    arts.set_output_off()
+    time.sleep(2)
+    arts.set_tr_off()
+    arts.disconnect()
+
+
+
