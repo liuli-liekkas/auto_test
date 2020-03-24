@@ -3,6 +3,7 @@ from PyQt5.QtGui import QFont, QPixmap
 from PyQt5 import QtCore
 import sys
 import pyqtgraph as pg
+from MachineClass import *
 
 
 class RadarTestMain(QMainWindow):
@@ -53,6 +54,20 @@ class RadarTestMain(QMainWindow):
         mission_menu.addAction(new_mission_act)
         edit_mission_act = QAction('修改', self)
         mission_menu.addAction(edit_mission_act)
+        # 配置菜单
+        power_supply_act = QAction('电源', self)
+        power_supply_act.isChecked.connect(self.power_supply_config)
+        config_menu.addAction(power_supply_act)
+        frequency_analysis_act = QAction('频谱仪', self)
+        config_menu.addAction(frequency_analysis_act)
+        signal_source_act = QAction('信号源', self)
+        config_menu.addAction(signal_source_act)
+        oscilloscope_act = QAction('示波器', self)
+        config_menu.addAction(oscilloscope_act)
+        target_simulate_act = QAction('目标模拟器', self)
+        config_menu.addAction(target_simulate_act)
+        turn_table = QAction('转台', self)
+        config_menu.addAction(turn_table)
         # 工具菜单
         com_act = QAction("串口调试", self)
         # com_act.triggered.connect()
@@ -77,12 +92,11 @@ class RadarTestMain(QMainWindow):
         self.toolbar.addAction(exit_act)
 
     def tab_menu_init(self):
-        self.central_widget = QWidget(self)
+        self.central_widget = QWidget()
         self.tabWidget = QTabWidget(self.central_widget)
         self.tabWidget.setGeometry(0, 0, self.geometry().width(), self.geometry().height()-50)
         self.tabWidget.setStyleSheet("QTabBar::tab:selected{color:red;background-color:rbg(200,200,255);} ")
         self.tabWidget.setFont(QFont('KaiTi', 16))
-        # self.tabWidget.set
         self.tab1_central_widget = QWidget()
         self.tab2_central_widget = QWidget()
         self.tab3_central_widget = QWidget()
@@ -323,6 +337,9 @@ class RadarTestMain(QMainWindow):
         else:
             self.tab2_speed_distinction_config_button.setEnabled(False)
 
+    def power_supply_config(self):
+        pass
+
     def horizontal_power_config_menu_window_display(self):
         self.horizontal_power_config_menu_window = HorizontalPowerMenu()
         self.horizontal_power_config_menu_window.show()
@@ -430,7 +447,7 @@ class HorizontalPowerMenu(QWidget):
         self.test_mode_combo = QComboBox()
         self.test_mode_combo.addItems(('先距离后角度', '先角度后距离'))
         self.confirm_button = QPushButton('确认')
-        self.confirm_button.clicked.connect(self.set_result__confirm)
+        self.confirm_button.clicked.connect(self.confirm_config)
         self.layout_init()
 
     def layout_init(self):
@@ -476,7 +493,7 @@ class HorizontalPowerMenu(QWidget):
         else:
             self.motor_pattern_one_way_combo.setEnabled(True)
 
-    def set_result__confirm(self):
+    def confirm_config(self):
         if self.motor_pattern_round_trip_button.isChecked():
             motor_pattern = '往返运动'
             motor_pattern_one_way = '无效'
@@ -511,10 +528,118 @@ class HorizontalPowerMenu(QWidget):
 class AddMission(QWidget):
     def __init__(self):
         super(AddMission, self).__init__()
+    pass
+
+
+class PowerSupply(QWidget):
+    def __init__(self):
+        super(PowerSupply, self).__init__()
+        self.file = open('./config/PowerSupply.txt', 'r')
+        self.config_result = self.file.readlines()
+        self.setWindowTitle('电源设置')
+        self.ip_config_label = QLabel('IP地址:')
+        self.ip_config_edit = QTextEdit()
+        # self.ip_config_edit.setText(self.config_result[0].split(':')[1][0:-1])
+        self.ip_config_edit.setMaximumSize(100, 25)
+        self.ip_config_edit.setAlignment(QtCore.Qt.AlignCenter)
+        self.ip_config_confirm_button = QPushButton('连接')
+        self.ip_config_confirm_button.clicked.connect(self.power_supply_connect)
+        self.volt_config_label = QLabel('工作电压:')
+        self.volt_config_edit = QTextEdit()
+        # self.volt_config_edit.setText(self.config_result[1].split(':')[1][0:-2])
+        self.volt_config_edit.setMaximumSize(50, 25)
+        self.volt_config_edit.setAlignment(QtCore.Qt.AlignCenter)
+        self.volt_config_unit_label = QLabel('V')
+        self.curr_config_label = QLabel('工作电流:')
+        self.curr_config_edit = QTextEdit()
+        # self.curr_config_edit.setText(self.config_result[2].split(':')[1][0:-2])
+        self.curr_config_edit.setMaximumSize(50, 25)
+        self.curr_config_edit.setAlignment(QtCore.Qt.AlignCenter)
+        self.curr_config_unit_label = QLabel('A')
+        self.chan_config_label = QLabel('工作通道:')
+        self.chan_config_combo = QComboBox()
+        self.chan_config_combo.addItems(('1', '2'))
+        self.query_button = QPushButton('查询')
+        self.query_button.clicked.connect(self.query_result)
+        self.confirm_button = QPushButton('确认')
+        self.confirm_button.clicked.connect(self.confirm_config)
+        self.power_on_button = QPushButton('加电')
+        self.power_on_button.clicked.connect(self.power_on)
+        self.power_off_button = QPushButton('断电')
+        self.power_off_button.clicked.connect(self.power_off)
+        self.result_label = QLabel('状态显示')
+        self.result_edit = QTextBrowser()
+        self.result_edit.setMinimumHeight(300)
+        self.layout_init()
+
+    def layout_init(self):
+        self.grid_layout = QGridLayout()
+        self.h_layout = QHBoxLayout()
+        self.v_layout = QVBoxLayout()
+        self.grid_layout.addWidget(self.ip_config_label, 0, 0, 1, 1)
+        self.grid_layout.addWidget(self.ip_config_edit, 0, 1, 1, 2)
+        self.grid_layout.addWidget(self.ip_config_confirm_button, 0, 3, 1, 1)
+        self.grid_layout.addWidget(self.chan_config_label, 1, 0, 1, 1)
+        self.grid_layout.addWidget(self.chan_config_combo, 1, 1, 1, 1)
+        self.grid_layout.addWidget(self.confirm_button, 1, 3, 1, 1)
+        self.grid_layout.addWidget(self.volt_config_label, 2, 0, 1, 1)
+        self.grid_layout.addWidget(self.volt_config_edit, 2, 1, 1, 1)
+        self.grid_layout.addWidget(self.volt_config_unit_label, 2, 2, 1, 1)
+        self.grid_layout.addWidget(self.query_button, 2, 3, 1, 1)
+        self.grid_layout.addWidget(self.curr_config_label, 3, 0, 1, 1)
+        self.grid_layout.addWidget(self.curr_config_edit, 3, 1, 1, 1)
+        self.grid_layout.addWidget(self.curr_config_unit_label, 3, 2, 1, 1)
+        self.grid_layout.addWidget(self.power_on_button, 3, 3, 1, 1)
+        self.grid_layout.addWidget(self.power_off_button, 4, 3, 1, 1)
+        self.v_layout.addLayout(self.grid_layout)
+        self.v_layout.addWidget(self.result_label)
+        self.v_layout.addWidget(self.result_edit)
+        self.setLayout(self.v_layout)
+
+    def power_supply_connect(self):
+        self.power_supply = HMP()
+        print(self.ip_config_edit.toPlainText())
+        if self.power_supply.open('192.168.0.105'):
+            self.result_edit.setText(self.result_edit.toPlainText() + '电源连接成功' + time.strftime('%H:%M:%S'))
+        else:
+            self.result_edit.setText(self.result_edit.toPlainText() + '电源连接失败' + time.strftime('%H:%M:%S'))
+
+    def confirm_config(self):
+        self.result_edit.setText(self.result_edit.toPlainText() + '正在设置通道：' + self.chan_config_combo.currentText() + '   ' + time.strftime('%H:%M:%S') + '\n')
+        self.result_edit.setText(self.result_edit.toPlainText() + '正在设置电压：' + self.volt_config_edit.toPlainText() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+        self.result_edit.setText(self.result_edit.toPlainText() + '正在设置电流：' + self.curr_config_edit.toPlainText() + 'A  ' + time.strftime('%H:%M:%S') + '\n等待设置......\n')
+        file = open('./config/PowerSupply.txt', 'w+')
+        file.write('设置IP地址:%s\n'
+                   '设置通道:%s\n'
+                   '设置电压:%sV\n'
+                   '设置电流:%sA\n' % (
+                    self.ip_config_edit.toPlainText(),
+                    self.chan_config_combo.currentText(),
+                    self.volt_config_edit.toPlainText(),
+                    self.curr_config_edit.toPlainText()
+                    ))
+        self.power_supply.select_chan(self.chan_config_combo.currentText())
+        self.power_supply.set_volt(int(self.volt_config_edit.toPlainText()))
+        self.power_supply.set_curr(int(self.curr_config_edit.toPlainText()))
+        time.sleep(2)
+        self.result_edit.setText(self.result_edit.toPlainText() + '完成设置通道：' + self.power_supply.return_status_chan() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+        self.result_edit.setText(self.result_edit.toPlainText() + '完成设置电压：' + self.power_supply.return_status_volt() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+        self.result_edit.setText(self.result_edit.toPlainText() + '完成设置电流：' + self.power_supply.return_status_curr() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+
+    def query_result(self):
+        self.result_edit.setText(self.result_edit.toPlainText() + '当前设置通道：' + self.power_supply.return_status_chan() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+        self.result_edit.setText(self.result_edit.toPlainText() + '当前设置电压：' + self.power_supply.return_status_volt() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+        self.result_edit.setText(self.result_edit.toPlainText() + '当前设置电流：' + self.power_supply.return_status_curr() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+
+    def power_on(self):
+        self.power_supply.set_output_on()
+
+    def power_off(self):
+        self.power_supply.set_output_off()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    radar_test = RadarTestMain()
+    radar_test = PowerSupply()
     radar_test.show()
     sys.exit(app.exec())

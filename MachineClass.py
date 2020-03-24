@@ -48,6 +48,11 @@ class HMP:
     def open(self, ip):
         address = 'TCPIP::%s::5025::SOCKET' % ip
         self.instance = self.resourceManager.open_resource(address, read_termination='\n')
+        if self.instance:
+            result = True
+        else:
+            result = False
+        return result
 
     def close(self):
         if self.instance is not None:
@@ -646,18 +651,18 @@ if __name__ == '__main__':
     # rsc.close()
 
     # HMP连接测试
-    # hmp = HMP('192.168.0.105', '1', '24', '1')
-    # hmp.open()
-    # hmp.reset()
-    # time.sleep(1)
-    # hmp.select_chan('2')
-    # hmp.set_volt(18)
-    # hmp.set_curr(2)
-    # hmp.set_chan_on()
-    # hmp.set_output_on()
-    # hmp.read_idn()
-    # hmp.return_status()
-    # hmp.close()
+    hmp = HMP()
+    hmp.open('192.168.0.105')
+    hmp.reset()
+    time.sleep(1)
+    hmp.select_chan('2')
+    hmp.set_volt(18)
+    hmp.set_curr(2)
+    hmp.set_chan_on()
+    hmp.set_output_on()
+    hmp.read_idn()
+    hmp.return_status()
+    hmp.close()
 
     # FSW连接测试
     # fsw = FSW('192.168.0.30')
@@ -690,9 +695,9 @@ if __name__ == '__main__':
     # turntable.s_home(2)
 
     # ARTS连接测试
-    arts = ARTS()
-    arts.connect('192.168.0.20')
-    time.sleep(1)
+    # arts = ARTS()
+    # arts.connect('192.168.0.20')
+    # time.sleep(1)
     # arts.set_freq(76250000)
     # arts.set_tr_on()
     # time.sleep(2)
@@ -712,16 +717,16 @@ if __name__ == '__main__':
     # arts.run_wave_form(1,0)
     # arts.reset()
     # time.sleep(4)
-    arts.set_tx_chan_enable(1,1,1,1)
+    # arts.set_tx_chan_enable(1,1,1,1)
     # time.sleep(4)
     # arts.set_tr_on()
     # time.sleep(2)
     # arts.set_output_on()
-    time.sleep(4)
-    arts.set_output_off()
-    time.sleep(2)
-    arts.set_tr_off()
-    arts.disconnect()
+    # time.sleep(4)
+    # arts.set_output_off()
+    # time.sleep(2)
+    # arts.set_tr_off()
+    # arts.disconnect()
 
 
 
