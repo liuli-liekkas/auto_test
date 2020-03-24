@@ -539,20 +539,20 @@ class PowerSupply(QWidget):
         self.setWindowTitle('电源设置')
         self.ip_config_label = QLabel('IP地址:')
         self.ip_config_edit = QTextEdit()
-        # self.ip_config_edit.setText(self.config_result[0].split(':')[1][0:-1])
+        self.ip_config_edit.setText(self.config_result[0].split(':')[1][0:-1])
         self.ip_config_edit.setMaximumSize(100, 25)
         self.ip_config_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.ip_config_confirm_button = QPushButton('连接')
         self.ip_config_confirm_button.clicked.connect(self.power_supply_connect)
         self.volt_config_label = QLabel('工作电压:')
         self.volt_config_edit = QTextEdit()
-        # self.volt_config_edit.setText(self.config_result[1].split(':')[1][0:-2])
+        self.volt_config_edit.setText(self.config_result[2].split(':')[1][0:-2])
         self.volt_config_edit.setMaximumSize(50, 25)
         self.volt_config_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.volt_config_unit_label = QLabel('V')
         self.curr_config_label = QLabel('工作电流:')
         self.curr_config_edit = QTextEdit()
-        # self.curr_config_edit.setText(self.config_result[2].split(':')[1][0:-2])
+        self.curr_config_edit.setText(self.config_result[3].split(':')[1][0:-2])
         self.curr_config_edit.setMaximumSize(50, 25)
         self.curr_config_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.curr_config_unit_label = QLabel('A')
@@ -598,16 +598,15 @@ class PowerSupply(QWidget):
 
     def power_supply_connect(self):
         self.power_supply = HMP()
-        print(self.ip_config_edit.toPlainText())
-        if self.power_supply.open('192.168.0.105'):
-            self.result_edit.setText(self.result_edit.toPlainText() + '电源连接成功' + time.strftime('%H:%M:%S'))
-        else:
-            self.result_edit.setText(self.result_edit.toPlainText() + '电源连接失败' + time.strftime('%H:%M:%S'))
+        self.power_supply.open('192.168.0.105')
+        self.result_edit.setText(self.result_edit.toPlainText() + '电源连接成功' + time.strftime('%H:%M:%S') + '\n')
+        time.sleep(0.1)
+        self.power_supply.reset()
 
     def confirm_config(self):
-        self.result_edit.setText(self.result_edit.toPlainText() + '正在设置通道：' + self.chan_config_combo.currentText() + '   ' + time.strftime('%H:%M:%S') + '\n')
-        self.result_edit.setText(self.result_edit.toPlainText() + '正在设置电压：' + self.volt_config_edit.toPlainText() + 'V ' + time.strftime('%H:%M:%S') + '\n')
-        self.result_edit.setText(self.result_edit.toPlainText() + '正在设置电流：' + self.curr_config_edit.toPlainText() + 'A  ' + time.strftime('%H:%M:%S') + '\n等待设置......\n')
+        # self.result_edit.setText(self.result_edit.toPlainText() + '正在设置通道：' + self.chan_config_combo.currentText() + '   ' + time.strftime('%H:%M:%S') + '\n')
+        # self.result_edit.setText(self.result_edit.toPlainText() + '正在设置电压：' + self.volt_config_edit.toPlainText() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+        # self.result_edit.setText(self.result_edit.toPlainText() + '正在设置电流：' + self.curr_config_edit.toPlainText() + 'A  ' + time.strftime('%H:%M:%S') + '\n等待设置......\n')
         file = open('./config/PowerSupply.txt', 'w+')
         file.write('设置IP地址:%s\n'
                    '设置通道:%s\n'
@@ -618,8 +617,10 @@ class PowerSupply(QWidget):
                     self.volt_config_edit.toPlainText(),
                     self.curr_config_edit.toPlainText()
                     ))
-        self.power_supply.select_chan(self.chan_config_combo.currentText())
+        self.power_supply.select_chan(int(self.chan_config_combo.currentText()))
+        time.sleep(0.1)
         self.power_supply.set_volt(int(self.volt_config_edit.toPlainText()))
+        time.sleep(0.1)
         self.power_supply.set_curr(int(self.curr_config_edit.toPlainText()))
         time.sleep(2)
         self.result_edit.setText(self.result_edit.toPlainText() + '完成设置通道：' + self.power_supply.return_status_chan() + 'V ' + time.strftime('%H:%M:%S') + '\n')

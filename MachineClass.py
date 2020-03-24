@@ -50,8 +50,10 @@ class HMP:
         self.instance = self.resourceManager.open_resource(address, read_termination='\n')
         if self.instance:
             result = True
+            print('连接成功')
         else:
             result = False
+            print('连接失败')
         return result
 
     def close(self):
@@ -185,6 +187,8 @@ class SMW:
         idn = self.instance.query('*IDN?')
         print(idn)
         return idn
+
+
 
 
 class ARTS:
@@ -650,19 +654,19 @@ if __name__ == '__main__':
     # rsc.set_corr_off()
     # rsc.close()
 
-    # HMP连接测试
-    hmp = HMP()
-    hmp.open('192.168.0.105')
-    hmp.reset()
-    time.sleep(1)
-    hmp.select_chan('2')
-    hmp.set_volt(18)
-    hmp.set_curr(2)
-    hmp.set_chan_on()
-    hmp.set_output_on()
-    hmp.read_idn()
-    hmp.return_status()
-    hmp.close()
+    # # HMP连接测试
+    # hmp = HMP()
+    # hmp.open('192.168.0.105')
+    # hmp.reset()
+    # time.sleep(1)
+    # hmp.select_chan(2)
+    # hmp.set_volt(18)
+    # hmp.set_curr(2)
+    # hmp.set_chan_on()
+    # hmp.set_output_on()
+    # hmp.read_idn()
+    # hmp.return_status()
+    # hmp.close()
 
     # FSW连接测试
     # fsw = FSW('192.168.0.30')
@@ -695,38 +699,34 @@ if __name__ == '__main__':
     # turntable.s_home(2)
 
     # ARTS连接测试
-    # arts = ARTS()
-    # arts.connect('192.168.0.20')
-    # time.sleep(1)
+    arts = ARTS()
+    arts.connect('192.168.0.20')
+    time.sleep(1)
     # arts.set_freq(76250000)
     # arts.set_tr_on()
     # time.sleep(2)
     # arts.set_tr_off()
     # time.sleep(2)
-    # arts.reset()
-    # arts.set_mode_dynamic()
-    # arts.set_trims(10, 10, 5)
     # arts.set_mode_static()
-    # time.sleep(2)
-    # arts.set_tx_chan_static(10,20,40,50,-10,-30,-30,-30,50,80,120,140)
-    # arts.set_tx_chan_dynamic(10,20,30,40,10,20,30,40,30,40,50,60,180,190,200,210,-30,-30,-30,-30)
-    # time.sleep(2)
-    # time.sleep(1)
-    # arts.download_wave_form(0)
-    # time.sleep(1)
-    # arts.run_wave_form(1,0)
+    arts.set_mode_dynamic()
     # arts.reset()
-    # time.sleep(4)
-    # arts.set_tx_chan_enable(1,1,1,1)
-    # time.sleep(4)
-    # arts.set_tr_on()
-    # time.sleep(2)
-    # arts.set_output_on()
+    # arts.set_trims(10, 10, 5)
+    time.sleep(2)
+    # arts.set_tx_chan_static(31,20,40,50,-5,10,10,-10,50,80,120,140)
+    arts.set_tx_chan_dynamic(5,20,30,40,5,20,30,40,80,100,110,120,180,190,200,210,15,-5,-5,-5)
+    # arts.reset()
+    time.sleep(4)
+    arts.set_tx_chan_enable(1,0,0,0)
+    # # time.sleep(1)
+    # # arts.set_tr_on()
+    time.sleep(4)
+    arts.set_output_on()
+    time.sleep(3)
+    arts.download_wave_form(0)
+    time.sleep(4)
+    arts.run_wave_form(1,0)
     # time.sleep(4)
     # arts.set_output_off()
     # time.sleep(2)
     # arts.set_tr_off()
-    # arts.disconnect()
-
-
-
+    arts.disconnect()
