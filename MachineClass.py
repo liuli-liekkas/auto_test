@@ -189,8 +189,6 @@ class SMW:
         return idn
 
 
-
-
 class ARTS:
     def __init__(self):
         self.dll = ctypes.CDLL('./dll/D4ARTS6x64.dll')
@@ -676,7 +674,7 @@ if __name__ == '__main__':
     # fsw.read_idn()
     # fsw.close()
 
-    #RTO连接测试
+    # RTO连接测试
     # rto = RTO('192.168.0.33')
     # rto.open()
     # rto.read_idn()
