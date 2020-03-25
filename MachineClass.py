@@ -652,7 +652,7 @@ if __name__ == '__main__':
     # rsc.set_corr_off()
     # rsc.close()
 
-    # # HMP连接测试
+    # HMP连接测试
     # hmp = HMP()
     # hmp.open('192.168.0.105')
     # hmp.reset()

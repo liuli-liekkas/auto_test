@@ -39,7 +39,7 @@ class RadarTestMain(QMainWindow):
         # 文件菜单
         open_act = QAction("打开", self)
         open_act.setShortcut('Ctrl+O')
-        open_act.triggered.connect(self.open_file)
+        open_act.triggered.connect(lambda: QFileDialog.getOpenFileName(self, '打开文件', '/home'))
         file_menu.addAction(open_act)
         save_act = QAction("保存", self)
         save_act.setShortcut('Ctrl+S')
@@ -56,7 +56,7 @@ class RadarTestMain(QMainWindow):
         mission_menu.addAction(edit_mission_act)
         # 配置菜单
         power_supply_act = QAction('电源', self)
-        power_supply_act.isChecked.connect(self.power_supply_config)
+        power_supply_act.triggered.connect(self.power_supply_config)
         config_menu.addAction(power_supply_act)
         frequency_analysis_act = QAction('频谱仪', self)
         config_menu.addAction(frequency_analysis_act)
@@ -160,7 +160,7 @@ class RadarTestMain(QMainWindow):
         self.tab2_test_stop_button = QPushButton('终止测试')
         self.tab2_horizontal_power_config_button = QPushButton('设置')
         self.tab2_horizontal_power_config_button.setEnabled(False)
-        self.tab2_horizontal_power_config_button.clicked.connect(self.horizontal_power_config_menu_window_display)
+        self.tab2_horizontal_power_config_button.clicked.connect(self.horizontal_power_config_window)
         self.tab2_horizontal_power_box.stateChanged.connect(self.tab2_horizontal_power_button_status)
         self.tab2_vertical_power_config_button = QPushButton('设置')
         self.tab2_vertical_power_config_button.setEnabled(False)
@@ -338,9 +338,10 @@ class RadarTestMain(QMainWindow):
             self.tab2_speed_distinction_config_button.setEnabled(False)
 
     def power_supply_config(self):
-        pass
+        self.power_supply = PowerSupply()
+        self.power_supply.show()
 
-    def horizontal_power_config_menu_window_display(self):
+    def horizontal_power_config_window(self):
         self.horizontal_power_config_menu_window = HorizontalPowerMenu()
         self.horizontal_power_config_menu_window.show()
         self.horizontal_power_config_menu_window.confirm_button.clicked.connect(
@@ -385,7 +386,7 @@ class RadarTestMain(QMainWindow):
 class HorizontalPowerMenu(QWidget):
     def __init__(self):
         super(HorizontalPowerMenu, self).__init__()
-        self.file = open('./config/HorizontalPowerTest.txt', 'r')
+        self.file = open('./config/HorizontalPowerTest.txt', 'r', encoding='unicode_escape')
         self.edit_result = self.file.readlines()
         self.resize(200, 200)
         self.setWindowTitle('水平威力范围设置')
@@ -534,13 +535,13 @@ class AddMission(QWidget):
 class PowerSupply(QWidget):
     def __init__(self):
         super(PowerSupply, self).__init__()
-        self.file = open('./config/PowerSupply.txt', 'r')
+        self.file = open('./config/PowerSupply.txt', 'r', encoding='unicode_escape')
         self.config_result = self.file.readlines()
         self.setWindowTitle('电源设置')
         self.ip_config_label = QLabel('IP地址:')
         self.ip_config_edit = QTextEdit()
         self.ip_config_edit.setText(self.config_result[0].split(':')[1][0:-1])
-        self.ip_config_edit.setMaximumSize(100, 25)
+        self.ip_config_edit.setMaximumSize(130, 25)
         self.ip_config_edit.setAlignment(QtCore.Qt.AlignCenter)
         self.ip_config_confirm_button = QPushButton('连接')
         self.ip_config_confirm_button.clicked.connect(self.power_supply_connect)
@@ -580,7 +581,7 @@ class PowerSupply(QWidget):
         self.grid_layout.addWidget(self.ip_config_edit, 0, 1, 1, 2)
         self.grid_layout.addWidget(self.ip_config_confirm_button, 0, 3, 1, 1)
         self.grid_layout.addWidget(self.chan_config_label, 1, 0, 1, 1)
-        self.grid_layout.addWidget(self.chan_config_combo, 1, 1, 1, 1)
+        self.grid_layout.addWidget(self.chan_config_combo, 1, 1, 1, 2)
         self.grid_layout.addWidget(self.confirm_button, 1, 3, 1, 1)
         self.grid_layout.addWidget(self.volt_config_label, 2, 0, 1, 1)
         self.grid_layout.addWidget(self.volt_config_edit, 2, 1, 1, 1)
@@ -641,6 +642,6 @@ class PowerSupply(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    radar_test = PowerSupply()
+    radar_test = RadarTestMain()
     radar_test.show()
     sys.exit(app.exec())
