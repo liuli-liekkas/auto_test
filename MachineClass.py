@@ -254,7 +254,7 @@ class ARTS:
 			self.rut_distance)
 		if result == 0:
 			print('已设置GainTrim为%ddB，已设置RangeTrim为%dm,已设置RUTDistance为%dm ' %
-				  (gain_trim, range_trim, ctypes.c_double(rut_distance)))
+			      (gain_trim, range_trim, ctypes.c_double(rut_distance)))
 		return result
 
 	def set_rx_attenuation(self, attenuation):
@@ -283,16 +283,16 @@ class ARTS:
 		return result
 
 	def set_tx_chan_static(self, speed_ch1, speed_ch2, speed_ch3, speed_ch4,
-						   rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4,
-						   range_ch1, range_ch2, range_ch3, range_ch4):
+	                       rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4,
+	                       range_ch1, range_ch2, range_ch3, range_ch4):
 		# Set Tx Channel Parameters in "normal operating units": Speed (kph), Gain (dB), Range (m).
-		wave_speed = 3*10**8
-		wave_period = 1/(self.freq*10**3)
+		wave_speed = 3 * 10 ** 8
+		wave_period = 1 / (self.freq * 10 ** 3)
 		gama = wave_speed * wave_period
-		gain_ch1 = rcs_ch1 * 4 * math.pi * range_ch1**4 / (self.gain_s**2 * gama**2 * (range_ch1 + self.rut_distance)**4)
-		gain_ch2 = rcs_ch2 * 4 * math.pi * range_ch2**4 / (self.gain_s**2 * gama**2 * (range_ch2 + self.rut_distance)**4)
-		gain_ch3 = rcs_ch3 * 4 * math.pi * range_ch3**4 / (self.gain_s**2 * gama**2 * (range_ch3 + self.rut_distance)**4)
-		gain_ch4 = rcs_ch4 * 4 * math.pi * range_ch4**4 / (self.gain_s**2 * gama**2 * (range_ch4 + self.rut_distance)**4)
+		gain_ch1 = rcs_ch1 * 4 * math.pi * range_ch1 ** 4 / (self.gain_s ** 2 * gama ** 2 * (range_ch1 + self.rut_distance) ** 4)
+		gain_ch2 = rcs_ch2 * 4 * math.pi * range_ch2 ** 4 / (self.gain_s ** 2 * gama ** 2 * (range_ch2 + self.rut_distance) ** 4)
+		gain_ch3 = rcs_ch3 * 4 * math.pi * range_ch3 ** 4 / (self.gain_s ** 2 * gama ** 2 * (range_ch3 + self.rut_distance) ** 4)
+		gain_ch4 = rcs_ch4 * 4 * math.pi * range_ch4 ** 4 / (self.gain_s ** 2 * gama ** 2 * (range_ch4 + self.rut_distance) ** 4)
 		self.speed_ch1 = ctypes.c_double(speed_ch1)
 		self.speed_ch2 = ctypes.c_double(speed_ch2)
 		self.speed_ch3 = ctypes.c_double(speed_ch3)
@@ -320,22 +320,22 @@ class ARTS:
 			ctypes.byref(self.range_ch4))
 		if result == 0:
 			print('静态目标设置成功\n'
-				  '目标1：速度%dkm/h，距离%dm，RCS%ddBsm\n'
-				  '目标2：速度%dkm/h，距离%dm，RCS%ddBsm\n'
-				  '目标3：速度%dkm/h，距离%dm，RCS%ddBsm\n'
-				  '目标4：速度%dkm/h，距离%dm，RCS%ddBsm\n' %
-				  (speed_ch1, range_ch1, rcs_ch1,
-				   speed_ch2, range_ch2, rcs_ch2,
-				   speed_ch3, range_ch3, rcs_ch3,
-				   speed_ch4, range_ch4, rcs_ch4))
+			      '目标1：速度%dkm/h，距离%dm，RCS%ddBsm\n'
+			      '目标2：速度%dkm/h，距离%dm，RCS%ddBsm\n'
+			      '目标3：速度%dkm/h，距离%dm，RCS%ddBsm\n'
+			      '目标4：速度%dkm/h，距离%dm，RCS%ddBsm\n' %
+			      (speed_ch1, range_ch1, rcs_ch1,
+			       speed_ch2, range_ch2, rcs_ch2,
+			       speed_ch3, range_ch3, rcs_ch3,
+			       speed_ch4, range_ch4, rcs_ch4))
 		return result
 
 	def set_tx_chan_dynamic(self,
-							start_speed_ch1, start_speed_ch2, start_speed_ch3, start_speed_ch4,
-							stop_speed_ch1, stop_speed_ch2, stop_speed_ch3, stop_speed_ch4,
-							start_range_ch1, start_range_ch2, start_range_ch3, start_range_ch4,
-							stop_range_ch1, stop_range_ch2, stop_range_ch3, stop_range_ch4,
-							rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4):
+	                        start_speed_ch1, start_speed_ch2, start_speed_ch3, start_speed_ch4,
+	                        stop_speed_ch1, stop_speed_ch2, stop_speed_ch3, stop_speed_ch4,
+	                        start_range_ch1, start_range_ch2, start_range_ch3, start_range_ch4,
+	                        stop_range_ch1, stop_range_ch2, stop_range_ch3, stop_range_ch4,
+	                        rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4):
 		# // enable 1/R^4 power attenuation
 		# // 0=no file created; 1=binary file; 2=ASCII file
 		# // can be NULL if no file created
@@ -390,17 +390,17 @@ class ARTS:
 			1, 0)
 		if result == 0:
 			print('静态目标设置成功\n'
-				  '目标1：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
-				  '目标2：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
-				  '目标3：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
-				  '目标4：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n' %
-				  (start_speed_ch1, stop_speed_ch1, start_range_ch1, stop_range_ch1, rcs_ch1,
-				   start_speed_ch2, stop_speed_ch2, start_range_ch2, stop_range_ch2, rcs_ch2,
-				   start_speed_ch3, stop_speed_ch3, start_range_ch3, stop_range_ch3, rcs_ch3,
-				   start_speed_ch4, stop_speed_ch4, start_range_ch4, stop_range_ch4, rcs_ch4,
-				   ))
-			# if r4_enable == 1:
-			#     print('功率距离自适应开启')
+			      '目标1：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
+			      '目标2：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
+			      '目标3：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
+			      '目标4：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n' %
+			      (start_speed_ch1, stop_speed_ch1, start_range_ch1, stop_range_ch1, rcs_ch1,
+			       start_speed_ch2, stop_speed_ch2, start_range_ch2, stop_range_ch2, rcs_ch2,
+			       start_speed_ch3, stop_speed_ch3, start_range_ch3, stop_range_ch3, rcs_ch3,
+			       start_speed_ch4, stop_speed_ch4, start_range_ch4, stop_range_ch4, rcs_ch4,
+			       ))
+		# if r4_enable == 1:
+		#     print('功率距离自适应开启')
 		return result
 
 	def set_tx_chan_enable(self, tx1, tx2, tx3, tx4):
@@ -457,6 +457,7 @@ class ARTS:
 		return result
 
 	def set_tr_on(self):
+		result = 1
 		if self.dll.CheckConnectionStatus() == 1:
 			result = self.dll.SetTrEn(1)
 			self.tr = 1
@@ -467,6 +468,7 @@ class ARTS:
 		return result
 
 	def set_tr_off(self):
+		result = 1
 		if self.dll.CheckConnectionStatus() == 1:
 			result = self.dll.SetTrEn(0)
 			self.tr = 0
@@ -477,6 +479,7 @@ class ARTS:
 		return result
 
 	def set_output_on(self):
+		result = 1
 		if self.dll.CheckConnectionStatus() == 1:
 			result = self.dll.SetSynthRFOutput(1)
 			self.output = 1
@@ -487,6 +490,7 @@ class ARTS:
 		return result
 
 	def set_output_off(self):
+		result = 1
 		if self.dll.CheckConnectionStatus() == 1:
 			result = self.dll.SetSynthRFOutput(0)
 			self.output = 0
@@ -559,11 +563,9 @@ class TurnTable:
 		# // 参数：fDeltaStep - ---默认为0
 		# // 参数：iTime - ---默认为0
 		# // 返回值：true - 成功、false - 失败
-		result = 0
-		if self.status == 1:
-			result = self.dll.MoveToPosByType(self.i_device, ctypes.c_short(n_axis), to_start, to_end, to_speed, start_equ, end_equ, step_pos, speed, delta_step, i_time)
-			if result == 1:
-				print('开始TTL模式转动')
+		result = self.dll.MoveToPosByType(self.i_device, ctypes.c_short(n_axis), to_start, to_end, to_speed, start_equ, end_equ, step_pos, speed, delta_step, i_time)
+		if result == 1:
+			print('开始TTL模式转动')
 		return result
 
 	def get_motor_idle(self, n_axis):
@@ -702,10 +704,10 @@ if __name__ == '__main__':
 	# arts.set_trims(10, 10, 5)
 	time.sleep(2)
 	# arts.set_tx_chan_static(31,20,40,50,-5,10,10,-10,50,80,120,140)
-	arts.set_tx_chan_dynamic(5,20,30,40,5,20,30,40,80,100,110,120,180,190,200,210,15,-5,-5,-5)
+	arts.set_tx_chan_dynamic(5, 20, 30, 40, 5, 20, 30, 40, 80, 100, 110, 120, 180, 190, 200, 210, 15, -5, -5, -5)
 	# arts.reset()
 	time.sleep(4)
-	arts.set_tx_chan_enable(1,0,0,0)
+	arts.set_tx_chan_enable(1, 0, 0, 0)
 	# # time.sleep(1)
 	# # arts.set_tr_on()
 	time.sleep(4)
@@ -713,7 +715,7 @@ if __name__ == '__main__':
 	time.sleep(3)
 	arts.download_wave_form(0)
 	time.sleep(4)
-	arts.run_wave_form(1,0)
+	arts.run_wave_form(1, 0)
 	# time.sleep(4)
 	# arts.set_output_off()
 	# time.sleep(2)
