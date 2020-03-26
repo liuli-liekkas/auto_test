@@ -1,7 +1,7 @@
 from MachineClass import *
 from UIRadarTest import *
 import time
-import winsound
+# import winsound
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtCore import Qt, QThread
@@ -15,19 +15,21 @@ class HorizontalPowerTest(RadarTestMain):
         # target_simulate = ARTS()
 
     def get_config(self):
-        self.horizontal_power_test_config_file = open('./config/HorizontalPowerTest.txt', 'r')
-        self.horizontal_power_test_config = self.horizontal_power_test_config_file.readlines()
-        self.target_rcs_config = float(self.horizontal_power_test_config[0].split(':')[1][0:-5])
-        self.min_range_config = float(self.horizontal_power_test_config[1].split(':')[1][0:-2])
-        self.max_range_config = float(self.horizontal_power_test_config[2].split(':')[1][0:-2])
-        self.min_angle_config = float(self.horizontal_power_test_config[3].split(':')[1][0:-2])
-        self.max_angle_config = float(self.horizontal_power_test_config[4].split(':')[1][0:-2])
-        self.step_range_config = float(self.horizontal_power_test_config[5].split(':')[1][0:-2])
-        self.step_angle_config = float(self.horizontal_power_test_config[6].split(':')[1][0:-2])
-        self.dwell_time_config = int(self.horizontal_power_test_config[7].split(':')[1][0:-2])
-        self.motor_pattern_config = self.horizontal_power_test_config[8].split(':')[1][0:-1]
-        self.motor_pattern_one_way_config = self.horizontal_power_test_config[9].split(':')[1][0:-1]
-        self.test_mode_config = self.horizontal_power_test_config[10].split(':')[1][0:-1]
+        self.horizontal_power_menu = HorizontalPowerMenu()
+        print()
+        # self.horizontal_power_test_config_file = open('./config/HorizontalPowerTest.txt', 'r')
+        # self.horizontal_power_test_config = self.horizontal_power_test_config_file.readlines()
+        # self.target_rcs_config = float(self.horizontal_power_test_config[0].split(':')[1][0:-5])
+        # self.min_range_config = float(self.horizontal_power_test_config[1].split(':')[1][0:-2])
+        # self.max_range_config = float(self.horizontal_power_test_config[2].split(':')[1][0:-2])
+        # self.min_angle_config = float(self.horizontal_power_test_config[3].split(':')[1][0:-2])
+        # self.max_angle_config = float(self.horizontal_power_test_config[4].split(':')[1][0:-2])
+        # self.step_range_config = float(self.horizontal_power_test_config[5].split(':')[1][0:-2])
+        # self.step_angle_config = float(self.horizontal_power_test_config[6].split(':')[1][0:-2])
+        # self.dwell_time_config = int(self.horizontal_power_test_config[7].split(':')[1][0:-2])
+        # self.motor_pattern_config = self.horizontal_power_test_config[8].split(':')[1][0:-1]
+        # self.motor_pattern_one_way_config = self.horizontal_power_test_config[9].split(':')[1][0:-1]
+        # self.test_mode_config = self.horizontal_power_test_config[10].split(':')[1][0:-1]
 
     def show_config(self):
         self.tab2_status_test_edit.setPlainText(
