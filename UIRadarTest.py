@@ -13,12 +13,10 @@ class RadarTestMain(QMainWindow):
 		self.init_ui()
 
 	def init_ui(self):
-		self.resize(1200, 800)
-		self.center()
+		self.resize(1000, 700)
 		self.setWindowTitle("毫米波雷达测试系统")
-		# self.setFont(QFont('Menlo', 12))
+		self.center()
 		self.menu_init()
-		# self.tool_menu_init()
 		self.tab_menu_init()
 
 	def center(self):
@@ -28,6 +26,7 @@ class RadarTestMain(QMainWindow):
 		self.move(qr.topLeft())
 
 	def menu_init(self):
+		# 菜单总览
 		menubar = self.menuBar()
 		file_menu = menubar.addMenu("文件")
 		mission_menu = menubar.addMenu("任务")
@@ -38,74 +37,72 @@ class RadarTestMain(QMainWindow):
 		tool_menu = menubar.addMenu("工具")
 		help_menu = menubar.addMenu("帮助")
 		# 文件菜单
+		# 打开
 		open_act = QAction("打开", self)
 		open_act.setShortcut('Ctrl+O')
 		open_act.triggered.connect(lambda: QFileDialog.getOpenFileName(self, '打开文件', '/home'))
 		file_menu.addAction(open_act)
+		# 保存
 		save_act = QAction("保存", self)
 		save_act.setShortcut('Ctrl+S')
-		save_act.triggered.connect(self.save_file)
+		save_act.triggered.connect(lambda: QFileDialog.getSaveFileName(self, '保存文件', '/home'))
 		file_menu.addAction(save_act)
+		# 退出
 		exit_act = QAction("退出", self)
 		exit_act.setShortcut("Ctrl+Q")
 		exit_act.triggered.connect(qApp.quit)
 		file_menu.addAction(exit_act)
 		# 任务菜单
+		# 新建
 		new_mission_act = QAction('新建', self)
 		mission_menu.addAction(new_mission_act)
+		# new_mission_act.triggered.connect()
+		# 修改
 		edit_mission_act = QAction('修改', self)
 		mission_menu.addAction(edit_mission_act)
+		# edit_mission_act.triggered.connect()
 		# 配置菜单
+		# 电源
 		power_supply_act = QAction('电源', self)
 		power_supply_act.triggered.connect(self.power_supply_config)
 		config_menu.addAction(power_supply_act)
+		# 频谱仪
 		frequency_analysis_act = QAction('频谱仪', self)
 		config_menu.addAction(frequency_analysis_act)
+		# 信号源
 		signal_source_act = QAction('信号源', self)
 		config_menu.addAction(signal_source_act)
+		# 示波器
 		oscilloscope_act = QAction('示波器', self)
 		config_menu.addAction(oscilloscope_act)
+		# 目标模拟器
 		target_simulate_act = QAction('目标模拟器', self)
 		config_menu.addAction(target_simulate_act)
+		# 转台
 		turn_table_act = QAction('转台', self)
 		config_menu.addAction(turn_table_act)
 		turn_table_act.triggered.connect(self.turn_table_config)
 		# 工具菜单
+		# 串口调试工具
 		com_act = QAction("串口调试", self)
 		# com_act.triggered.connect()
 		tool_menu.addAction(com_act)
+		# 网口调试工具
 		net_act = QAction("网口调试", self)
 		# net_act.triggered.connect()
 		tool_menu.addAction(net_act)
 
-	def open_file(self):
-		QFileDialog.getOpenFileName(self, '打开文件', '/home')
-
-	def save_file(self):
-		QFileDialog.getSaveFileName(self, '保存文件', '/home')
-
-	def tool_menu_init(self):
-		exit_act = QAction("退出", self)
-		exit_act.setShortcut("Ctrl+Q")
-		exit_act.triggered.connect(qApp.quit)
-		exit_act.setToolTip("退出应用")
-
-		self.toolbar = self.addToolBar("exit")
-		self.toolbar.addAction(exit_act)
-
 	def tab_menu_init(self):
-		self.central_widget = QWidget()
-		self.tabWidget = QTabWidget(self.central_widget)
-		self.tabWidget.setGeometry(0, 0, self.geometry().width(), self.geometry().height() - 50)
-		self.tabWidget.setStyleSheet("QTabBar::tab:selected{color:red;background-color:rbg(200,200,255);} ")
-		self.tabWidget.setFont(QFont('KaiTi', 16))
-		self.tab1_central_widget = QWidget()
-		self.tab2_central_widget = QWidget()
-		self.tab3_central_widget = QWidget()
-		self.tabWidget.addTab(self.tab1_central_widget, "射频性能测试")
-		self.tabWidget.addTab(self.tab2_central_widget, "探测性能测试")
-		self.tabWidget.addTab(self.tab3_central_widget, "天线性能测试")
-		self.setCentralWidget(self.central_widget)
+		self.tab_widget = QTabWidget(self)
+		self.tab_widget.setStyleSheet("QTabBar::tab:selected{color:red;background-color:rbg(200,200,255);} ")
+		self.tab_widget.setFont(QFont('KaiTi', 16))
+		self.tab1_central_widget = QWidget(self.tab_widget)
+		self.tab2_central_widget = QWidget(self.tab_widget)
+		self.tab3_central_widget = QWidget(self.tab_widget)
+		self.tab_widget.addTab(self.tab1_central_widget, "射频性能测试")
+		self.tab_widget.addTab(self.tab2_central_widget, "探测性能测试")
+		self.tab_widget.addTab(self.tab3_central_widget, "天线性能测试")
+		self.setCentralWidget(self.tab_widget)
 		self.tab1_ui()
 		self.tab2_ui()
 		self.tab3_ui()
@@ -739,7 +736,7 @@ class TurnTableConfig(QWidget):
 		self.down_grid_layout.addWidget(self.pitching_absolute_edit, 2, 3, 1, 1)
 		self.down_grid_layout.addWidget(self.pitching_absolute_unit_label, 2, 4, 1, 1)
 		self.down_grid_layout.addWidget(self.pitching_current_angle, 2, 5, 1, 1)
-		self.down_grid_layout.addWidget(self.pitching_current_unit_label, 2, 6, 1, 1)
+		self.down_grid_layout.addWidget(self.pitching_current_unit_label, 2, 1, 6, 1)
 		self.down_grid_layout.addWidget(self.connect_button, 3, 0, 1, 1)
 		self.down_grid_layout.addWidget(self.find_home_combo, 3, 1, 1, 2)
 		self.down_grid_layout.addWidget(self.find_home_button, 3, 3, 1, 2)

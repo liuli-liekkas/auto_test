@@ -57,9 +57,8 @@ class HMP:
 		return result
 
 	def close(self):
-		if self.instance is not None:
-			self.instance.close()
-			self.instance = None
+		self.instance.close()
+		self.instance = None
 
 	def reset(self):
 		self.instance.write('*RST')
@@ -505,8 +504,8 @@ class ARTS:
 
 
 class TurnTable:
-	# nAxis - 轴：nAxis == 2 时为俯仰轴；
-	# nAxis - 轴：nAxis == 1 时为方位轴；
+	# nAxis - 轴：nAxis == 1 时为俯仰轴；
+	# nAxis - 轴：nAxis == 2 时为方位轴；
 	# fSetPos：单位为°（对转台而言）或者mm(对扫描架而言)
 	# fSetVel：° / s（对转台而言）或者mm / s(对扫描架而言)
 	# iDevice：设备地址号，转台iDevice = 0。
@@ -528,19 +527,15 @@ class TurnTable:
 		# // 返回值：true - 成功、false - 失败
 		result = self.dll.DisConnectImac()
 		if result == 1:
-			print('转台成功断开连接')
+			print('转台断开成功')
 		else:
-			print('转台未连接')
+			print('转台断开失败')
 
 	def move_to_position(self, n_axis, set_pos, set_vel, b_abs=True):
-		# // 参数：iDevice –设备地址号；
-		# // 参数：nAxis  –轴号；
 		# // 参数：fSetPos –对应轴号所设置的位置值；
 		# // 参数：fSetVel –对应轴号所设置的速度值；
 		# // 参数：bIsAbs –对于轴号运动方式，true - 绝对运动，false - 相对运动；
 		# // 返回值：true - 成功、false - 失败
-		# nAxis - 轴：nAxis == 2 时为俯仰轴；
-		# nAxis - 轴：nAxis == 1 时为方位轴；
 		# fSetPos：单位为°（对转台而言）或者mm(对扫描架而言)
 		# fSetVel：° / s（对转台而言）或者mm / s(对扫描架而言)
 		# iDevice：设备地址号，转台iDevice = 0。
