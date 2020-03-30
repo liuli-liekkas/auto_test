@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5 import QtCore
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
 import sys
 import pyqtgraph as pg
 from MachineClass import *
@@ -94,15 +94,18 @@ class RadarTestMain(QMainWindow):
 
 	def tab_menu_init(self):
 		self.tab_widget = QTabWidget(self)
-		self.tab_widget.setStyleSheet("QTabBar::tab:selected{color:red;background-color:rbg(200,200,255);} ")
-		self.tab_widget.setFont(QFont('KaiTi', 16))
 		self.tab1_central_widget = QWidget(self.tab_widget)
 		self.tab2_central_widget = QWidget(self.tab_widget)
 		self.tab3_central_widget = QWidget(self.tab_widget)
 		self.tab_widget.addTab(self.tab1_central_widget, "射频性能测试")
 		self.tab_widget.addTab(self.tab2_central_widget, "探测性能测试")
 		self.tab_widget.addTab(self.tab3_central_widget, "天线性能测试")
+		self.tab_widget.setCurrentIndex(1)
+		self.tab_widget.setTabPosition(1)
+		self.tab_widget.setTabShape(1)
 		self.setCentralWidget(self.tab_widget)
+		self.tab_widget.setStyleSheet("QTabBar::tab:selected{color:red;background-color:rbg(200,200,255);} ")
+		self.tab_widget.setFont(QFont('KaiTi', 16))
 		self.tab1_ui()
 		self.tab2_ui()
 		self.tab3_ui()
@@ -115,34 +118,50 @@ class RadarTestMain(QMainWindow):
 
 	def tab2_ui(self):
 		# 基本信息
-		self.left_frame = QFrame(self.tab2_central_widget)
-		self.middle_frame = QFrame(self.tab2_central_widget)
-		self.right_frame = QFrame(self.tab2_central_widget)
-		self.tab2_sample_number_label = QLabel(self.left_frame)
+		# 任务信息栏
+		self.frame_1 = QFrame(self.tab2_central_widget)
+		self.frame_1.setFrameShape(QFrame.StyledPanel)
+		# 项目栏
+		self.frame_2 = QFrame(self.tab2_central_widget)
+		self.frame_2.setFrameShape(QFrame.StyledPanel)
+		# 状态栏
+		self.frame_3 = QFrame(self.tab2_central_widget)
+		self.frame_3.setFrameShape(QFrame.StyledPanel)
+		# 目标信息栏
+		self.frame_4 = QFrame(self.tab2_central_widget)
+		self.frame_4.setFrameShape(QFrame.StyledPanel)
+		# 各控件信息
+		# 任务信息栏
+		self.tab2_sample_number_label = QLabel(self.frame_1)
 		self.tab2_sample_number_label.setText('样品编号:')
-		self.tab2_sample_number_browser = QTextBrowser()
+		self.tab2_sample_number_label.setMaximumWidth(55)
+		self.tab2_sample_number_browser = QTextBrowser(self.frame_1)
 		self.tab2_sample_number_browser.setText('00001')
-		self.tab2_sample_number_browser.setMinimumSize(80, 20)
 		self.tab2_sample_number_browser.setMaximumSize(100, 20)
-		self.tab2_tester_name_label = QLabel('测试人员:')
-		self.tab2_tester_name_browser = QTextBrowser()
+		self.tab2_tester_name_label = QLabel(self.frame_1)
+		self.tab2_tester_name_label.setText('测试人员:')
+		self.tab2_tester_name_label.setMaximumWidth(55)
+		self.tab2_tester_name_browser = QTextBrowser(self.frame_1)
 		self.tab2_tester_name_browser.setText('薛岩')
-		self.tab2_tester_name_browser.setMinimumSize(80, 20)
-		self.tab2_tester_name_browser.setMaximumSize(100, 20)
-		self.tab2_supervisor_name_label = QLabel('复核/监督人员:')
-		self.tab2_supervisor_name_combo = QComboBox()
+		self.tab2_tester_name_browser.setMaximumSize(80, 20)
+		self.tab2_supervisor_name_label = QLabel(self.frame_1)
+		self.tab2_supervisor_name_label.setText('复核/监督人员:')
+		self.tab2_supervisor_name_label.setMaximumWidth(85)
+		self.tab2_supervisor_name_combo = QComboBox(self.frame_1)
 		self.tab2_supervisor_name_combo.setMaximumSize(80, 20)
 		self.tab2_supervisor_name_combo.addItem('刘力')
 		self.tab2_supervisor_name_combo.addItem('申亚飞')
 		self.tab2_supervisor_name_combo.addItem('裴毓')
 		self.tab2_supervisor_name_combo.addItem('张晓蕾')
 		self.tab2_supervisor_name_combo.addItem('薛岩')
-		self.tab2_test_data_label = QLabel('试验日期')
-		self.tab2_test_data_edit = QDateEdit()
-		self.tab2_test_data_edit.setMaximumSize(200, 20)
+		self.tab2_test_data_label = QLabel(self.frame_1)
+		self.tab2_test_data_label.setText('试验日期:')
+		self.tab2_test_data_label.setMaximumWidth(55)
+		self.tab2_test_data_edit = QDateEdit(self.frame_1)
+		self.tab2_test_data_edit.setMaximumSize(100, 20)
 		self.tab2_test_data_edit.setCalendarPopup(True)
-		self.tab2_test_data_edit.setDate(QtCore.QDate(2020, 1, 1))
-		# 测试内容
+		self.tab2_test_data_edit.setDate(QtCore.QDate.currentDate())
+		# 项目栏
 		self.tab2_horizontal_power_box = QCheckBox('水平探测威力')
 		self.tab2_vertical_power_box = QCheckBox('垂直探测威力')
 		self.tab2_distance_resolution_box = QCheckBox('距离分辨率')
@@ -191,13 +210,13 @@ class RadarTestMain(QMainWindow):
 		self.tab2_speed_distinction_config_button = QPushButton('设置')
 		self.tab2_speed_distinction_config_button.setEnabled(False)
 		self.tab2_speed_distinction_box.stateChanged.connect(self.tab2_speed_distinction_button_status)
-		# 状态信息
+		# 状态栏
 		self.tab2_status_test_label = QLabel('测试状态')
 		self.tab2_status_test_edit = QTextEdit()
 		self.tab2_status_test_edit.setStyleSheet('background-color:white;font-size:12px')
 		self.tab2_result_test_label = QLabel('试验结果')
-		self.tab2_result_test_edit = QTextEdit()
-		# 雷达目标信息
+		self.tab2_result_test_edit = QTextBrowser()
+		# 目标信息栏
 		self.tab2_realtime_plot = pg.PlotWidget()
 		self.tab2_realtime_plot.showGrid(x=True, y=True)
 		self.tab2_realtime_plot.setRange(xRange=[-5, 5], yRange=[0, 300])
@@ -211,64 +230,71 @@ class RadarTestMain(QMainWindow):
 
 	def tab2_layout_init(self):
 		# ---底层界面布局---
-		# 左侧顶层布局
-		self.tab2_lu_h_layout = QHBoxLayout()
-		self.tab2_lu_h_layout.addWidget(self.tab2_sample_number_label)
-		self.tab2_lu_h_layout.addWidget(self.tab2_sample_number_browser)
-		self.tab2_lu_h_layout.addWidget(self.tab2_tester_name_label)
-		self.tab2_lu_h_layout.addWidget(self.tab2_tester_name_browser)
-		self.tab2_lu_h_layout.addWidget(self.tab2_supervisor_name_label)
-		self.tab2_lu_h_layout.addWidget(self.tab2_supervisor_name_combo)
-		self.tab2_lu_h_layout.addWidget(self.tab2_test_data_label)
-		self.tab2_lu_h_layout.addWidget(self.tab2_test_data_edit)
-		# 左侧底部L布局
-		self.tab2_ldl_grid_layout = QGridLayout()
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_power_box, 0, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_power_config_button, 0, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_vertical_power_box, 1, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_vertical_power_config_button, 1, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_distance_resolution_box, 2, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_distance_resolution_config_button, 2, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_distance_distinction_box, 3, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_distance_distinction_config_button, 3, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_angular_range_box, 4, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_angular_range_config_button, 4, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_vertical_angular_range_box, 5, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_vertical_angular_range_config_button, 5, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_distinction_box, 6, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_horizontal_distinction_config_button, 6, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_range_box, 7, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_range_config_button, 7, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_resolution_box, 8, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_resolution_config_button, 8, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_distinction_box, 9, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_speed_distinction_config_button, 9, 2, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_test_start_button, 10, 0, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_test_pause_button, 10, 1, 1, 1)
-		self.tab2_ldl_grid_layout.addWidget(self.tab2_test_stop_button, 10, 2, 1, 1)
-		# 左侧底部R布局
-		self.tab2_ldr_v_layout = QVBoxLayout()
-		self.tab2_ldr_v_layout.addWidget(self.tab2_status_test_label)
-		self.tab2_ldr_v_layout.addWidget(self.tab2_status_test_edit)
-		self.tab2_ldr_v_layout.addWidget(self.tab2_result_test_label)
-		self.tab2_ldr_v_layout.addWidget(self.tab2_result_test_edit)
-		self.tab2_ldr_v_layout.addWidget(self.tab2_realtime_table)
-		# 左侧底部布局
-		self.tab2_ld_h_layout = QHBoxLayout()
-		self.tab2_ld_h_layout.addLayout(self.tab2_ldl_grid_layout)
-		self.tab2_ld_h_layout.addLayout(self.tab2_ldr_v_layout)
-		# 右侧布局
-		self.tab2_right_v_layout = QVBoxLayout()
-		self.tab2_right_v_layout.addWidget(self.tab2_realtime_plot)
-		# 左侧布局
-		self.tab2_left_v_layout = QVBoxLayout()
-		self.tab2_left_v_layout.addLayout(self.tab2_lu_h_layout)
-		self.tab2_left_v_layout.addLayout(self.tab2_ld_h_layout)
-		# 完整布局
-		self.all_h_layout = QHBoxLayout()
-		self.all_h_layout.addLayout(self.tab2_left_v_layout)
-		self.all_h_layout.addLayout(self.tab2_right_v_layout)
-		self.tab2_central_widget.setLayout(self.all_h_layout)
+		# 任务信息栏布局
+		self.tab2_1_h_layout = QHBoxLayout()
+		self.tab2_1_h_layout.addWidget(self.tab2_sample_number_label)
+		self.tab2_1_h_layout.addWidget(self.tab2_sample_number_browser)
+		self.tab2_1_h_layout.addWidget(self.tab2_tester_name_label)
+		self.tab2_1_h_layout.addWidget(self.tab2_tester_name_browser)
+		self.tab2_1_h_layout.addWidget(self.tab2_supervisor_name_label)
+		self.tab2_1_h_layout.addWidget(self.tab2_supervisor_name_combo)
+		self.tab2_1_h_layout.addWidget(self.tab2_test_data_label)
+		self.tab2_1_h_layout.addWidget(self.tab2_test_data_edit)
+		self.frame_1.setLayout(self.tab2_1_h_layout)
+		# 项目栏布局
+		self.tab2_2_grid_layout = QGridLayout()
+		self.tab2_2_grid_layout.addWidget(self.tab2_horizontal_power_box, 0, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_horizontal_power_config_button, 0, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_vertical_power_box, 1, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_vertical_power_config_button, 1, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_distance_resolution_box, 2, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_distance_resolution_config_button, 2, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_distance_distinction_box, 3, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_distance_distinction_config_button, 3, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_horizontal_angular_range_box, 4, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_horizontal_angular_range_config_button, 4, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_vertical_angular_range_box, 5, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_vertical_angular_range_config_button, 5, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_horizontal_distinction_box, 6, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_horizontal_distinction_config_button, 6, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_speed_range_box, 7, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_speed_range_config_button, 7, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_speed_resolution_box, 8, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_speed_resolution_config_button, 8, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_speed_distinction_box, 9, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_speed_distinction_config_button, 9, 2, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_test_start_button, 10, 0, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_test_pause_button, 10, 1, 1, 1)
+		self.tab2_2_grid_layout.addWidget(self.tab2_test_stop_button, 10, 2, 1, 1)
+		self.frame_2.setLayout(self.tab2_2_grid_layout)
+		# 状态栏布局
+		self.tab2_3_v_layout = QVBoxLayout()
+		self.tab2_3_v_layout.addWidget(self.tab2_status_test_label)
+		self.tab2_3_v_layout.addWidget(self.tab2_status_test_edit)
+		self.tab2_3_v_layout.addWidget(self.tab2_result_test_label)
+		self.tab2_3_v_layout.addWidget(self.tab2_result_test_edit)
+		self.tab2_3_v_layout.addWidget(self.tab2_realtime_table)
+		self.frame_3.setLayout(self.tab2_3_v_layout)
+		# 目标信息栏布局
+		self.tab2_4_v_layout = QVBoxLayout()
+		self.tab2_4_v_layout.addWidget(self.tab2_realtime_plot)
+		self.frame_4.setLayout(self.tab2_4_v_layout)
+		# 项目栏+状态栏布局
+		self.tab2_1_h_splitter = QSplitter(Qt.Horizontal)
+		self.tab2_1_h_splitter.addWidget(self.frame_2)
+		self.tab2_1_h_splitter.addWidget(self.frame_3)
+		# 任务信息栏+项目栏+状态栏布局
+		self.tab2_2_v_splitter = QSplitter(Qt.Vertical)
+		self.tab2_2_v_splitter.addWidget(self.frame_1)
+		self.tab2_2_v_splitter.addWidget(self.tab2_1_h_splitter)
+		# 任务信息栏+项目栏+状态栏+目标信息栏布局
+		self.tab2_3_h_splitter = QSplitter(Qt.Horizontal)
+		self.tab2_3_h_splitter.addWidget(self.tab2_2_v_splitter)
+		self.tab2_3_h_splitter.addWidget(self.frame_4)
+		# 最终布局
+		self.tab2_5_v_layout = QVBoxLayout()
+		self.tab2_5_v_layout.addWidget(self.tab2_3_h_splitter)
+		self.tab2_central_widget.setLayout(self.tab2_5_v_layout)
 
 	def tab2_horizontal_power_button_status(self):
 		if self.tab2_horizontal_power_box.checkState() == 2:

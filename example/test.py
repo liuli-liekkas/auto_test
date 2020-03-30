@@ -17,8 +17,8 @@ import pyqtgraph as pg
 from MachineClass import *
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+class Ui_MainWindow(QMainWindow):
+    def __init__(self):(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
