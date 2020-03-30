@@ -1,12 +1,14 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5 import QtCore
-from PyQt5.QtCore import QThread, pyqtSignal, Qt
+from PyQt5.QtCore import Qt
 import sys
 import pyqtgraph as pg
 from MachineClass import *
+from ThreadMission import *
 
 
+# 主界面
 class RadarTestMain(QMainWindow):
 	def __init__(self):
 		super(RadarTestMain, self).__init__()
@@ -101,8 +103,8 @@ class RadarTestMain(QMainWindow):
 		self.tab_widget.addTab(self.tab2_central_widget, "探测性能测试")
 		self.tab_widget.addTab(self.tab3_central_widget, "天线性能测试")
 		self.tab_widget.setCurrentIndex(1)
-		self.tab_widget.setTabPosition(1)
-		self.tab_widget.setTabShape(1)
+		self.tab_widget.setTabPosition(QTabWidget.South)
+		self.tab_widget.setTabShape(QTabWidget.Triangular)
 		self.setCentralWidget(self.tab_widget)
 		self.tab_widget.setStyleSheet("QTabBar::tab:selected{color:red;background-color:rbg(200,200,255);} ")
 		self.tab_widget.setFont(QFont('KaiTi', 16))
@@ -228,6 +230,7 @@ class RadarTestMain(QMainWindow):
 		# 位置初始化
 		self.tab2_layout_init()
 
+	# 性能测试布局
 	def tab2_layout_init(self):
 		# ---底层界面布局---
 		# 任务信息栏布局
@@ -275,6 +278,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_3_v_layout.addWidget(self.tab2_result_test_edit)
 		self.tab2_3_v_layout.addWidget(self.tab2_realtime_table)
 		self.frame_3.setLayout(self.tab2_3_v_layout)
+		self.frame_3.setMinimumWidth(400)
 		# 目标信息栏布局
 		self.tab2_4_v_layout = QVBoxLayout()
 		self.tab2_4_v_layout.addWidget(self.tab2_realtime_plot)
@@ -296,86 +300,21 @@ class RadarTestMain(QMainWindow):
 		self.tab2_5_v_layout.addWidget(self.tab2_3_h_splitter)
 		self.tab2_central_widget.setLayout(self.tab2_5_v_layout)
 
+	# 水平威力范围按钮显示，勾取后可以设置
 	def tab2_horizontal_power_button_status(self):
 		if self.tab2_horizontal_power_box.checkState() == 2:
 			self.tab2_horizontal_power_config_button.setEnabled(True)
 		else:
 			self.tab2_horizontal_power_config_button.setEnabled(False)
 
-	def tab2_vertical_power_button_status(self):
-		if self.tab2_vertical_power_box.checkState() == 2:
-			self.tab2_vertical_power_config_button.setEnabled(True)
-		else:
-			self.tab2_vertical_power_config_button.setEnabled(False)
-
-	def tab2_distance_resolution_button_status(self):
-		if self.tab2_distance_resolution_box.checkState() == 2:
-			self.tab2_distance_resolution_config_button.setEnabled(True)
-		else:
-			self.tab2_distance_resolution_config_button.setEnabled(False)
-
-	def tab2_distance_distinction_button_status(self):
-		if self.tab2_distance_distinction_box.checkState() == 2:
-			self.tab2_distance_distinction_config_button.setEnabled(True)
-		else:
-			self.tab2_distance_distinction_config_button.setEnabled(False)
-
-	def tab2_horizontal_angular_range_button_status(self):
-		if self.tab2_horizontal_angular_range_box.checkState() == 2:
-			self.tab2_horizontal_angular_range_config_button.setEnabled(True)
-		else:
-			self.tab2_horizontal_angular_range_config_button.setEnabled(False)
-
-	def tab2_vertical_angular_range_button_status(self):
-		if self.tab2_vertical_angular_range_box.checkState() == 2:
-			self.tab2_vertical_angular_range_config_button.setEnabled(True)
-		else:
-			self.tab2_vertical_angular_range_config_button.setEnabled(False)
-
-	def tab2_angular_resolution_button_status(self):
-		if self.tab2_angular_resolution_box.checkState() == 2:
-			self.tab2_angular_resolution_config_button.setEnabled(True)
-		else:
-			self.tab2_angular_resolution_config_button.setEnabled(False)
-
-	def tab2_horizontal_distinction_button_status(self):
-		if self.tab2_horizontal_distinction_box.checkState() == 2:
-			self.tab2_horizontal_distinction_config_button.setEnabled(True)
-		else:
-			self.tab2_horizontal_distinction_config_button.setEnabled(False)
-
-	def tab2_speed_range_button_status(self):
-		if self.tab2_speed_range_box.checkState() == 2:
-			self.tab2_speed_range_config_button.setEnabled(True)
-		else:
-			self.tab2_speed_range_config_button.setEnabled(False)
-
-	def tab2_speed_resolution_button_status(self):
-		if self.tab2_speed_resolution_box.checkState() == 2:
-			self.tab2_speed_resolution_config_button.setEnabled(True)
-		else:
-			self.tab2_speed_resolution_config_button.setEnabled(False)
-
-	def tab2_speed_distinction_button_status(self):
-		if self.tab2_speed_distinction_box.checkState() == 2:
-			self.tab2_speed_distinction_config_button.setEnabled(True)
-		else:
-			self.tab2_speed_distinction_config_button.setEnabled(False)
-
-	def power_supply_config(self):
-		self.power_supply = PowerSupplyConfig()
-		self.power_supply.show()
-
-	def turn_table_config(self):
-		self.turn_table = TurnTableConfig()
-		self.turn_table.show()
-
+	# 水平威力范围主界面设置按钮跳转
 	def horizontal_power_config_window(self):
 		self.horizontal_power_config_menu_window = HorizontalPowerMenu()
 		self.horizontal_power_config_menu_window.show()
 		self.horizontal_power_config_menu_window.confirm_button.clicked.connect(
 			self.horizontal_power_config_confirm)
 
+	# 水平威力范围副界面确认按钮功能
 	def horizontal_power_config_confirm(self):
 		if self.horizontal_power_config_menu_window.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -408,10 +347,97 @@ class RadarTestMain(QMainWindow):
 				self.horizontal_power_config_menu_window.test_mode_combo.currentText()))
 		self.horizontal_power_config_menu_window.close()
 
+	# 垂直威力范围按钮显示，勾取后可以设置
+	def tab2_vertical_power_button_status(self):
+		if self.tab2_vertical_power_box.checkState() == 2:
+			self.tab2_vertical_power_config_button.setEnabled(True)
+		else:
+			self.tab2_vertical_power_config_button.setEnabled(False)
+
+	# 距离分辨率按钮显示，勾取后可以设置
+	def tab2_distance_resolution_button_status(self):
+		if self.tab2_distance_resolution_box.checkState() == 2:
+			self.tab2_distance_resolution_config_button.setEnabled(True)
+		else:
+			self.tab2_distance_resolution_config_button.setEnabled(False)
+
+	# 距离区分度按钮显示，勾取后可以设置
+	def tab2_distance_distinction_button_status(self):
+		if self.tab2_distance_distinction_box.checkState() == 2:
+			self.tab2_distance_distinction_config_button.setEnabled(True)
+		else:
+			self.tab2_distance_distinction_config_button.setEnabled(False)
+
+	# 水平角度范围按钮显示，勾取后可以设置
+	def tab2_horizontal_angular_range_button_status(self):
+		if self.tab2_horizontal_angular_range_box.checkState() == 2:
+			self.tab2_horizontal_angular_range_config_button.setEnabled(True)
+		else:
+			self.tab2_horizontal_angular_range_config_button.setEnabled(False)
+
+	# 垂直角度范围按钮显示，勾取后可以设置
+	def tab2_vertical_angular_range_button_status(self):
+		if self.tab2_vertical_angular_range_box.checkState() == 2:
+			self.tab2_vertical_angular_range_config_button.setEnabled(True)
+		else:
+			self.tab2_vertical_angular_range_config_button.setEnabled(False)
+
+	# 角度分辨率按钮显示，勾取后可以设置
+	def tab2_angular_resolution_button_status(self):
+		if self.tab2_angular_resolution_box.checkState() == 2:
+			self.tab2_angular_resolution_config_button.setEnabled(True)
+		else:
+			self.tab2_angular_resolution_config_button.setEnabled(False)
+
+	# 角度区分度按钮显示，勾取后可以设置
+	def tab2_horizontal_distinction_button_status(self):
+		if self.tab2_horizontal_distinction_box.checkState() == 2:
+			self.tab2_horizontal_distinction_config_button.setEnabled(True)
+		else:
+			self.tab2_horizontal_distinction_config_button.setEnabled(False)
+
+	# 速度范围按钮显示，勾取后可以设置
+	def tab2_speed_range_button_status(self):
+		if self.tab2_speed_range_box.checkState() == 2:
+			self.tab2_speed_range_config_button.setEnabled(True)
+		else:
+			self.tab2_speed_range_config_button.setEnabled(False)
+
+	# 速度分辨率按钮显示，勾取后可以设置
+	def tab2_speed_resolution_button_status(self):
+		if self.tab2_speed_resolution_box.checkState() == 2:
+			self.tab2_speed_resolution_config_button.setEnabled(True)
+		else:
+			self.tab2_speed_resolution_config_button.setEnabled(False)
+
+	# 速度区分度按钮显示，勾取后可以设置
+	def tab2_speed_distinction_button_status(self):
+		if self.tab2_speed_distinction_box.checkState() == 2:
+			self.tab2_speed_distinction_config_button.setEnabled(True)
+		else:
+			self.tab2_speed_distinction_config_button.setEnabled(False)
+
+	# 设置菜单选项
+	# 电源模块主界面设置按钮跳转
+	def power_supply_config(self):
+		self.power_supply = PowerSupplyConfig()
+		self.power_supply.show()
+
+	# 转台主界面设置按钮跳转
+	def turn_table_config(self):
+		self.turn_table = TurnTableConfig()
+		self.turn_table.show()
+
+	# 目标模拟器主界面设置按钮跳转
+	def target_simulate_config(self):
+		self.target_simulate = ARTS()
+		self.target_simulate.show()
+
 	def tab3_ui(self):
 		pass
 
 
+# 水平威力范围详细菜单
 class HorizontalPowerMenu(QWidget):
 	def __init__(self):
 		super(HorizontalPowerMenu, self).__init__()
@@ -558,7 +584,6 @@ class HorizontalPowerMenu(QWidget):
 class AddMission(QWidget):
 	def __init__(self):
 		super(AddMission, self).__init__()
-
 	pass
 
 
@@ -630,7 +655,7 @@ class PowerSupplyConfig(QWidget):
 	def power_supply_connect(self):
 		self.power_supply = HMP()
 		self.power_supply.open('192.168.0.105')
-		self.result_edit.setText(self.result_edit.toPlainText() + '电源连接成功' + time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('电源连接成功' + time.strftime('%H:%M:%S') + '\n')
 		time.sleep(0.1)
 		self.power_supply.reset()
 
@@ -650,14 +675,26 @@ class PowerSupplyConfig(QWidget):
 		time.sleep(0.1)
 		self.power_supply.set_curr(int(self.curr_config_edit.toPlainText()))
 		time.sleep(2)
-		self.result_edit.setText(self.result_edit.toPlainText() + '完成设置通道：' + self.power_supply.return_status_chan() + 'V ' + time.strftime('%H:%M:%S') + '\n')
-		self.result_edit.setText(self.result_edit.toPlainText() + '完成设置电压：' + self.power_supply.return_status_volt() + 'V ' + time.strftime('%H:%M:%S') + '\n')
-		self.result_edit.setText(self.result_edit.toPlainText() + '完成设置电流：' + self.power_supply.return_status_curr() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('完成设置通道：' +
+		                        self.power_supply.return_status_chan() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('完成设置电压：' +
+		                        self.power_supply.return_status_volt() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('完成设置电流：' +
+		                        self.power_supply.return_status_curr() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 
 	def query_result(self):
-		self.result_edit.setText(self.result_edit.toPlainText() + '当前设置通道：' + self.power_supply.return_status_chan() + 'V ' + time.strftime('%H:%M:%S') + '\n')
-		self.result_edit.setText(self.result_edit.toPlainText() + '当前设置电压：' + self.power_supply.return_status_volt() + 'V ' + time.strftime('%H:%M:%S') + '\n')
-		self.result_edit.setText(self.result_edit.toPlainText() + '当前设置电流：' + self.power_supply.return_status_curr() + 'V ' + time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('当前设置通道：' +
+		                        self.power_supply.return_status_chan() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('当前设置电压：' +
+		                        self.power_supply.return_status_volt() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('当前设置电流：' +
+		                        self.power_supply.return_status_curr() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 
 	def power_on(self):
 		self.power_supply.set_output_on()
@@ -697,9 +734,9 @@ class TurnTableConfig(QWidget):
 		self.azimuth_absolute_edit.setAlignment(QtCore.Qt.AlignCenter)
 		self.azimuth_absolute_edit.setText(self.config_result[3].split(':')[1][0:-3])
 		self.azimuth_absolute_unit_label = QLabel('°')
-		self.azimuth_current_angle = QTextBrowser()
-		self.azimuth_current_angle.setMaximumSize(50, 25)
-		self.azimuth_current_angle.setAlignment(QtCore.Qt.AlignCenter)
+		self.azimuth_current_angle_text = QTextBrowser()
+		self.azimuth_current_angle_text.setMaximumSize(70, 25)
+		self.azimuth_current_angle_text.setAlignment(QtCore.Qt.AlignCenter)
 		self.azimuth_current_unit_label = QLabel('°')
 		self.pitching_motion_label = QLabel('俯仰')
 		self.pitching_relative_edit = QTextEdit()
@@ -712,9 +749,9 @@ class TurnTableConfig(QWidget):
 		self.pitching_absolute_edit.setAlignment(QtCore.Qt.AlignCenter)
 		self.pitching_absolute_edit.setText(self.config_result[5].split(':')[1][0:-3])
 		self.pitching_absolute_unit_label = QLabel('°')
-		self.pitching_current_angle = QTextBrowser()
-		self.pitching_current_angle.setMaximumSize(50, 25)
-		self.pitching_current_angle.setAlignment(QtCore.Qt.AlignCenter)
+		self.pitching_current_angle_text = QTextBrowser()
+		self.pitching_current_angle_text.setMaximumSize(70, 25)
+		self.pitching_current_angle_text.setAlignment(QtCore.Qt.AlignCenter)
 		self.pitching_current_unit_label = QLabel('°')
 		self.azimuth_relative_edit.setEnabled(True)
 		self.pitching_relative_edit.setEnabled(True)
@@ -724,13 +761,13 @@ class TurnTableConfig(QWidget):
 		self.connect_button.clicked.connect(self.turn_table_status)
 		self.find_home_combo = QComboBox()
 		self.find_home_combo.addItems(('水平寻零', '俯仰寻零', '全向寻零'))
-		self.find_home_button = QPushButton('寻零')
+		self.find_home_button = QPushButton('开始寻零')
 		self.find_home_button.setEnabled(False)
 		self.find_home_button.clicked.connect(self.find_home)
-		self.confirm_button = QPushButton('确认')
+		self.confirm_button = QPushButton('开始旋转')
 		self.confirm_button.setEnabled(False)
 		self.confirm_button.clicked.connect(self.confirm_config)
-		self.result_label = QLabel('状态显示')
+		self.result_label = QLabel('系统状态')
 		self.result_edit = QTextBrowser()
 		self.result_edit.setMinimumHeight(300)
 		self.layout_init()
@@ -754,15 +791,15 @@ class TurnTableConfig(QWidget):
 		self.down_grid_layout.addWidget(self.azimuth_relative_unit_label, 1, 2, 1, 1)
 		self.down_grid_layout.addWidget(self.azimuth_absolute_edit, 1, 3, 1, 1)
 		self.down_grid_layout.addWidget(self.azimuth_absolute_unit_label, 1, 4, 1, 1)
-		self.down_grid_layout.addWidget(self.azimuth_current_angle, 1, 5, 1, 1)
+		self.down_grid_layout.addWidget(self.azimuth_current_angle_text, 1, 5, 1, 1)
 		self.down_grid_layout.addWidget(self.azimuth_current_unit_label, 1, 6, 1, 1)
 		self.down_grid_layout.addWidget(self.pitching_motion_label, 2, 0, 1, 1)
 		self.down_grid_layout.addWidget(self.pitching_relative_edit, 2, 1, 1, 1)
 		self.down_grid_layout.addWidget(self.pitching_relative_unit_label, 2, 2, 1, 1)
 		self.down_grid_layout.addWidget(self.pitching_absolute_edit, 2, 3, 1, 1)
 		self.down_grid_layout.addWidget(self.pitching_absolute_unit_label, 2, 4, 1, 1)
-		self.down_grid_layout.addWidget(self.pitching_current_angle, 2, 5, 1, 1)
-		self.down_grid_layout.addWidget(self.pitching_current_unit_label, 2, 1, 6, 1)
+		self.down_grid_layout.addWidget(self.pitching_current_angle_text, 2, 5, 1, 1)
+		self.down_grid_layout.addWidget(self.pitching_current_unit_label, 2, 6, 1, 1)
 		self.down_grid_layout.addWidget(self.connect_button, 3, 0, 1, 1)
 		self.down_grid_layout.addWidget(self.find_home_combo, 3, 1, 1, 2)
 		self.down_grid_layout.addWidget(self.find_home_button, 3, 3, 1, 2)
@@ -776,60 +813,89 @@ class TurnTableConfig(QWidget):
 
 	def turn_table_status(self):
 		if self.connect_button.text() == '连接':
+			self.result_edit.append('转台连接成功')
 			self.turn_table.connect()
-			self.find_home_button.setEnabled(True)
-			self.confirm_button.setEnabled(True)
+			self.azimuth_current_angle = CurrentAngleAzimuth()
+			self.pitching_current_angle = CurrentAnglePitching()
+			self.azimuth_current_angle.start()
+			self.pitching_current_angle.start()
+			self.azimuth_current_angle.my_signal.connect(self.azimuth_current_angle_display)
+			self.pitching_current_angle.my_signal.connect(self.pitching_current_angle_display)
 			self.connect_button.setText('断开')
+			if self.manual_config_button.isChecked():
+				self.find_home_button.setEnabled(True)
+				self.confirm_button.setEnabled(True)
+				if self.relative_motion_button.isChecked():
+					self.azimuth_relative_edit.setEnabled(True)
+					self.pitching_relative_edit.setEnabled(True)
+					self.azimuth_absolute_edit.setEnabled(False)
+					self.pitching_absolute_edit.setEnabled(False)
+				else:
+					self.azimuth_relative_edit.setEnabled(False)
+					self.pitching_relative_edit.setEnabled(False)
+					self.azimuth_absolute_edit.setEnabled(True)
+					self.pitching_absolute_edit.setEnabled(True)
+			else:
+				self.find_home_button.setEnabled(False)
+				self.confirm_button.setEnabled(False)
+				self.azimuth_relative_edit.setEnabled(False)
+				self.pitching_relative_edit.setEnabled(False)
+				self.azimuth_absolute_edit.setEnabled(False)
+				self.pitching_absolute_edit.setEnabled(False)
 		else:
+			self.result_edit.append('转台断开连接')
+			self.azimuth_current_angle.quit()
+			self.pitching_current_angle.quit()
 			self.turn_table.disconnect()
 			self.find_home_button.setEnabled(False)
 			self.confirm_button.setEnabled(False)
+			self.azimuth_current_angle_text.setText('')
+			self.pitching_current_angle_text.setText('')
 			self.connect_button.setText('连接')
 
 	def find_home(self):
 		if self.find_home_combo.currentText() == '水平寻零':
 			self.turn_table.s_home(2)
-			self.current_angle_azimuth = CurrentAngleAzimuth()
-			self.current_angle_pitching = CurrentAnglePitching()
-			self.current_angle_azimuth.start()
-			self.current_angle_pitching.start()
-			self.current_angle_azimuth.my_signal.connect(self.set_current_angle_azimuth_label)
-			self.current_angle_pitching.my_signal.connect(self.set_current_angle_pitching_label)
+			self.azimuth_find_home = FindHome(2)
+			self.azimuth_find_home.start()
+			self.azimuth_find_home.my_signal.connect(self.find_home_result_display)
 		elif self.find_home_combo.currentText() == '俯仰寻零':
 			self.turn_table.s_home(1)
-			self.current_angle_azimuth = CurrentAngleAzimuth()
-			self.current_angle_pitching = CurrentAnglePitching()
-			self.current_angle_azimuth.start()
-			self.current_angle_pitching.start()
-			self.current_angle_azimuth.my_signal.connect(self.set_current_angle_azimuth_label)
-			self.current_angle_pitching.my_signal.connect(self.set_current_angle_pitching_label)
+			self.pitching_find_home = FindHome(1)
+			self.pitching_find_home.start()
+			self.pitching_find_home.my_signal.connect(self.find_home_result_display)
 		else:
-			self.turn_table.s_home(1)
 			self.turn_table.s_home(2)
-			self.current_angle_azimuth = CurrentAngleAzimuth()
-			self.current_angle_pitching = CurrentAnglePitching()
-			self.current_angle_azimuth.start()
-			self.current_angle_pitching.start()
-			self.current_angle_azimuth.my_signal.connect(self.set_current_angle_azimuth_label)
-			self.current_angle_pitching.my_signal.connect(self.set_current_angle_pitching_label)
+			self.azimuth_find_home = FindHome(2)
+			self.azimuth_find_home.start()
+			self.azimuth_find_home.my_signal.connect(self.find_home_result_display)
+			self.turn_table.s_home(1)
+			self.pitching_find_home = FindHome(1)
+			self.pitching_find_home.start()
+			self.pitching_find_home.my_signal.connect(self.find_home_result_display)
 
 	def mode_select(self):
-		if self.manual_config_button.isChecked():
-			if self.relative_motion_button.isChecked():
-				self.azimuth_relative_edit.setEnabled(True)
-				self.pitching_relative_edit.setEnabled(True)
-				self.azimuth_absolute_edit.setEnabled(False)
-				self.pitching_absolute_edit.setEnabled(False)
+		if self.connect_button.text() == '断开':
+			if self.manual_config_button.isChecked():
+				self.find_home_button.setEnabled(True)
+				self.confirm_button.setEnabled(True)
+				if self.relative_motion_button.isChecked():
+					self.azimuth_relative_edit.setEnabled(True)
+					self.pitching_relative_edit.setEnabled(True)
+					self.azimuth_absolute_edit.setEnabled(False)
+					self.pitching_absolute_edit.setEnabled(False)
+				else:
+					self.azimuth_relative_edit.setEnabled(False)
+					self.pitching_relative_edit.setEnabled(False)
+					self.azimuth_absolute_edit.setEnabled(True)
+					self.pitching_absolute_edit.setEnabled(True)
 			else:
 				self.azimuth_relative_edit.setEnabled(False)
 				self.pitching_relative_edit.setEnabled(False)
-				self.azimuth_absolute_edit.setEnabled(True)
-				self.pitching_absolute_edit.setEnabled(True)
-		else:
-			self.azimuth_relative_edit.setEnabled(False)
-			self.pitching_relative_edit.setEnabled(False)
-			self.azimuth_absolute_edit.setEnabled(False)
-			self.pitching_absolute_edit.setEnabled(False)
+				self.azimuth_absolute_edit.setEnabled(False)
+				self.pitching_absolute_edit.setEnabled(False)
+				self.find_home_button.setEnabled(False)
+				self.confirm_button.setEnabled(False)
 
 	def confirm_config(self):
 		file = open('./config/TurnTable.txt', 'w+')
@@ -854,65 +920,23 @@ class TurnTableConfig(QWidget):
 			           self.azimuth_absolute_edit.toPlainText(),
 			           self.pitching_relative_edit.toPlainText(),
 			           self.pitching_absolute_edit.toPlainText()))
-		# self.result_edit.setText(self.result_edit.toPlainText() + '完成设置通道：' + self.power_supply.return_status_chan() + 'V ' + time.strftime('%H:%M:%S') + '\n')
-		# self.result_edit.setText(self.result_edit.toPlainText() + '完成设置电压：' + self.power_supply.return_status_volt() + 'V ' + time.strftime('%H:%M:%S') + '\n')
-		# self.result_edit.setText(self.result_edit.toPlainText() + '完成设置电流：' + self.power_supply.return_status_curr() + 'V ' + time.strftime('%H:%M:%S') + '\n')
 
 	def manual_motion(self):
 		if self.relative_motion_button.isChecked():
 			self.turn_table.move_to_position(2, float(self.azimuth_relative_edit.toPlainText()), 1, False)
 			self.turn_table.move_to_position(1, float(self.pitching_relative_edit.toPlainText()), 1, False)
-			self.current_angle_azimuth = CurrentAngleAzimuth()
-			self.current_angle_pitching = CurrentAnglePitching()
-			self.current_angle_azimuth.start()
-			self.current_angle_pitching.start()
-			self.current_angle_azimuth.my_signal.connect(self.set_current_angle_azimuth_label)
-			self.current_angle_pitching.my_signal.connect(self.set_current_angle_pitching_label)
 		else:
 			self.turn_table.move_to_position(2, float(self.azimuth_absolute_edit.toPlainText()), 1, True)
 			self.turn_table.move_to_position(1, float(self.pitching_absolute_edit.toPlainText()), 1, True)
-			self.current_angle_azimuth = CurrentAngleAzimuth()
-			self.current_angle_pitching = CurrentAnglePitching()
-			self.current_angle_azimuth.start()
-			self.current_angle_pitching.start()
-			self.current_angle_azimuth.my_signal.connect(self.set_current_angle_azimuth_label)
-			self.current_angle_pitching.my_signal.connect(self.set_current_angle_pitching_label)
 
-	def set_current_angle_azimuth_label(self, num):
-		self.azimuth_current_angle.setText(num)
+	def find_home_result_display(self, message):
+		self.result_edit.append(message)
 
-	def set_current_angle_pitching_label(self, num):
-		self.pitching_current_angle.setText(num)
+	def azimuth_current_angle_display(self, message):
+		self.azimuth_current_angle_text.setText(message)
 
-
-class CurrentAngleAzimuth(QThread):
-	my_signal = pyqtSignal(str)
-
-	def __init__(self):
-		super(CurrentAngleAzimuth, self).__init__()
-
-	def run(self):
-		self.turn_table = TurnTable()
-		self.turn_table.connect()
-		time.sleep(2)
-		while True:
-			self.my_signal.emit(str(round(self.turn_table.get_position(2), 2)))
-			self.sleep(1)
-
-
-class CurrentAnglePitching(QThread):
-	my_signal = pyqtSignal(str)
-
-	def __init__(self):
-		super(CurrentAnglePitching, self).__init__()
-
-	def run(self):
-		self.turn_table = TurnTable()
-		self.turn_table.connect()
-		time.sleep(2)
-		while True:
-			self.my_signal.emit(str(round(self.turn_table.get_position(1), 2)))
-			self.sleep(1)
+	def pitching_current_angle_display(self, message):
+		self.pitching_current_angle_text.setText(message)
 
 
 if __name__ == '__main__':
