@@ -581,12 +581,14 @@ class HorizontalPowerMenu(QWidget):
 			           self.test_mode_combo.currentText()))
 
 
+# 新建任务
 class AddMission(QWidget):
 	def __init__(self):
 		super(AddMission, self).__init__()
 	pass
 
 
+# 电源模块配置菜单
 class PowerSupplyConfig(QWidget):
 	def __init__(self):
 		super(PowerSupplyConfig, self).__init__()
@@ -703,6 +705,7 @@ class PowerSupplyConfig(QWidget):
 		self.power_supply.set_output_off()
 
 
+# 转台模块配置菜单
 class TurnTableConfig(QWidget):
 	def __init__(self):
 		super(TurnTableConfig, self).__init__()
