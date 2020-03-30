@@ -59,27 +59,6 @@ class HorizontalPowerTest(RadarTestMain):
 				self.motor_pattern_one_way_config,
 				self.test_mode_config))
 
-	# def start_test(self):
-	# 	self.get_config()
-	# 	self.show_config()
-	# 	if self.test_mode_config == '先距离后角度':
-	# 		print('------当前模式--先距离后角度------' + '   ' + time.strftime('%H:%M:%S') + '\n')
-	# 		for anger in range(self.min_angle_config, self.max_angle_config+1, self.step_angle_config):
-	# 			self.tab2_status_test_edit.setPlainText(
-	# 				self.tab2_status_test_edit.toPlainText() +
-	# 				'------当前角度：' + str(anger) + '°' + '------' + time.strftime('%H:%M:%S') + '\n')
-	# 			for distance in range(self.min_range_config, self.max_range_config+1, self.step_range_config):
-	# 				self.tab2_status_test_edit.setPlainText(
-	# 					self.tab2_status_test_edit.toPlainText() +
-	# 					'------当前距离：' + str(distance) + 'm' + '------' + time.strftime('%H:%M:%S') + '\n')
-	# 				time.sleep(self.dwell_time_config)
-	# 				winsound.Beep(600, 1000)
-	# 	elif self.test_mode_config == '先角度后距离':
-	# 		print('先角度后距离')
-	#
-	# 	else:
-	# 		print('测试模式错误')
-
 	def set_label(self, message):
 		self.tab2_status_test_edit.append(message)
 		# self.tab2_status_test_edit.moveCursor(TextEdit.textCursor().End)
@@ -115,22 +94,23 @@ class MyThread(QThread):
 		self.motor_pattern_one_way_config = self.horizontal_power_test_config[9].split(':')[1][0:-1]
 		self.test_mode_config = self.horizontal_power_test_config[10].split(':')[1][0:-1]
 		self.turn_table.move_to_position(2, self.min_angle_config, 1)
-		time.sleep(self.dwell_time_config)
-		self.my_signal.emit('------开始测试------' + time.strftime('%H:%M:%S'))
+		self.sleep(5)
+		self.my_signal.emit('------转台位置初始化，开始测试------' + time.strftime('%H:%M:%S'))
 		self.target_simulate.set_mode_static()
 		self.target_simulate.set_tx_chan_enable(1, 0, 0, 0)
 		self.target_simulate.set_tr_on()
 		self.target_simulate.set_output_on()
 		if self.test_mode_config == '先距离后角度':
 			for anger in range(self.min_angle_config, self.max_angle_config + 1, self.step_angle_config):
+				self.turn_table.move_to_position(2, anger, 1)
 				self.my_signal.emit(
 					'------当前角度：' + str(anger) + '°' + '------' + time.strftime('%H:%M:%S'))
-				self.turn_table.move_to_position(2, anger, 1)
 				self.turn_table.get_position(2)
 				for distance in range(self.min_range_config, self.max_range_config + 1, self.step_range_config):
+					self.target_simulate.set_tx_chan_static(0, 0, 0, 0, -10, -10, -10, -10,distance, distance, distance, distance)
 					self.my_signal.emit(
 						'------当前距离：' + str(distance) + 'm' + '------' + time.strftime('%H:%M:%S'))
-					self.target_simulate.set_tx_chan_static(0, 0, 0, 0, -10, -10, -10, -10,distance, distance, distance, distance)
+
 					self.sleep(self.dwell_time_config)
 					winsound.Beep(600, 1000)
 			self.target_simulate.disconnect()
@@ -138,6 +118,8 @@ class MyThread(QThread):
 			print('先角度后距离')
 		else:
 			print('测试模式错误')
+
+
 
 
 if __name__ == '__main__':
