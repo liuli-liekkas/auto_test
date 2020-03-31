@@ -96,7 +96,7 @@ class MyWindow(QWidget):
         # 后面四个数字的作用依次是 初始值 最小值 最大值 步幅
         value,ok = QInputDialog.getInt(self,"输入框标题","这是提示信息\n\n请输入整数:",37,-10000,10000,2)
 
-    # self.echo(value)
+        self.echo(value)
 
     def do_btn12(self,event):  # 输入：小数
         # 后面四个数字的作用依次是 初始值 最小值 最大值 小数点后位数

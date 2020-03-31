@@ -58,7 +58,7 @@ class RadarTestMain(QMainWindow):
 		# 新建
 		new_mission_act = QAction('新建', self)
 		mission_menu.addAction(new_mission_act)
-		# new_mission_act.triggered.connect()
+		new_mission_act.triggered.connect(self.add_mission_config)
 		# 修改
 		edit_mission_act = QAction('修改', self)
 		mission_menu.addAction(edit_mission_act)
@@ -433,6 +433,10 @@ class RadarTestMain(QMainWindow):
 		self.target_simulate = ARTS()
 		self.target_simulate.show()
 
+	def add_mission_config(self):
+		self.add_mission = AddMission()
+		self.add_mission.show()
+
 	def tab3_ui(self):
 		pass
 
@@ -587,32 +591,58 @@ class AddMission(QWidget):
 		super(AddMission, self).__init__()
 		self.setWindowTitle('新建任务信息')
 		self.sample_name_button = QPushButton('样品名称：')
-		self.sample_name_button.clicked.connect(self.show_dialog)
+		self.sample_name_button.clicked.connect(self.echo_sample_name)
 		self.sample_name_text = QTextBrowser()
 		self.sample_type_button = QPushButton('型号规格：')
 		self.sample_type_text = QTextBrowser()
 		self.sample_number_button = QPushButton('样品编号：')
-		self.sample_name_text = QTextBrowser()
-		self.request_company_button = QPushButton('报告编号：')
-		self.sample_name_text = QTextBrowser()
-		self.test_date_button = QPushButton('委托单位：')
-		self.sample_name_text = QTextBrowser()
-		self.test_basis_button = QPushButton('试验日期：')
-		self.sample_name_text = QTextBrowser()
-		self.test_worker_button = QPushButton('试验依据：')
-		self.sample_name_text = QTextBrowser()
-		self.supervise_worker_button = QPushButton('测试人员：')
-		self.sample_name_text = QTextBrowser()
-		self.sample_type_button = QPushButton('监督人员：')
-		self.sample_name_text = QTextBrowser()
+		self.sample_number_text = QTextBrowser()
+		self.report_number_button = QPushButton('报告编号：')
+		self.report_number_text = QTextBrowser()
+		self.request_company_button = QPushButton('委托单位：')
+		self.request_company_text = QTextBrowser()
+		self.test_date_button = QPushButton('试验日期：')
+		self.test_date_text = QDateEdit()
+		self.test_date_text.setCalendarPopup(True)
+		self.test_date_text.setDate(QtCore.QDate.currentDate())
+		self.test_basis_button = QPushButton('试验依据：')
+		self.test_basis_text = QTextBrowser()
+		self.test_worker_button = QPushButton('测试人员：')
+		self.test_worker_text = QTextBrowser()
+		self.supervise_worker_button = QPushButton('监督人员：')
+		self.supervise_worker_text = QTextBrowser()
+		self.confirm_button = QPushButton('确认')
+		self.layout_init()
 
 	def layout_init(self):
-		self.grid_layout = QGridLayout()
-		self
+		self.grid_layout = QGridLayout(self)
+		self.grid_layout.addWidget(self.sample_name_button, 0, 0, 1, 1)
+		self.grid_layout.addWidget(self.sample_name_text, 0, 1, 1, 1)
+		self.grid_layout.addWidget(self.sample_type_button, 1, 0, 1, 1)
+		self.grid_layout.addWidget(self.sample_type_text, 1, 1, 1, 1)
+		self.grid_layout.addWidget(self.request_company_button, 2, 0, 1, 1)
+		self.grid_layout.addWidget(self.request_company_text, 2, 3, 1, 1)
+		self.grid_layout.addWidget(self.sample_number_button, 3, 0, 1, 1)
+		self.grid_layout.addWidget(self.sample_number_text, 3, 1, 1, 1)
+		self.grid_layout.addWidget(self.report_number_button, 4, 0, 1, 1)
+		self.grid_layout.addWidget(self.report_number_text, 4, 1, 1, 1)
+		self.grid_layout.addWidget(self.request_company_button, 5, 0, 1, 1)
+		self.grid_layout.addWidget(self.request_company_text, 5, 1, 1, 1)
+		self.grid_layout.addWidget(self.test_date_button, 6, 0, 1, 1)
+		self.grid_layout.addWidget(self.test_date_text, 6, 1, 1, 1)
+		self.grid_layout.addWidget(self.test_basis_button, 7, 0, 1, 1)
+		self.grid_layout.addWidget(self.test_basis_text, 7, 1, 1, 1)
+		self.grid_layout.addWidget(self.test_worker_button, 8, 0, 1, 1)
+		self.grid_layout.addWidget(self.test_worker_text, 8, 1, 1, 1)
+		self.grid_layout.addWidget(self.supervise_worker_button, 9, 0, 1, 1)
+		self.grid_layout.addWidget(self.supervise_worker_text, 9, 1, 1, 1)
+		self.grid_layout.addWidget(self.confirm_button, 10, 1, 1, 1)
+		self.setLayout(self.grid_layout)
 
-	def show_dialog(self):
-		sender = self.sender()
 
+	def echo_sample_name(self):
+		value,ok = QInputDialog.getText(self, '新建任务信息', '请输入样品名称：', QLineEdit.Normal)
+		self.sample_name_text.setText(value)
 
 # 电源模块配置菜单
 class PowerSupplyConfig(QWidget):
