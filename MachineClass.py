@@ -253,7 +253,7 @@ class ARTS:
 			self.rut_distance)
 		if result == 0:
 			print('已设置GainTrim为%ddB，已设置RangeTrim为%dm,已设置RUTDistance为%dm ' %
-			      (gain_trim, range_trim, ctypes.c_double(rut_distance)))
+			      (gain_trim, range_trim, rut_distance))
 		return result
 
 	def set_rx_attenuation(self, attenuation):

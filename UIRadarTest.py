@@ -15,7 +15,7 @@ class RadarTestMain(QMainWindow):
 		self.init_ui()
 
 	def init_ui(self):
-		self.resize(1000, 700)
+		self.resize(1100, 700)
 		self.setWindowTitle("毫米波雷达测试系统")
 		self.center()
 		self.menu_init()
@@ -585,7 +585,33 @@ class HorizontalPowerMenu(QWidget):
 class AddMission(QWidget):
 	def __init__(self):
 		super(AddMission, self).__init__()
-	pass
+		self.setWindowTitle('新建任务信息')
+		self.sample_name_button = QPushButton('样品名称：')
+		self.sample_name_button.clicked.connect(self.show_dialog)
+		self.sample_name_text = QTextBrowser()
+		self.sample_type_button = QPushButton('型号规格：')
+		self.sample_type_text = QTextBrowser()
+		self.sample_number_button = QPushButton('样品编号：')
+		self.sample_name_text = QTextBrowser()
+		self.request_company_button = QPushButton('报告编号：')
+		self.sample_name_text = QTextBrowser()
+		self.test_date_button = QPushButton('委托单位：')
+		self.sample_name_text = QTextBrowser()
+		self.test_basis_button = QPushButton('试验日期：')
+		self.sample_name_text = QTextBrowser()
+		self.test_worker_button = QPushButton('试验依据：')
+		self.sample_name_text = QTextBrowser()
+		self.supervise_worker_button = QPushButton('测试人员：')
+		self.sample_name_text = QTextBrowser()
+		self.sample_type_button = QPushButton('监督人员：')
+		self.sample_name_text = QTextBrowser()
+
+	def layout_init(self):
+		self.grid_layout = QGridLayout()
+		self
+
+	def show_dialog(self):
+		sender = self.sender()
 
 
 # 电源模块配置菜单

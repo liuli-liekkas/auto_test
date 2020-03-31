@@ -1,7 +1,7 @@
 from MachineClass import *
 from UIRadarTest import *
 import time
-import winsound
+# import winsound
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
@@ -107,19 +107,16 @@ class MyThread(QThread):
 					'------当前角度：' + str(anger) + '°' + '------' + time.strftime('%H:%M:%S'))
 				self.turn_table.get_position(2)
 				for distance in range(self.min_range_config, self.max_range_config + 1, self.step_range_config):
-					self.target_simulate.set_tx_chan_static(0, 0, 0, 0, -10, -10, -10, -10,distance, distance, distance, distance)
+					self.target_simulate.set_tx_chan_static(0, 0, 0, 0, -10, -10, -10, -10, distance, distance, distance, distance)
 					self.my_signal.emit(
 						'------当前距离：' + str(distance) + 'm' + '------' + time.strftime('%H:%M:%S'))
-
 					self.sleep(self.dwell_time_config)
-					winsound.Beep(600, 1000)
+					# winsound.Beep(600, 1000)
 			self.target_simulate.disconnect()
 		elif self.test_mode_config == '先角度后距离':
 			print('先角度后距离')
 		else:
 			print('测试模式错误')
-
-
 
 
 if __name__ == '__main__':
