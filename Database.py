@@ -12,7 +12,7 @@ class Database(QWidget):
 	def db_connect(self):
 		self.db = QSqlDatabase.addDatabase('QMYSQL')
 		self.db.setHostName('localhost')
-		self.db.setDatabaseName('test')
+		self.db.setDatabaseName('mysql')
 		self.db.setUserName('root')
 		self.db.setPassword('ll891119')
 		if not self.db.open():
