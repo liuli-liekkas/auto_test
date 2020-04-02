@@ -1,5 +1,4 @@
 import pyvisa
-import time
 import ctypes
 import math
 
@@ -627,6 +626,8 @@ class TurnTable:
 
 
 if __name__ == '__main__':
+	rcs = SMW('192.168.0.1')
+	ctypes.CDLL('./dll/D4ARTS6x64.dll')
 	# RCS连接测试
 	# rsc = RSC('192.168.0.101', 50, 2000000)
 	# rsc.open()
@@ -685,28 +686,28 @@ if __name__ == '__main__':
 	# turntable.s_home(2)
 
 	# ARTS连接测试
-	arts = ARTS()
-	arts.connect('192.168.0.20')
-	time.sleep(1)
+	# arts = ARTS()
+	# arts.connect('192.168.0.20')
+	# time.sleep(1)
 	# arts.set_freq(76250000)
 	# arts.set_tr_on()
 	# time.sleep(2)
 	# arts.set_tr_off()
 	# time.sleep(2)
-	arts.set_mode_static()
+	# arts.set_mode_static()
 	# arts.set_mode_dynamic()
 	# arts.reset()
 	# arts.set_trims(10, 10, 5)
 	# time.sleep(2)
-	arts.set_tx_chan_static(0,0,0,0,-5,10,10,-10,100,80,120,140)
+	# arts.set_tx_chan_static(0,0,0,0,-5,10,10,-10,100,80,120,140)
 	# arts.set_tx_chan_dynamic(5, 20, 30, 40, 5, 20, 30, 40, 80, 100, 110, 120, 180, 190, 200, 210, 15, -5, -5, -5)
 	# arts.reset()
 	# time.sleep(4)
-	arts.set_tx_chan_enable(1, 0, 0, 0)
-	time.sleep(1)
+	# arts.set_tx_chan_enable(1, 0, 0, 0)
+	# time.sleep(1)
 	# arts.set_tr_on()
-	time.sleep(4)
-	arts.set_output_on()
+	# time.sleep(4)
+	# arts.set_output_on()
 	# time.sleep(3)
 	# arts.download_wave_form(0)
 	# time.sleep(4)
@@ -715,4 +716,4 @@ if __name__ == '__main__':
 	# arts.set_output_off()
 	# time.sleep(2)
 	# arts.set_tr_off()
-	arts.disconnect()
+	# arts.disconnect()
