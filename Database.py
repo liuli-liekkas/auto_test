@@ -18,7 +18,7 @@ class Database(QWidget):
 		if not self.db.open():
 			QMessageBox.critical(self, 'Database Connection', self.db.lastError().text())
 
-	def closeEvent(self, QCloseEvent):
+	def closeEvent(self, close_event):
 		self.db.close()
 
 
