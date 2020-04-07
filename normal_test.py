@@ -9,4 +9,3 @@ if __name__ == '__main__':
 	db.setPassword("ll891119")
 	db.setPort(3306)
 	print(db.open())
-	print(QtSql.QSqlDatabase.drivers())
