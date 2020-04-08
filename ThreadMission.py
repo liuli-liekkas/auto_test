@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 from MachineClass import *
+import cantools
 
 
 class CurrentAngleAzimuth(QThread):

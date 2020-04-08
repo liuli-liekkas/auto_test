@@ -76,6 +76,7 @@ class LoginWindow(QWidget):
 class SigInPage(QDialog):
     def __init__(self):
         super(SigInPage, self).__init__()
+        self.setWindowTitle('用户注册')
         self.sign_in_user_label = QLabel('用户名', self)
         self.sign_in_pwd1_label = QLabel('密码', self)
         self.sign_in_pwd2_label = QLabel('密码', self)

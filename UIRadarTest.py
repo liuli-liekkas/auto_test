@@ -6,6 +6,7 @@ import sys
 import pyqtgraph as pg
 from MachineClass import *
 from ThreadMission import *
+import time
 
 
 # 主界面
@@ -160,6 +161,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_test_data_label.setText('试验日期:')
 		self.tab2_test_data_label.setMaximumWidth(55)
 		self.tab2_test_data_edit = QDateEdit(self.frame_1)
+		self.tab2_test_data_edit.setAlignment(QtCore.Qt.AlignCenter)
 		self.tab2_test_data_edit.setMaximumSize(100, 20)
 		self.tab2_test_data_edit.setCalendarPopup(True)
 		self.tab2_test_data_edit.setDate(QtCore.QDate.currentDate())
@@ -593,32 +595,42 @@ class AddMission(QWidget):
 		self.sample_name_button = QPushButton('样品名称：')
 		self.sample_name_button.clicked.connect(self.echo_sample_name)
 		self.sample_name_text = QTextBrowser()
-		self.sample_name_text.setMaximumHeight(25)
+		self.sample_name_text.setMaximumSize(150, 25)
 		self.sample_type_button = QPushButton('型号规格：')
+		self.sample_type_button.clicked.connect(self.echo_sample_type)
 		self.sample_type_text = QTextBrowser()
-		self.sample_type_text.setMaximumHeight(25)
+		self.sample_type_text.setMaximumSize(150, 25)
 		self.sample_number_button = QPushButton('样品编号：')
+		self.sample_number_button.clicked.connect(self.echo_sample_number)
 		self.sample_number_text = QTextBrowser()
-		self.sample_number_text.setMaximumHeight(25)
+		self.sample_number_text.setMaximumSize(150, 25)
 		self.report_number_button = QPushButton('报告编号：')
+		self.report_number_button.clicked.connect(self.echo_report_number)
 		self.report_number_text = QTextBrowser()
-		self.report_number_text.setMaximumHeight(25)
+		self.report_number_text.setMaximumSize(150, 25)
 		self.request_company_button = QPushButton('委托单位：')
+		self.request_company_button.clicked.connect(self.echo_request_company)
 		self.request_company_text = QTextBrowser()
-		self.request_company_text.setMaximumHeight(25)
+		self.request_company_text.setMaximumSize(150, 25)
 		self.test_date_button = QPushButton('试验日期：')
 		self.test_date_text = QDateEdit()
+		self.test_date_text.setMaximumSize(150, 25)
 		self.test_date_text.setCalendarPopup(True)
 		self.test_date_text.setDate(QtCore.QDate.currentDate())
+		self.test_date_text.setAlignment(QtCore.Qt.AlignCenter)
 		self.test_basis_button = QPushButton('试验依据：')
+		self.test_basis_button.clicked.connect(self.echo_test_basis)
 		self.test_basis_text = QTextBrowser()
-		self.test_basis_text.setMaximumHeight(25)
+		self.test_basis_text.setMaximumSize(150, 60)
+		self.test_basis_text.setAlignment(QtCore.Qt.AlignCenter)
 		self.test_worker_button = QPushButton('测试人员：')
+		self.test_worker_button.clicked.connect(self.echo_test_worker)
 		self.test_worker_text = QTextBrowser()
-		self.test_worker_text.setMaximumHeight(25)
+		self.test_worker_text.setMaximumSize(150, 25)
 		self.supervise_worker_button = QPushButton('监督人员：')
+		self.supervise_worker_button.clicked.connect(self.echo_supervise_worker)
 		self.supervise_worker_text = QTextBrowser()
-		self.supervise_worker_text.setMaximumHeight(25)
+		self.supervise_worker_text.setMaximumSize(150, 25)
 		self.confirm_button = QPushButton('确认')
 		self.layout_init()
 
@@ -628,29 +640,69 @@ class AddMission(QWidget):
 		self.grid_layout.addWidget(self.sample_name_text, 0, 1, 1, 1)
 		self.grid_layout.addWidget(self.sample_type_button, 1, 0, 1, 1)
 		self.grid_layout.addWidget(self.sample_type_text, 1, 1, 1, 1)
-		self.grid_layout.addWidget(self.request_company_button, 2, 0, 1, 1)
-		self.grid_layout.addWidget(self.request_company_text, 2, 3, 1, 1)
-		self.grid_layout.addWidget(self.sample_number_button, 3, 0, 1, 1)
-		self.grid_layout.addWidget(self.sample_number_text, 3, 1, 1, 1)
-		self.grid_layout.addWidget(self.report_number_button, 4, 0, 1, 1)
-		self.grid_layout.addWidget(self.report_number_text, 4, 1, 1, 1)
-		self.grid_layout.addWidget(self.request_company_button, 5, 0, 1, 1)
-		self.grid_layout.addWidget(self.request_company_text, 5, 1, 1, 1)
-		self.grid_layout.addWidget(self.test_date_button, 6, 0, 1, 1)
-		self.grid_layout.addWidget(self.test_date_text, 6, 1, 1, 1)
-		self.grid_layout.addWidget(self.test_basis_button, 7, 0, 1, 1)
-		self.grid_layout.addWidget(self.test_basis_text, 7, 1, 1, 1)
-		self.grid_layout.addWidget(self.test_worker_button, 8, 0, 1, 1)
-		self.grid_layout.addWidget(self.test_worker_text, 8, 1, 1, 1)
-		self.grid_layout.addWidget(self.supervise_worker_button, 9, 0, 1, 1)
-		self.grid_layout.addWidget(self.supervise_worker_text, 9, 1, 1, 1)
-		self.grid_layout.addWidget(self.confirm_button, 10, 1, 1, 1)
+		self.grid_layout.addWidget(self.sample_number_button, 2, 0, 1, 1)
+		self.grid_layout.addWidget(self.sample_number_text, 2, 1, 1, 1)
+		self.grid_layout.addWidget(self.report_number_button, 3, 0, 1, 1)
+		self.grid_layout.addWidget(self.report_number_text, 3, 1, 1, 1)
+		self.grid_layout.addWidget(self.request_company_button, 4, 0, 1, 1)
+		self.grid_layout.addWidget(self.request_company_text, 4, 1, 1, 1)
+		self.grid_layout.addWidget(self.test_date_button, 5, 0, 1, 1)
+		self.grid_layout.addWidget(self.test_date_text, 5, 1, 1, 1)
+		self.grid_layout.addWidget(self.test_basis_button, 6, 0, 1, 1)
+		self.grid_layout.addWidget(self.test_basis_text, 6, 1, 1, 1)
+		self.grid_layout.addWidget(self.test_worker_button, 7, 0, 1, 1)
+		self.grid_layout.addWidget(self.test_worker_text, 7, 1, 1, 1)
+		self.grid_layout.addWidget(self.supervise_worker_button, 8, 0, 1, 1)
+		self.grid_layout.addWidget(self.supervise_worker_text, 8, 1, 1, 1)
+		self.grid_layout.addWidget(self.confirm_button, 9, 1, 1, 1)
 		self.setLayout(self.grid_layout)
 
-
 	def echo_sample_name(self):
-		value,ok = QInputDialog.getText(self, '新建任务信息', '请输入样品名称：', QLineEdit.Normal)
+		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入样品名称：', QLineEdit.Normal)
 		self.sample_name_text.setText(value)
+		self.sample_name_text.setAlignment(QtCore.Qt.AlignCenter)
+
+	def echo_sample_type(self):
+		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入型号规格：', QLineEdit.Normal)
+		self.sample_type_text.setText(value)
+		self.sample_type_text.setAlignment(QtCore.Qt.AlignCenter)
+
+	def echo_sample_number(self):
+		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入样品编号：', QLineEdit.Normal)
+		self.sample_number_text.setText(value)
+		self.sample_number_text.setAlignment(QtCore.Qt.AlignCenter)
+
+	def echo_report_number(self):
+		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入报告编号：', QLineEdit.Normal)
+		self.report_number_text.setText(value)
+		self.report_number_text.setAlignment(QtCore.Qt.AlignCenter)
+
+	def echo_request_company(self):
+		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入委托单位：', QLineEdit.Normal)
+		self.request_company_text.setText(value)
+		self.request_company_text.setAlignment(QtCore.Qt.AlignCenter)
+
+	def echo_test_basis(self):
+		items = ['GB∕T 36654-2018 76GHz车辆无线电设备射频指标技术要求及测试方法',
+		         '毫米波雷达上海市地方标准',
+		         '毫米波雷达国家标准',
+		         '毫米波雷达企业标准']
+		value, ok = QInputDialog.getItem(self, '新建任务信息', '请选择试验依据：', items, 1, True)
+		self.test_basis_text.setText(value)
+		self.test_basis_text.setAlignment(QtCore.Qt.AlignHCenter)
+
+	def echo_test_worker(self):
+		items = ['薛岩', '裴毓', '张晓蕾', '刘力']
+		value, ok = QInputDialog.getItem(self, '新建任务信息', '请输入测试人员：', items, 1, True)
+		self.test_worker_text.setText(value)
+		self.test_worker_text.setAlignment(QtCore.Qt.AlignCenter)
+
+	def echo_supervise_worker(self):
+		items = ['薛岩', '裴毓', '张晓蕾', '刘力']
+		value, ok = QInputDialog.getItem(self, '新建任务信息', '请输入监督人员：', items, 1, True)
+		self.supervise_worker_text.setText(value)
+		self.supervise_worker_text.setAlignment(QtCore.Qt.AlignCenter)
+
 
 # 电源模块配置菜单
 class PowerSupplyConfig(QWidget):

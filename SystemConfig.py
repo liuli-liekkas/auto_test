@@ -124,8 +124,3 @@ if __name__ == '__main__':
 	HorizontalPowerTest = HorizontalPowerTest()
 	HorizontalPowerTest.show()
 	sys.exit(app.exec_())
-
-
-
-
-
