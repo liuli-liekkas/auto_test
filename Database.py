@@ -15,8 +15,6 @@ class Database(QWidget):
 		self.db.setDatabaseName('mysql')
 		self.db.setUserName('root')
 		self.db.setPassword('ll891119')
-		if not self.db.open():
-			QMessageBox.critical(self, 'Database Connection', self.db.lastError().text())
 
 	def closeEvent(self, close_event):
 		self.db.close()
@@ -25,5 +23,3 @@ class Database(QWidget):
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	database = Database()
-	database.show()
-	sys.exit(app.exec_())
