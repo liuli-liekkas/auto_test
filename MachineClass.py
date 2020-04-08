@@ -189,7 +189,7 @@ class SMW:
 
 class ARTS:
 	def __init__(self):
-		self.dll = ctypes.CDLL('D:\\files\\python_learn\\auto_test\\dll_file\\D4ARTS6x64.dll')
+		self.dll = ctypes.CDLL('D:\\files\\python_learn\\auto_test\\dll\\D4ARTS6x64.dll')
 		self.status = 0
 		self.output = 0
 		self.tr = 0
@@ -509,7 +509,7 @@ class TurnTable:
 	# fSetVel：° / s（对转台而言）或者mm / s(对扫描架而言)
 	# iDevice：设备地址号，转台iDevice = 0。
 	def __init__(self):
-		self.dll = ctypes.CDLL('D:\\files\\python_learn\\auto_test\\dll_file\\D4ARTS6x64.dll')
+		self.dll = ctypes.CDLL('D:\\files\\python_learn\\auto_test\\dll\\D4ARTS6x64.dll')
 		self.i_device = ctypes.c_short(0)
 
 	def connect(self):
