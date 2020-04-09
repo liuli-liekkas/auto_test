@@ -113,6 +113,9 @@ class RadarTestMain(QMainWindow):
 		self.tab2_ui()
 		self.tab3_ui()
 
+	def status_bat_init(self):
+
+
 	def tab1_ui(self):
 		pass
 
