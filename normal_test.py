@@ -1,56 +1,36 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+import numpy as np
 import pyqtgraph as pg
-import sys
-import traceback
-import psutil
 
+app = pg.mkQApp()
 
-class MainUi(QtWidgets.QMainWindow):
-	def __init__(self):
-		super().__init__()
-		self.setWindowTitle("CPU使用率监控 - 州的先生https://zmister.com")
-		self.main_widget = QtWidgets.QWidget()  # 创建一个主部件
-		self.main_layout = QtWidgets.QGridLayout()  # 创建一个网格布局
-		self.main_widget.setLayout(self.main_layout)  # 设置主部件的布局为网格
-		self.setCentralWidget(self.main_widget)  # 设置窗口默认部件
+win = pg.GraphicsWindow()
+win.setWindowTitle(u'pyqtgraph plot demo')
+win.resize(600, 400)
 
-		self.plot_widget = QtWidgets.QWidget()  # 实例化一个widget部件作为K线图部件
-		self.plot_layout = QtWidgets.QGridLayout()  # 实例化一个网格布局层
-		self.plot_widget.setLayout(self.plot_layout)  # 设置K线图部件的布局层
-		self.plot_plt = pg.PlotWidget()  # 实例化一个绘图部件
-		self.plot_plt.showGrid(x=True, y=True)  # 显示图形网格
-		self.plot_layout.addWidget(self.plot_plt)  # 添加绘图部件到K线图部件的网格布局层
-		# 将上述部件添加到布局层中
-		self.main_layout.addWidget(self.plot_widget, 1, 0, 3, 3)
+p = win.addPlot()
+p.showGrid(x=True, y=True)
+p.setLabel(axis='left', text=u'Amplitude / V')
+p.setLabel(axis='bottom', text=u't / s')
+p.setTitle('y1=sin(x)  y2=cos(x)')
+p.addLegend()
 
-		self.setCentralWidget(self.main_widget)
-		self.plot_plt.setYRange(max=100, min=0)
-		self.data_list = []
-		self.timer_start()
+curve1 = p.plot(pen='r', name='y1')
+curve2 = p.plot(pen='g', name='y2')
 
-	# 启动定时器 时间间隔秒
-	def timer_start(self):
-		self.timer = QtCore.QTimer(self)
-		self.timer.timeout.connect(self.get_cpu_info)
-		self.timer.start(1000)
+Fs = 1024.0 #采样频率
+N = 1024    #采样点数
+f0 = 5.0    #信号频率
+pha = 0     #初始相位
+t = np.arange(N) / Fs   #时间向量
 
-	# 获取CPU使用率
-	def get_cpu_info(self):
-		try:
-			cpu = "%0.2f" % psutil.cpu_percent(interval=1)
-			self.data_list.append(float(cpu))
-			print(float(cpu))
-			self.plot_plt.plot().setData(self.data_list, pen='g')
-		except Exception as e:
-			print(traceback.print_exc())
+def plotData():
+    global pha
+    pha += 10
+    curve1.setData(t, np.sin(2 * np.pi * f0 * t + pha*np.pi/180.0))
+    curve2.setData(t, np.cos(2 * np.pi * f0 * t + pha*np.pi/180.0))
 
+timer = pg.QtCore.QTimer()
+timer.timeout.connect(plotData)
+timer.start(50)
 
-def main():
-	app = QtWidgets.QApplication(sys.argv)
-	gui = MainUi()
-	gui.show()
-	sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-	main()
+app.exec_()

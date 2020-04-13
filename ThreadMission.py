@@ -1,5 +1,8 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 from MachineClass import *
+import CanAnalysis
+import time
+import UIRadarTest
 import cantools
 from ctypes import wintypes
 import ctypes
@@ -79,28 +82,38 @@ class TurnTableInitialize(QThread):
 			self.msleep(100)
 
 
-class Struct_INIT_CONFIG(ctypes.Structure):
-	_fields_ = (("AccCode", wintypes.DWORD),
-                ("AccMask", wintypes.DWORD),
-                ("Reserved", wintypes.DWORD),
-                ("Filter", ctypes.c_ubyte),
-                ("Timing0", ctypes.c_ubyte),
-                ("Timing1", ctypes.c_ubyte),
-                ("Mode", ctypes.c_ubyte)
-                )
+class GetMessage(QThread):
+	my_signal = pyqtSignal(list)
+
+	def __init__(self):
+		super(GetMessage, self).__init__()
+
+	def run(self):
+		self.can_control = CanAnalysis.CanControl()
+		self.can_control.open()
+		self.can_control.init_channel(0)
+		while True:
+			self.can_control.get_message(0)
+			self.my_signal.emit(self.can_control.data)
 
 
-class Struct_CAN_OBJ(ctypes.Structure):
-    _fields_ = [("ID", ctypes.c_uint),
-                ("TimeStamp", ctypes.c_uint),
-                ("TimeFlag", ctypes.c_ubyte),
-                ("SendType", ctypes.c_ubyte),
-                ("RemoteFlag", ctypes.c_ubyte),
-                ("ExternFlag", ctypes.c_ubyte),
-                ("DataLen", ctypes.c_ubyte),
-                ("Data", ctypes.c_ubyte * 8),
-                ("Reserved", ctypes.c_ubyte * 3)
-                ]
+class PaintMessage(QThread):
+	my_signal = pyqtSignal(list)
+
+	def __init__(self):
+		super(PaintMessage, self).__init__()
+
+	def run(self):
+		self.can_control = CanAnalysis.CanControl()
+		self.can_control.open()
+		self.can_control.init_channel(0)
+		while True:
+			self.can_control.get_message(0)
+			self.data = self.can_control.data
+			self.my_signal.emit(self.data)
+			self.msleep(200)
 
 
-class CanAnalysis()
+if __name__ == '__main__':
+	can = GetMessage()
+	can.run(0)

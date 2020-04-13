@@ -40,6 +40,43 @@ class CanControl:
         self.data = np.zeros(shape=(25, 7))
         for i in range(25):
             self.data[i, 0] = i
+        self.data = self.data.tolist()
+        # 定义DBC数据格式
+        self.id_start = 0
+        self.id_length = 8
+        self.id_factor = 1
+        self.id_offset = 0
+        self.id_start_handle = (self.id_start // 8 + 1) * 8 - self.id_start % 8 - self.id_length
+        self.dist_long_start = 19
+        self.dist_long_length = 13
+        self.dist_long_factor = 0.2
+        self.dist_long_offset = -500
+        self.dist_long_start_handle = (self.dist_long_start // 8 + 1) * 8 - self.dist_long_start % 8 - self.dist_long_length
+        self.dist_lat_start = 24
+        self.dist_lat_length = 11
+        self.dist_lat_factor = 0.2
+        self.dist_lat_offset = -204.6
+        self.dist_lat_start_handle = (self.dist_lat_start // 8 + 1) * 8 - self.dist_lat_start % 8 - self.dist_lat_length
+        self.verl_long_start = 46
+        self.verl_long_length = 10
+        self.verl_long_factor = 0.25
+        self.verl_long_offset = -128
+        self.verl_long_start_handle = (self.verl_long_start // 8 + 1) * 8 - self.verl_long_start % 8 - self.verl_long_length
+        self.verl_lat_start = 53
+        self.verl_lat_length = 9
+        self.verl_lat_factor = 0.25
+        self.verl_lat_offset = -64
+        self.verl_lat_start_handle = (self.verl_lat_start // 8 + 1) * 8 - self.verl_lat_start % 8 - self.verl_lat_length
+        self.dyn_prop_start = 48
+        self.dyn_prop_length = 3
+        self.dyn_prop_factor = 1
+        self.dyn_prop_offset = 0
+        self.dyn_prop_start_handle = (self.dyn_prop_start // 8 + 1) * 8 - self.dyn_prop_start % 8 - self.dyn_prop_length
+        self.rcs_start = 56
+        self.rcs_length = 8
+        self.rcs_factor = 0.5
+        self.rcs_offset = -64
+        self.rcs_start_handle = (self.rcs_start // 8 + 1) * 8 - self.rcs_start % 8 - self.rcs_length
 
     def open(self):
         result = self.canDLL.OpenDevice(self.Struct_USBCAN2C, 0, 0)
@@ -71,77 +108,40 @@ class CanControl:
         byte_3array = ctypes.c_ubyte * 3
         remain = byte_3array(0, 0, 0)
         can_obj = Struct_CAN_OBJ(0x0, 1, 1, 0, 0, 0, 8, information, remain)
-        # 定义DBC数据格式
-        id_start = 0
-        id_length = 8
-        id_factor = 1
-        id_offset = 0
-        id_start_handle = (id_start // 8 + 1) * 8 - id_start % 8 - id_length
-        dist_long_start = 19
-        dist_long_length = 13
-        dist_long_factor = 0.2
-        dist_long_offset = -500
-        dist_long_start_handle = (dist_long_start // 8 + 1) * 8 - dist_long_start % 8 - dist_long_length
-        dist_lat_start = 24
-        dist_lat_length = 11
-        dist_lat_factor = 0.2
-        dist_lat_offset = -204.6
-        dist_lat_start_handle = (dist_lat_start // 8 + 1) * 8 - dist_lat_start % 8 - dist_lat_length
-        verl_long_start = 46
-        verl_long_length = 10
-        verl_long_factor = 0.25
-        verl_long_offset = -128
-        verl_long_start_handle = (verl_long_start // 8 + 1) * 8 - verl_long_start % 8 - verl_long_length
-        verl_lat_start = 53
-        verl_lat_length = 9
-        verl_lat_factor = 0.25
-        verl_lat_offset = -64
-        verl_lat_start_handle = (verl_lat_start // 8 + 1) * 8 - verl_lat_start % 8 - verl_lat_length
-        dyn_prop_start = 48
-        dyn_prop_length = 3
-        dyn_prop_factor = 1
-        dyn_prop_offset = 0
-        dyn_prop_start_handle = (dyn_prop_start // 8 + 1) * 8 - dyn_prop_start % 8 - dyn_prop_length
-        rcs_start = 56
-        rcs_length = 8
-        rcs_factor = 0.5
-        rcs_offset = -64
-        rcs_start_handle = (rcs_start // 8 + 1) * 8 - rcs_start % 8 - rcs_length
-        while True:
-            ret = self.canDLL.Receive(self.Struct_USBCAN2C, 0, channel, ctypes.byref(can_obj), 1, 10)
-            if ret > 0:
-                if can_obj.ID == 1547:
-                    # start = time.clock()
-                    struct_can_obj_data = list(can_obj.Data)
-                    message = ''
-                    for i in struct_can_obj_data:
-                        bin_i = bin(i)
-                        bin_i = bin_i[2:].rjust(8, '0')
-                        message += bin_i
-                    obj_id_bin = message[id_start_handle:id_start_handle + id_length]
-                    obj_id = int(obj_id_bin, 2) * id_factor + id_offset
-                    obj_dist_long_bin = message[dist_long_start_handle:dist_long_start_handle + dist_long_length]
-                    obj_dist_long = int(obj_dist_long_bin, 2) * dist_long_factor + dist_long_offset
-                    obj_dist_lat_bin = message[dist_lat_start_handle:dist_lat_start_handle + dist_lat_length]
-                    obj_dist_lat = int(obj_dist_lat_bin, 2) * dist_lat_factor + dist_lat_offset
-                    obj_verl_long_bin = message[verl_long_start_handle:verl_long_start_handle + verl_long_length]
-                    obj_verl_long = int(obj_verl_long_bin, 2) * verl_long_factor + verl_long_offset
-                    obj_verl_lat_bin = message[verl_lat_start_handle:verl_lat_start_handle + verl_lat_length]
-                    obj_verl_lat = int(obj_verl_lat_bin, 2) * verl_lat_factor + verl_lat_offset
-                    obj_dyn_prop_bin = message[dyn_prop_start_handle:dyn_prop_start_handle + dyn_prop_length]
-                    obj_dyn_prop = int(obj_dyn_prop_bin, 2) * dyn_prop_factor + dyn_prop_offset
-                    obj_rcs_bin = message[rcs_start_handle:rcs_start_handle + rcs_length]
-                    obj_rcs = int(obj_rcs_bin, 2) * rcs_factor + rcs_offset
-                    # print(obj_id, round(obj_dist_long, 2), round(obj_dist_lat, 2), obj_verl_long, obj_verl_lat, obj_dyn_prop, obj_rcs)
-                    self.data[obj_id, 1] = round(obj_dist_long, 2)
-                    self.data[obj_id, 2] = round(obj_dist_lat, 2)
-                    self.data[obj_id, 3] = obj_verl_long
-                    self.data[obj_id, 4] = obj_verl_lat
-                    self.data[obj_id, 5] = obj_dyn_prop
-                    self.data[obj_id, 6] = obj_rcs
-                    print(self.data)
-                    # end = time.clock()
-                    # print(round(end-start, 3))
+        ret = self.canDLL.Receive(self.Struct_USBCAN2C, 0, channel, ctypes.byref(can_obj), 1, 10)
+        if ret > 0:
+            if can_obj.ID == 1547:
+                # start = time.clock()
+                struct_can_obj_data = list(can_obj.Data)
+                message = ''
+                for i in struct_can_obj_data:
+                    bin_i = bin(i)
+                    bin_i = bin_i[2:].rjust(8, '0')
+                    message += bin_i
+                obj_id_bin = message[self.id_start_handle:self.id_start_handle + self.id_length]
+                obj_id = int(obj_id_bin, 2) * self.id_factor + self.id_offset
+                obj_dist_long_bin = message[self.dist_long_start_handle:self.dist_long_start_handle + self.dist_long_length]
+                obj_dist_long = int(obj_dist_long_bin, 2) * self.dist_long_factor + self.dist_long_offset
+                obj_dist_lat_bin = message[self.dist_lat_start_handle:self.dist_lat_start_handle + self.dist_lat_length]
+                obj_dist_lat = int(obj_dist_lat_bin, 2) * self.dist_lat_factor + self.dist_lat_offset
+                obj_verl_long_bin = message[self.verl_long_start_handle:self.verl_long_start_handle + self.verl_long_length]
+                obj_verl_long = int(obj_verl_long_bin, 2) * self.verl_long_factor + self.verl_long_offset
+                obj_verl_lat_bin = message[self.verl_lat_start_handle:self.verl_lat_start_handle + self.verl_lat_length]
+                obj_verl_lat = int(obj_verl_lat_bin, 2) * self.verl_lat_factor + self.verl_lat_offset
+                obj_dyn_prop_bin = message[self.dyn_prop_start_handle:self.dyn_prop_start_handle + self.dyn_prop_length]
+                obj_dyn_prop = int(obj_dyn_prop_bin, 2) * self.dyn_prop_factor + self.dyn_prop_offset
+                obj_rcs_bin = message[self.rcs_start_handle:self.rcs_start_handle + self.rcs_length]
+                obj_rcs = int(obj_rcs_bin, 2) * self.rcs_factor + self.rcs_offset
+                # print(obj_id, round(obj_dist_long, 2), round(obj_dist_lat, 2), obj_verl_long, obj_verl_lat, obj_dyn_prop, obj_rcs)
+                self.data[obj_id][1] = round(obj_dist_long, 2)
+                self.data[obj_id][2] = round(obj_dist_lat, 2)
+                self.data[obj_id][3] = obj_verl_long
+                self.data[obj_id][4] = obj_verl_lat
+                self.data[obj_id][5] = obj_dyn_prop
+                self.data[obj_id][6] = obj_rcs
+                # print(self.data)
+                # end = time.clock()
+                # print(round(end-start, 3))
 
     def close(self):
         result = self.canDLL.CloseDevice(self.Struct_USBCAN2C, 0)

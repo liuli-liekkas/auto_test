@@ -7,6 +7,7 @@ import pyqtgraph as pg
 from MachineClass import *
 from ThreadMission import *
 import time
+import numpy as np
 
 
 # 主界面
@@ -227,6 +228,11 @@ class RadarTestMain(QMainWindow):
 		self.tab2_realtime_plot = pg.PlotWidget()
 		self.tab2_realtime_plot.showGrid(x=True, y=True)
 		self.tab2_realtime_plot.setRange(xRange=[-5, 5], yRange=[0, 300])
+		self.paint_message = PaintMessage()
+		self.paint_message.start()
+		self.timer = pg.QtCore.QTimer()
+		# print(self.get_message.my_signal)
+		self.paint_message.my_signal.connect(self.paint_target)
 		self.tab2_realtime_table = QTableWidget()
 		self.tab2_realtime_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 		self.tab2_realtime_table.setColumnCount(6)
@@ -441,6 +447,16 @@ class RadarTestMain(QMainWindow):
 	def add_mission_config(self):
 		self.add_mission = AddMission()
 		self.add_mission.show()
+
+	def paint_target(self, message):
+		new_message = np.array(message)
+		print(new_message[:, 1])
+		self.timer.timeout.connect(lambda: self.paint(new_message))
+		self.timer.start(200)
+
+	def paint(self, message):
+		self.tab2_realtime_plot.plot(message[:, 1], message[:, 2], pen=None, symbol='o')
+
 
 	def tab3_ui(self):
 		pass
