@@ -1,109 +1,56 @@
+from PyQt5 import QtWidgets, QtCore, QtGui
+import pyqtgraph as pg
 import sys
-print("----------------欢迎使用CAN报文转换工具交互模式----------------")
-print("请输入CAN信号,格式为:startBit:length:minValue:maxValue:setValue")
-print("例如：32:1:0:1:1")
-print("或者省略minValue和maxValue：35：1：：：1")
-print("信号输入结束请再按一次回车")
+import traceback
+import psutil
 
-#十进制转换成二进制list
-def octToBin(octNum, bit):
-    while(octNum != 0):
-        bit.append(octNum%2)
-        octNum = int(octNum/2)
-    for i in range(64-len(bit)):
-        bit.append(0)
 
-sig = []
-startBit = []
-length = []
-setValue = []
-#输入CAN信号
-while True:
-    input_str = input()
-    if not len(input_str):
-        break
-    if(input_str.count(":")<4):
-        print("输入格式错误，参数缺少setValue,请重新输入！")
-        continue
-    if(input_str.split(":")[4]==""):
-        print("setValue参数不能为空，请重新输入！")
-        continue
-    sig.append(input_str)
-    print(sig)
-#解析CAN信号
-for i in range(len(sig)):
-    startBit.append(int(sig[i].split(":")[0]))
-    length.append(int(sig[i].split(":")[1]))
-    setValue.append(int(sig[i].split(":")[4]))
-#CAN数组存放CAN报文值
-# 0:8:::165
-# 24:12:::1701
-# 54:5:::25
-print(startBit, length, setValue)
-CAN = []
-for i in range(64):
-    CAN.append(-1)
-for i in range(len(startBit)):
-    #长度超过1Byte的情况，暂不支持
-    if(length[i]>16):
-        print("CAN信号长度超过2Byte，暂不支持！！！")
-        sys.stdin.readline()
-        sys.exit()
-    #长度未超过1Byte的情况且未跨字节的信号
-    if((startBit[i]%8 + length[i])<=8):
-        for j in range(length[i]):
-            bit = []
-            #setValue的二进制值按字节位从低到高填
-            octToBin(setValue[i],bit)
-            print(bit)
-            #填满字节长度值
-            if(CAN[startBit[i]+j]==-1):
-                CAN[startBit[i]+j] = bit[j]
-            #字节存在冲突
-            else:
-                print(sig[i] + "字节位存在冲突，生成CAN报文失败！！！")
-                sys.stdin.readline()
-                sys.exit()
-    #跨字节的信号
-    else:
-        #高位位数和低位位数
-        highLen = 8 - startBit[i]%8
-        lowLen = length[i] - highLen
-        bit = []
-        #setValue的二进制值按字节位从低到高填
-        octToBin(setValue[i],bit)
-        #先填进信号的高位
-        for j1 in range(highLen):
-            if(CAN[startBit[i]+j1]==-1):
-                CAN[startBit[i]+j1] = bit[j1]
-            #字节存在冲突
-            else:
-                print(sig[i] + "字节位存在冲突，生成CAN报文失败！！！")
-                sys.stdin.readline()
-                sys.exit()
-        #再填进信号的低位
-        for j2 in range(lowLen):
-            if(CAN[(int(startBit[i]/8)-1)*8+j2]==-1):
-                CAN[(int(startBit[i]/8)-1)*8+j2] = bit[highLen+j2]
-            #字节存在冲突
-            else:
-                print(sig[i] + "字节位存在冲突，生成CAN报文失败！！！")
-                sys.stdin.readline()
-                sys.exit()
-#剩余位默认值设为0
-for i in range(64):
-    if(CAN[i]==-1):
-        CAN[i] = 0
-#----------------将二进制list每隔8位转换成十六进制输出----------------
-#其中，map()将list中的数字转成字符串，按照Motorola格式每隔8位采用了逆序
-# ''.join()将二进制list转换成二进制字符串，int()将二进制字符串转换成十进制
-#hex()再将十进制转换成十六进制，upper()转换成大写，两个lstrip()将"0X"删除,
-#zfill()填充两位，输出不换行，以空格分隔
-print(hex(int(''.join(map(str,CAN[7::-1])),2)).upper().lstrip("0").lstrip("X").zfill(2) + " ",end="")
-print(hex(int(''.join(map(str,CAN[15:7:-1])),2)).upper().lstrip("0").lstrip("X").zfill(2) + " ",end="")
-print(hex(int(''.join(map(str,CAN[23:15:-1])),2)).upper().lstrip("0").lstrip("X").zfill(2) + " ",end="")
-print(hex(int(''.join(map(str,CAN[31:23:-1])),2)).upper().lstrip("0").lstrip("X").zfill(2) + " ",end="")
-print(hex(int(''.join(map(str,CAN[39:31:-1])),2)).upper().lstrip("0").lstrip("X").zfill(2) + " ",end="")
-print(hex(int(''.join(map(str,CAN[47:39:-1])),2)).upper().lstrip("0").lstrip("X").zfill(2) + " ",end="")
-print(hex(int(''.join(map(str,CAN[55:47:-1])),2)).upper().lstrip("0").lstrip("X").zfill(2) + " ",end="")
-print(hex(int(''.join(map(str,CAN[63:55:-1])),2)).upper().lstrip("0").lstrip("X").zfill(2))
+class MainUi(QtWidgets.QMainWindow):
+	def __init__(self):
+		super().__init__()
+		self.setWindowTitle("CPU使用率监控 - 州的先生https://zmister.com")
+		self.main_widget = QtWidgets.QWidget()  # 创建一个主部件
+		self.main_layout = QtWidgets.QGridLayout()  # 创建一个网格布局
+		self.main_widget.setLayout(self.main_layout)  # 设置主部件的布局为网格
+		self.setCentralWidget(self.main_widget)  # 设置窗口默认部件
+
+		self.plot_widget = QtWidgets.QWidget()  # 实例化一个widget部件作为K线图部件
+		self.plot_layout = QtWidgets.QGridLayout()  # 实例化一个网格布局层
+		self.plot_widget.setLayout(self.plot_layout)  # 设置K线图部件的布局层
+		self.plot_plt = pg.PlotWidget()  # 实例化一个绘图部件
+		self.plot_plt.showGrid(x=True, y=True)  # 显示图形网格
+		self.plot_layout.addWidget(self.plot_plt)  # 添加绘图部件到K线图部件的网格布局层
+		# 将上述部件添加到布局层中
+		self.main_layout.addWidget(self.plot_widget, 1, 0, 3, 3)
+
+		self.setCentralWidget(self.main_widget)
+		self.plot_plt.setYRange(max=100, min=0)
+		self.data_list = []
+		self.timer_start()
+
+	# 启动定时器 时间间隔秒
+	def timer_start(self):
+		self.timer = QtCore.QTimer(self)
+		self.timer.timeout.connect(self.get_cpu_info)
+		self.timer.start(1000)
+
+	# 获取CPU使用率
+	def get_cpu_info(self):
+		try:
+			cpu = "%0.2f" % psutil.cpu_percent(interval=1)
+			self.data_list.append(float(cpu))
+			print(float(cpu))
+			self.plot_plt.plot().setData(self.data_list, pen='g')
+		except Exception as e:
+			print(traceback.print_exc())
+
+
+def main():
+	app = QtWidgets.QApplication(sys.argv)
+	gui = MainUi()
+	gui.show()
+	sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+	main()

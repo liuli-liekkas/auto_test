@@ -2,9 +2,8 @@ import ctypes
 from ctypes import wintypes
 from cantools import database
 import cantools
-
-Struct_USBCAN2C = 4
-STATUS_OK = 1
+import numpy as np
+import time
 
 
 class Struct_INIT_CONFIG(ctypes.Structure):
@@ -31,73 +30,127 @@ class Struct_CAN_OBJ(ctypes.Structure):
                 ]
 
 
+class CanControl:
+    def __init__(self):
+        self.db = database.load_file('./dbc/ARS408_can_database.dbc')
+        self.canDLL = ctypes.CDLL('D:\\files\python_learn\\auto_test\\dll\\ECanVci64.dll')
+        self.struct_initconfig = Struct_INIT_CONFIG(0, 0xFFFFFFFF, 0, 0, 0, 0x1C, 0)
+        self.Struct_USBCAN2C = 4
+        self.STATUS_OK = 1
+        self.data = np.zeros(shape=(25, 7))
+        for i in range(25):
+            self.data[i, 0] = i
+
+    def open(self):
+        result = self.canDLL.OpenDevice(self.Struct_USBCAN2C, 0, 0)
+        if result != self.STATUS_OK:
+            print('调用 Struct_OpenDevice出错\r\n')
+
+    def init_channel(self, channel):
+        result = self.canDLL.InitCAN(self.Struct_USBCAN2C, 0, channel, ctypes.byref(self.struct_initconfig))
+        if result != self.STATUS_OK:
+            print('调用 Struct_InitCAN' + channel + '出错\r\n')
+        result = self.canDLL.StartCAN(self.Struct_USBCAN2C, 0, channel)
+        if result != self.STATUS_OK:
+            print('调用 Struct_StartCAN' + channel + '出错\r\n')
+
+    def send_message(self, channel):
+        byte_array = ctypes.c_ubyte * 8
+        information = byte_array(1, 2, 3, 4, 5, 6, 7, 64)
+        byte_3array = ctypes.c_ubyte * 3
+        remain = byte_3array(0, 0, 0)
+        can_obj = Struct_CAN_OBJ(0x0, 0, 0, 1, 0, 0, 8, information, remain)
+        result = self.canDLL.Transmit(self.Struct_USBCAN2C, 0, channel, ctypes.byref(can_obj), 1)
+        if result != self.STATUS_OK:
+            print('调用 Struct_Transmit 出错\r\n')
+
+    def get_message(self, channel):
+        # 接收通道数据
+        byte_array = ctypes.c_ubyte * 8
+        information = byte_array(0, 0, 0, 0, 0, 0, 0, 1)
+        byte_3array = ctypes.c_ubyte * 3
+        remain = byte_3array(0, 0, 0)
+        can_obj = Struct_CAN_OBJ(0x0, 1, 1, 0, 0, 0, 8, information, remain)
+        # 定义DBC数据格式
+        id_start = 0
+        id_length = 8
+        id_factor = 1
+        id_offset = 0
+        id_start_handle = (id_start // 8 + 1) * 8 - id_start % 8 - id_length
+        dist_long_start = 19
+        dist_long_length = 13
+        dist_long_factor = 0.2
+        dist_long_offset = -500
+        dist_long_start_handle = (dist_long_start // 8 + 1) * 8 - dist_long_start % 8 - dist_long_length
+        dist_lat_start = 24
+        dist_lat_length = 11
+        dist_lat_factor = 0.2
+        dist_lat_offset = -204.6
+        dist_lat_start_handle = (dist_lat_start // 8 + 1) * 8 - dist_lat_start % 8 - dist_lat_length
+        verl_long_start = 46
+        verl_long_length = 10
+        verl_long_factor = 0.25
+        verl_long_offset = -128
+        verl_long_start_handle = (verl_long_start // 8 + 1) * 8 - verl_long_start % 8 - verl_long_length
+        verl_lat_start = 53
+        verl_lat_length = 9
+        verl_lat_factor = 0.25
+        verl_lat_offset = -64
+        verl_lat_start_handle = (verl_lat_start // 8 + 1) * 8 - verl_lat_start % 8 - verl_lat_length
+        dyn_prop_start = 48
+        dyn_prop_length = 3
+        dyn_prop_factor = 1
+        dyn_prop_offset = 0
+        dyn_prop_start_handle = (dyn_prop_start // 8 + 1) * 8 - dyn_prop_start % 8 - dyn_prop_length
+        rcs_start = 56
+        rcs_length = 8
+        rcs_factor = 0.5
+        rcs_offset = -64
+        rcs_start_handle = (rcs_start // 8 + 1) * 8 - rcs_start % 8 - rcs_length
+        while True:
+            ret = self.canDLL.Receive(self.Struct_USBCAN2C, 0, channel, ctypes.byref(can_obj), 1, 10)
+            if ret > 0:
+                if can_obj.ID == 1547:
+                    # start = time.clock()
+                    struct_can_obj_data = list(can_obj.Data)
+                    message = ''
+                    for i in struct_can_obj_data:
+                        bin_i = bin(i)
+                        bin_i = bin_i[2:].rjust(8, '0')
+                        message += bin_i
+                    obj_id_bin = message[id_start_handle:id_start_handle + id_length]
+                    obj_id = int(obj_id_bin, 2) * id_factor + id_offset
+                    obj_dist_long_bin = message[dist_long_start_handle:dist_long_start_handle + dist_long_length]
+                    obj_dist_long = int(obj_dist_long_bin, 2) * dist_long_factor + dist_long_offset
+                    obj_dist_lat_bin = message[dist_lat_start_handle:dist_lat_start_handle + dist_lat_length]
+                    obj_dist_lat = int(obj_dist_lat_bin, 2) * dist_lat_factor + dist_lat_offset
+                    obj_verl_long_bin = message[verl_long_start_handle:verl_long_start_handle + verl_long_length]
+                    obj_verl_long = int(obj_verl_long_bin, 2) * verl_long_factor + verl_long_offset
+                    obj_verl_lat_bin = message[verl_lat_start_handle:verl_lat_start_handle + verl_lat_length]
+                    obj_verl_lat = int(obj_verl_lat_bin, 2) * verl_lat_factor + verl_lat_offset
+                    obj_dyn_prop_bin = message[dyn_prop_start_handle:dyn_prop_start_handle + dyn_prop_length]
+                    obj_dyn_prop = int(obj_dyn_prop_bin, 2) * dyn_prop_factor + dyn_prop_offset
+                    obj_rcs_bin = message[rcs_start_handle:rcs_start_handle + rcs_length]
+                    obj_rcs = int(obj_rcs_bin, 2) * rcs_factor + rcs_offset
+                    # print(obj_id, round(obj_dist_long, 2), round(obj_dist_lat, 2), obj_verl_long, obj_verl_lat, obj_dyn_prop, obj_rcs)
+                    self.data[obj_id, 1] = round(obj_dist_long, 2)
+                    self.data[obj_id, 2] = round(obj_dist_lat, 2)
+                    self.data[obj_id, 3] = obj_verl_long
+                    self.data[obj_id, 4] = obj_verl_lat
+                    self.data[obj_id, 5] = obj_dyn_prop
+                    self.data[obj_id, 6] = obj_rcs
+                    print(self.data)
+                    # end = time.clock()
+                    # print(round(end-start, 3))
+
+    def close(self):
+        result = self.canDLL.CloseDevice(self.Struct_USBCAN2C, 0)
+        if result != self.STATUS_OK:
+            print('调用 Struct_CloseDevice出错\r\n')
+
+
 if __name__ == '__main__':
-    db = database.load_file('./dbc/ARS408_can_database.dbc')
-    # print(db.messages)
-    CanDLLName = './dll/ECanVci64.dll'
-    canDLL = ctypes.CDLL(CanDLLName)
-    ret = canDLL.OpenDevice(Struct_USBCAN2C, 0, 0)
-    if ret != STATUS_OK:
-        print('调用 Struct_OpenDevice出错\r\n')
-    # 初始0通道
-    struct_initconfig = Struct_INIT_CONFIG(0, 0xFFFFFFFF, 0, 0, 0, 0x1C, 0)
-    ret = canDLL.InitCAN(Struct_USBCAN2C, 0, 0, ctypes.byref(struct_initconfig))
-    if ret != STATUS_OK:
-        print('调用 Struct_InitCAN出错\r\n')
-
-    ret = canDLL.StartCAN(Struct_USBCAN2C, 0, 0)
-    if ret != STATUS_OK:
-        print('调用 Struct_StartCAN出错\r\n')
-
-    # 初始1通道
-    ret = canDLL.InitCAN(Struct_USBCAN2C, 0, 1, ctypes.byref(struct_initconfig))
-    if ret != STATUS_OK:
-        print('调用 Struct_InitCAN 1 出错\r\n')
-    ret = canDLL.StartCAN(Struct_USBCAN2C, 0, 1)
-    if ret != STATUS_OK:
-        print('调用 Struct_StartCAN 1 出错\r\n')
-
-    # 通道0发送数据
-    # ubyte_array = ctypes.c_ubyte * 8
-    # a = ubyte_array(1, 2, 3, 4, 5, 6, 7, 64)
-    # ubyte_3array = ctypes.c_ubyte * 3
-    # b = ubyte_3array(0, 0, 0)
-    # struct_can_obj = Struct_CAN_OBJ(0x0, 0, 0, 1, 0, 0, 8, a, b)
-    # ret = canDLL.Transmit(Struct_USBCAN2C, 0, 0, ctypes.byref(struct_can_obj), 1)
-    # print(ret, '6')
-    # if ret != STATUS_OK:
-    #     print('调用 Struct_Transmit 出错\r\n')
-
-    # 通道0接收数据
-    ubyte_array = ctypes.c_ubyte * 8
-    a = ubyte_array(0, 0, 0, 0, 0, 0, 0, 1)
-    ubyte_3array = ctypes.c_ubyte * 3
-    b = ubyte_3array(0, 0, 0)
-    struct_can_obj = Struct_CAN_OBJ(0x0, 1, 1, 0, 0, 0, 8, a, b)
-    while True:
-        # print('调用 Struct_Receive 出错\r\n')
-        ret = canDLL.Receive(Struct_USBCAN2C, 0, 0, ctypes.byref(struct_can_obj), 1, 10)
-        if ret > 0:
-            if struct_can_obj.ID == 1547:
-                # print(struct_can_obj.ID)
-                # print(struct_can_obj.DataLen)
-                struct_can_obj_data = list(struct_can_obj.Data)
-                for i in range(len(struct_can_obj_data)):
-                    print(bin(int(struct_can_obj_data[i], 10)))
-                    # struct_can_obj_data = [hex(i) for i in struct_can_obj_data]
-                    # print(struct_can_obj_data)
-
-
-    # 通道1接收数据
-    # a = ubyte_array(0, 0, 0, 0, 0, 0, 0, 1)
-    # struct_can_obj = Struct_CAN_OBJ(0x0, 0, 0, 1, 0, 0, 8, a, b)
-    # ret = canDLL.Receive(Struct_USBCAN2C, 0, 1, ctypes.byref(struct_can_obj), 1, 50)
-    # while ret <= 0:
-    #     print('调用 Struct_Receive 出错\r\n')
-    #     ret = canDLL.Receive(Struct_USBCAN2C, 0, 1, ctypes.byref(struct_can_obj), 1, 50)
-    # if ret > 0:
-    #     print(struct_can_obj.DataLen)
-    #     print(list(struct_can_obj.Data))
-
-    # 关闭
-    canDLL.CloseDevice(Struct_USBCAN2C, 0)
+    can_control = CanControl()
+    can_control.open()
+    can_control.init_channel(0)
+    can_control.get_message(0)

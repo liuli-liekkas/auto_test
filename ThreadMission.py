@@ -1,6 +1,8 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 from MachineClass import *
 import cantools
+from ctypes import wintypes
+import ctypes
 
 
 class CurrentAngleAzimuth(QThread):
@@ -75,3 +77,30 @@ class TurnTableInitialize(QThread):
 					self.my_signal.emit('俯仰初始化到位')
 				break
 			self.msleep(100)
+
+
+class Struct_INIT_CONFIG(ctypes.Structure):
+	_fields_ = (("AccCode", wintypes.DWORD),
+                ("AccMask", wintypes.DWORD),
+                ("Reserved", wintypes.DWORD),
+                ("Filter", ctypes.c_ubyte),
+                ("Timing0", ctypes.c_ubyte),
+                ("Timing1", ctypes.c_ubyte),
+                ("Mode", ctypes.c_ubyte)
+                )
+
+
+class Struct_CAN_OBJ(ctypes.Structure):
+    _fields_ = [("ID", ctypes.c_uint),
+                ("TimeStamp", ctypes.c_uint),
+                ("TimeFlag", ctypes.c_ubyte),
+                ("SendType", ctypes.c_ubyte),
+                ("RemoteFlag", ctypes.c_ubyte),
+                ("ExternFlag", ctypes.c_ubyte),
+                ("DataLen", ctypes.c_ubyte),
+                ("Data", ctypes.c_ubyte * 8),
+                ("Reserved", ctypes.c_ubyte * 3)
+                ]
+
+
+class CanAnalysis()
