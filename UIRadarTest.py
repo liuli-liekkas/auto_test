@@ -8,6 +8,9 @@ from MachineClass import *
 from ThreadMission import *
 import time
 import numpy as np
+import array
+import threading
+from queue import Queue
 
 
 # 主界面
@@ -19,6 +22,8 @@ class RadarTestMain(QMainWindow):
 	def init_ui(self):
 		self.resize(1100, 700)
 		self.setWindowTitle("毫米波雷达测试系统")
+		self.data = array.array('i')
+		self.message = [[-1,-1,-1,-1,-1,-1,-1]]
 		self.center()
 		self.menu_init()
 		self.tab_menu_init()
@@ -227,17 +232,19 @@ class RadarTestMain(QMainWindow):
 		# 目标信息栏
 		self.tab2_realtime_plot = pg.PlotWidget()
 		self.tab2_realtime_plot.showGrid(x=True, y=True)
-		self.tab2_realtime_plot.setRange(xRange=[-5, 5], yRange=[0, 300])
-		self.paint_message = PaintMessage()
-		self.paint_message.start()
+		self.tab2_realtime_plot.setRange(xRange=[-5, 5], yRange=[0, 50])
+		self.tab2_realtime_plot_ready = self.tab2_realtime_plot.plot(np.random.normal(size=1000), np.random.normal(size=1000))
+		self.get_message = GetMessage()
+		self.get_message.start()
+		self.get_message.my_signal.connect(self.set_message)
 		self.timer = pg.QtCore.QTimer()
-		# print(self.get_message.my_signal)
-		self.paint_message.my_signal.connect(self.paint_target)
+		self.timer.timeout.connect(lambda: self.paint_message(self.message))
+		self.timer.start(300)
 		self.tab2_realtime_table = QTableWidget()
 		self.tab2_realtime_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 		self.tab2_realtime_table.setColumnCount(6)
 		self.tab2_realtime_table.setRowCount(10)
-		self.tab2_realtime_table.setHorizontalHeaderLabels(['ID', '垂直距离', '水平距离', '方位角度', '相对速度', '目标RCS'])
+		self.tab2_realtime_table.setHorizontalHeaderLabels(['ID', '垂直距离', '水平距离', '垂直速度', '水平速度', '目标RCS'])
 		# 位置初始化
 		self.tab2_layout_init()
 
@@ -448,15 +455,22 @@ class RadarTestMain(QMainWindow):
 		self.add_mission = AddMission()
 		self.add_mission.show()
 
-	def paint_target(self, message):
+	def set_message(self, message):
+		self.message = message
+
+	def paint_message(self, message):
 		new_message = np.array(message)
-		print(new_message[:, 1])
-		self.timer.timeout.connect(lambda: self.paint(new_message))
-		self.timer.start(200)
-
-	def paint(self, message):
-		self.tab2_realtime_plot.plot(message[:, 1], message[:, 2], pen=None, symbol='o')
-
+		if len(new_message) > 1:
+			# print(x)
+			# y = [new_message[i, 1] for i in range(len(new_message))]
+			# print(y)
+			# self.tab2_realtime_plot.setData(x, y)
+			self.tab2_realtime_plot_ready.setData(new_message[1:, 2], new_message[1:, 1], pen=None, symbol='o')
+			for i in range(len(new_message)-1):
+				for j in range(6):
+					self.tab2_realtime_table.setItem(i, j, QTableWidgetItem(str(new_message[1+i, j])))
+					item_ij = self.tab2_realtime_table.item(i, j)
+					item_ij.setTextAlignment(Qt.AlignCenter)
 
 	def tab3_ui(self):
 		pass

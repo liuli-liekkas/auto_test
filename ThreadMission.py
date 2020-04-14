@@ -2,7 +2,6 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from MachineClass import *
 import CanAnalysis
 import time
-import UIRadarTest
 import cantools
 from ctypes import wintypes
 import ctypes
@@ -94,26 +93,9 @@ class GetMessage(QThread):
 		self.can_control.init_channel(0)
 		while True:
 			self.can_control.get_message(0)
-			self.my_signal.emit(self.can_control.data)
-
-
-class PaintMessage(QThread):
-	my_signal = pyqtSignal(list)
-
-	def __init__(self):
-		super(PaintMessage, self).__init__()
-
-	def run(self):
-		self.can_control = CanAnalysis.CanControl()
-		self.can_control.open()
-		self.can_control.init_channel(0)
-		while True:
-			self.can_control.get_message(0)
-			self.data = self.can_control.data
-			self.my_signal.emit(self.data)
-			self.msleep(200)
+			self.my_signal.emit(self.can_control.data.tolist())
 
 
 if __name__ == '__main__':
 	can = GetMessage()
-	can.run(0)
+	can.run()

@@ -1,36 +1,49 @@
+import sys
+import random
 import numpy as np
 import pyqtgraph as pg
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
 
-app = pg.mkQApp()
 
-win = pg.GraphicsWindow()
-win.setWindowTitle(u'pyqtgraph plot demo')
-win.resize(600, 400)
+class Demo(QWidget):
+    def __init__(self):
+        super(Demo, self).__init__()
+        self.resize(600, 600)
 
-p = win.addPlot()
-p.showGrid(x=True, y=True)
-p.setLabel(axis='left', text=u'Amplitude / V')
-p.setLabel(axis='bottom', text=u't / s')
-p.setTitle('y1=sin(x)  y2=cos(x)')
-p.addLegend()
+        # 1
+        pg.setConfigOptions(leftButtonPan=False)
+        pg.setConfigOption('background', 'w')
+        pg.setConfigOption('foreground', 'k')
 
-curve1 = p.plot(pen='r', name='y1')
-curve2 = p.plot(pen='g', name='y2')
+        # 2
+        x = np.random.normal(size=1000)
+        y = np.random.normal(size=1000)
+        r_symbol = random.choice(['o', 's', 't', 't1', 't2', 't3','d', '+', 'x', 'p', 'h', 'star'])
+        r_color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k', 'd', 'l', 's'])
 
-Fs = 1024.0 #采样频率
-N = 1024    #采样点数
-f0 = 5.0    #信号频率
-pha = 0     #初始相位
-t = np.arange(N) / Fs   #时间向量
+        # 3
+        self.pw = pg.PlotWidget(self)
+        self.plot_data = self.pw.plot(x, y, pen=None, symbol=r_symbol, symbolBrush=r_color)
 
-def plotData():
-    global pha
-    pha += 10
-    curve1.setData(t, np.sin(2 * np.pi * f0 * t + pha*np.pi/180.0))
-    curve2.setData(t, np.cos(2 * np.pi * f0 * t + pha*np.pi/180.0))
+        # 4
+        self.plot_btn = QPushButton('Replot', self)
+        self.plot_btn.clicked.connect(self.plot_slot)
 
-timer = pg.QtCore.QTimer()
-timer.timeout.connect(plotData)
-timer.start(50)
+        self.v_layout = QVBoxLayout()
+        self.v_layout.addWidget(self.pw)
+        self.v_layout.addWidget(self.plot_btn)
+        self.setLayout(self.v_layout)
 
-app.exec_()
+    def plot_slot(self):
+        x = np.random.normal(size=1000)
+        y = np.random.normal(size=1000)
+        r_symbol = random.choice(['o', 's', 't', 't1', 't2', 't3', 'd', '+', 'x', 'p', 'h', 'star'])
+        r_color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k', 'd', 'l', 's'])
+        self.plot_data.setData(x, y, pen=None, symbol=r_symbol, symbolBrush=r_color)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    demo = Demo()
+    demo.show()
+    sys.exit(app.exec_())

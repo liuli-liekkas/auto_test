@@ -37,10 +37,7 @@ class CanControl:
         self.struct_initconfig = Struct_INIT_CONFIG(0, 0xFFFFFFFF, 0, 0, 0, 0x1C, 0)
         self.Struct_USBCAN2C = 4
         self.STATUS_OK = 1
-        self.data = np.zeros(shape=(25, 7))
-        for i in range(25):
-            self.data[i, 0] = i
-        self.data = self.data.tolist()
+        self.data = np.array([[-1, -1, -1, -1, -1, -1, -1]])
         # 定义DBC数据格式
         self.id_start = 0
         self.id_length = 8
@@ -132,13 +129,19 @@ class CanControl:
                 obj_dyn_prop = int(obj_dyn_prop_bin, 2) * self.dyn_prop_factor + self.dyn_prop_offset
                 obj_rcs_bin = message[self.rcs_start_handle:self.rcs_start_handle + self.rcs_length]
                 obj_rcs = int(obj_rcs_bin, 2) * self.rcs_factor + self.rcs_offset
-                # print(obj_id, round(obj_dist_long, 2), round(obj_dist_lat, 2), obj_verl_long, obj_verl_lat, obj_dyn_prop, obj_rcs)
-                self.data[obj_id][1] = round(obj_dist_long, 2)
-                self.data[obj_id][2] = round(obj_dist_lat, 2)
-                self.data[obj_id][3] = obj_verl_long
-                self.data[obj_id][4] = obj_verl_lat
-                self.data[obj_id][5] = obj_dyn_prop
-                self.data[obj_id][6] = obj_rcs
+                data_basic = np.array([obj_id, round(obj_dist_long, 2), round(obj_dist_lat, 2), obj_verl_long, obj_verl_lat, obj_rcs, obj_dyn_prop])
+                # 定义数据为新数据
+                message_status = 1
+                for i in range(len(self.data)):
+                    if self.data[i, 0] == data_basic[0]:
+                        self.data[i] = data_basic
+                        # print('数据刷新')
+                        # 数据状态更新
+                        message_status = 0
+                        break
+                if message_status == 1:
+                    self.data = np.row_stack((self.data, data_basic))
+                    # print('数据新增')
                 # print(self.data)
                 # end = time.clock()
                 # print(round(end-start, 3))
@@ -153,4 +156,5 @@ if __name__ == '__main__':
     can_control = CanControl()
     can_control.open()
     can_control.init_channel(0)
-    can_control.get_message(0)
+    while True:
+        can_control.get_message(0)
