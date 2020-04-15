@@ -4,13 +4,10 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 import sys
 import pyqtgraph as pg
-from MachineClass import *
 from ThreadMission import *
 import time
 import numpy as np
 import array
-import threading
-from queue import Queue
 
 
 # 主界面
@@ -23,7 +20,6 @@ class RadarTestMain(QMainWindow):
 		self.resize(1100, 700)
 		self.setWindowTitle("毫米波雷达测试系统")
 		self.data = array.array('i')
-		self.message = [[-1,-1,-1,-1,-1,-1,-1]]
 		self.center()
 		self.menu_init()
 		self.tab_menu_init()
@@ -238,12 +234,14 @@ class RadarTestMain(QMainWindow):
 		self.get_message.start()
 		self.get_message.my_signal.connect(self.set_message)
 		self.timer = pg.QtCore.QTimer()
+		# 初始化雷达目标信息
+		self.message = [[-1, -1, -1, -1, -1, -1, -1]]
 		self.timer.timeout.connect(lambda: self.paint_message(self.message))
 		self.timer.start(300)
 		self.tab2_realtime_table = QTableWidget()
 		self.tab2_realtime_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 		self.tab2_realtime_table.setColumnCount(6)
-		self.tab2_realtime_table.setRowCount(10)
+		self.tab2_realtime_table.setRowCount(30)
 		self.tab2_realtime_table.setHorizontalHeaderLabels(['ID', '垂直距离', '水平距离', '垂直速度', '水平速度', '目标RCS'])
 		# 位置初始化
 		self.tab2_layout_init()

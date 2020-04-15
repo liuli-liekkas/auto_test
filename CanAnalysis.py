@@ -4,6 +4,8 @@ from cantools import database
 import cantools
 import numpy as np
 import time
+import os
+import sys
 
 
 class Struct_INIT_CONFIG(ctypes.Structure):
@@ -34,6 +36,7 @@ class CanControl:
     def __init__(self):
         self.db = database.load_file('./dbc/ARS408_can_database.dbc')
         self.canDLL = ctypes.CDLL('D:\\files\python_learn\\auto_test\\dll\\ECanVci64.dll')
+        # self.canDLL = ctypes.CDLL('./dll/ECanVci64.dll')
         self.struct_initconfig = Struct_INIT_CONFIG(0, 0xFFFFFFFF, 0, 0, 0, 0x1C, 0)
         self.Struct_USBCAN2C = 4
         self.STATUS_OK = 1

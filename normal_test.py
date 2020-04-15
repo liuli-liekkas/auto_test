@@ -18,7 +18,7 @@ class Demo(QWidget):
         # 2
         x = np.random.normal(size=1000)
         y = np.random.normal(size=1000)
-        r_symbol = random.choice(['o', 's', 't', 't1', 't2', 't3','d', '+', 'x', 'p', 'h', 'star'])
+        r_symbol = random.choice(['o', 's', 't', 't1', 't2', 't3', 'd', '+', 'x', 'p', 'h', 'star'])
         r_color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k', 'd', 'l', 's'])
 
         # 3
