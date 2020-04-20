@@ -1,10 +1,6 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 from MachineClass import *
 import CanAnalysis
-import time
-import cantools
-from ctypes import wintypes
-import ctypes
 
 
 class CurrentAngleAzimuth(QThread):
@@ -91,9 +87,19 @@ class GetMessage(QThread):
 		self.can_control = CanAnalysis.CanControl()
 		self.can_control.open()
 		self.can_control.init_channel(0)
+		self.message = []
+		self.time_stamp = 0
 		while True:
 			self.can_control.get_message(0)
-			self.my_signal.emit(self.can_control.data.tolist())
+			if self.can_control.can_obj.ID == 1547:
+				# print(self.can_control.can_obj.TimeStamp - self.time_stamp)
+				if self.can_control.can_obj.TimeStamp - self.time_stamp > 30000:
+					self.my_signal.emit(self.message)
+					self.message = []
+					self.message.append(self.can_control.data)
+					self.time_stamp = self.can_control.can_obj.TimeStamp
+				elif self.can_control.can_obj.TimeStamp - self.time_stamp <= 30000:
+					self.message.append(self.can_control.data)
 
 
 if __name__ == '__main__':

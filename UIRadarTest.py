@@ -87,6 +87,10 @@ class RadarTestMain(QMainWindow):
 		turn_table_act = QAction('转台', self)
 		config_menu.addAction(turn_table_act)
 		turn_table_act.triggered.connect(self.turn_table_config)
+		# 自检菜单
+		radar_connection_act = QAction('连接雷达', self)
+		self_test_menu.addAction(radar_connection_act)
+		radar_connection_act.triggered.connect(self.get_radar_message)
 		# 工具菜单
 		# 串口调试工具
 		com_act = QAction("串口调试", self)
@@ -230,14 +234,6 @@ class RadarTestMain(QMainWindow):
 		self.tab2_realtime_plot.showGrid(x=True, y=True)
 		self.tab2_realtime_plot.setRange(xRange=[-5, 5], yRange=[0, 50])
 		self.tab2_realtime_plot_ready = self.tab2_realtime_plot.plot(np.random.normal(size=1000), np.random.normal(size=1000))
-		self.get_message = GetMessage()
-		self.get_message.start()
-		self.get_message.my_signal.connect(self.set_message)
-		self.timer = pg.QtCore.QTimer()
-		# 初始化雷达目标信息
-		self.message = [[-1, -1, -1, -1, -1, -1, -1]]
-		self.timer.timeout.connect(lambda: self.paint_message(self.message))
-		self.timer.start(300)
 		self.tab2_realtime_table = QTableWidget()
 		self.tab2_realtime_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 		self.tab2_realtime_table.setColumnCount(6)
@@ -433,6 +429,32 @@ class RadarTestMain(QMainWindow):
 		else:
 			self.tab2_speed_distinction_config_button.setEnabled(False)
 
+	# 自检菜单选项
+	# 雷达信号接收
+	def get_radar_message(self):
+		# 初始化雷达目标信息
+		self.message = []
+		self.get_message = GetMessage()
+		self.get_message.start()
+		self.get_message.my_signal.connect(self.set_message)
+		self.timer = pg.QtCore.QTimer()
+		self.timer.timeout.connect(lambda: self.paint_message(self.message))
+		self.timer.start(500)
+		
+	def set_message(self, message):
+		self.message = message
+
+	def paint_message(self, message):
+		new_message = np.array(message)
+		if len(new_message) > 0:
+			self.tab2_realtime_plot_ready.setData(new_message[:, 2], new_message[:, 1], pen=None, symbol='o')
+			# print(new_message)
+			for i in range(len(new_message)):
+				for j in range(6):
+					self.tab2_realtime_table.setItem(i, j, QTableWidgetItem(str(new_message[i, j])))
+					item_ij = self.tab2_realtime_table.item(i, j)
+					item_ij.setTextAlignment(Qt.AlignCenter)
+
 	# 设置菜单选项
 	# 电源模块主界面设置按钮跳转
 	def power_supply_config(self):
@@ -447,28 +469,11 @@ class RadarTestMain(QMainWindow):
 	# 目标模拟器主界面设置按钮跳转
 	def target_simulate_config(self):
 		self.target_simulate = ARTS()
-		self.target_simulate.show()
+		# self.target_simulate.show()
 
 	def add_mission_config(self):
 		self.add_mission = AddMission()
 		self.add_mission.show()
-
-	def set_message(self, message):
-		self.message = message
-
-	def paint_message(self, message):
-		new_message = np.array(message)
-		if len(new_message) > 1:
-			# print(x)
-			# y = [new_message[i, 1] for i in range(len(new_message))]
-			# print(y)
-			# self.tab2_realtime_plot.setData(x, y)
-			self.tab2_realtime_plot_ready.setData(new_message[1:, 2], new_message[1:, 1], pen=None, symbol='o')
-			for i in range(len(new_message)-1):
-				for j in range(6):
-					self.tab2_realtime_table.setItem(i, j, QTableWidgetItem(str(new_message[1+i, j])))
-					item_ij = self.tab2_realtime_table.item(i, j)
-					item_ij.setTextAlignment(Qt.AlignCenter)
 
 	def tab3_ui(self):
 		pass

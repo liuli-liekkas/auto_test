@@ -1,6 +1,7 @@
 from MachineClass import *
 from UIRadarTest import *
 import time
+import math
 # import winsound
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget
@@ -10,9 +11,9 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 class HorizontalPowerTest(RadarTestMain):
 	def __init__(self):
 		super(HorizontalPowerTest, self).__init__()
-		self.tab2_test_start_button.clicked.connect(self.get_message)
+		self.tab2_test_start_button.clicked.connect(self.start_test)
 		self.my_thread = MyThread()
-		self.my_thread.my_signal.connect(self.set_label)
+		self.my_thread.my_signal.connect(self.message_detail)
 
 		# turn_table = TurnTable()
 		# target_simulate = ARTS()
@@ -59,16 +60,31 @@ class HorizontalPowerTest(RadarTestMain):
 				self.motor_pattern_one_way_config,
 				self.test_mode_config))
 
-	def set_label(self, message):
-		self.tab2_status_test_edit.append(message)
-		# self.tab2_status_test_edit.moveCursor(TextEdit.textCursor().End)
-
-	def get_message(self):
+	def message_detail(self, message_str, message_list):
+		self.tab2_status_test_edit.append(message_str)
+		if len(self.message) > 1:
+			test_validity = 'True'
+		else:
+			test_validity = 'False'
+		print(self.message)
+		print(message_list)
+		new_message = []
+		for i in range(len(self.message)):
+			if abs(self.message[i][1] - message_list[1]) < 5:
+				new_message = self.message[i]
+		print(new_message)
+		if new_message:
+			delta_anger = message_list[0] - math.degrees(math.atan(new_message[2] / new_message[1]))
+			delta_distance = message_list[1] - new_message[1]
+		# print(delta_anger, delta_distance)
+			self.tab2_status_test_edit.append('测试有效性：{0}---角度测量误差：{1}---距离测量误差：{2}'.format(test_validity, round(delta_anger, 2), round(delta_distance, 2)))
+		
+	def start_test(self):
 		self.my_thread.start()
 
 
 class MyThread(QThread):
-	my_signal = pyqtSignal(str)
+	my_signal = pyqtSignal(str, list)
 
 	def __init__(self):
 		super(MyThread, self).__init__()
@@ -95,21 +111,20 @@ class MyThread(QThread):
 		self.test_mode_config = self.horizontal_power_test_config[10].split(':')[1][0:-1]
 		self.turn_table.move_to_position(2, self.min_angle_config, 1)
 		self.sleep(5)
-		self.my_signal.emit('------转台位置初始化，开始测试------' + time.strftime('%H:%M:%S'))
+		# self.my_signal.emit('------转台位置初始化，开始测试------' + time.strftime('%H:%M:%S'), [0, 0])
 		self.target_simulate.set_mode_static()
 		self.target_simulate.set_tx_chan_enable(1, 0, 0, 0)
 		self.target_simulate.set_tr_on()
 		self.target_simulate.set_output_on()
 		if self.test_mode_config == '先距离后角度':
 			for anger in range(self.min_angle_config, self.max_angle_config + 1, self.step_angle_config):
-				self.turn_table.move_to_position(2, anger, 1)
-				self.my_signal.emit(
-					'------当前角度：' + str(anger) + '°' + '------' + time.strftime('%H:%M:%S'))
+				self.turn_table.move_to_position(2, anger+0.6, 3)
 				self.turn_table.get_position(2)
 				for distance in range(self.min_range_config, self.max_range_config + 1, self.step_range_config):
-					self.target_simulate.set_tx_chan_static(0, 0, 0, 0, -10, -10, -10, -10, distance, distance, distance, distance)
+					self.target_simulate.set_tx_chan_static(0, 0, 0, 0, -10, -10, -10, -10, distance-2.59, distance-2.59, distance-2.59, distance-2.59)
+					time.sleep(3)
 					self.my_signal.emit(
-						'------当前距离：' + str(distance) + 'm' + '------' + time.strftime('%H:%M:%S'))
+						'当前角度{0}°，当前距离：{1}m---{2}---'.format(str(anger), str(distance), time.strftime('%H:%M:%S')), [anger, distance])
 					self.sleep(self.dwell_time_config)
 					# winsound.Beep(600, 1000)
 			self.target_simulate.disconnect()
