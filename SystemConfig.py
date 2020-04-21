@@ -43,7 +43,7 @@ class HorizontalPowerTest(RadarTestMain):
 			'最小测试角度设置为：%s°\n'
 			'最大测试角度设置为：%s°\n'
 			'步进距离设置为：%sm\n'
-			'步进角度设置为：%sm\n'
+			'步进角度设置为：%s°\n'
 			'驻留时间设置为：%ss\n'
 			'运动模式设置为：%s\n'
 			'单向运动模式设置为：%s\n'
@@ -66,18 +66,20 @@ class HorizontalPowerTest(RadarTestMain):
 			test_validity = 'True'
 		else:
 			test_validity = 'False'
-		print(self.message)
-		print(message_list)
+		# print(self.message)
+		# print(message_list)
 		new_message = []
 		for i in range(len(self.message)):
 			if abs(self.message[i][1] - message_list[1]) < 5:
 				new_message = self.message[i]
-		print(new_message)
+		# print(new_message)
 		if new_message:
 			delta_anger = message_list[0] - math.degrees(math.atan(new_message[2] / new_message[1]))
 			delta_distance = message_list[1] - new_message[1]
 		# print(delta_anger, delta_distance)
-			self.tab2_status_test_edit.append('测试有效性：{0}---角度测量误差：{1}---距离测量误差：{2}'.format(test_validity, round(delta_anger, 2), round(delta_distance, 2)))
+			self.tab2_status_test_edit.append(
+				'测试有效性：{0},角度测量误差：{1}°,距离测量误差：{2}m'.
+				format(test_validity, round(delta_anger, 2), round(delta_distance, 2)))
 		
 	def start_test(self):
 		self.my_thread.start()

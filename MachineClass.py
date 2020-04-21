@@ -10,32 +10,32 @@ class RSC:
 		self.freq = freq
 		self.address = 'TCPIP::%s::inst0::INSTR' % self.ip
 		self.resourceManager = pyvisa.ResourceManager()
-
+	
 	def open(self):
 		self.instance = self.resourceManager.open_resource(self.address)
-
+	
 	def close(self):
 		if self.instance is not None:
 			self.instance.close()
 			self.instance = None
-
+	
 	def reset(self):
 		self.instance.write('*RST')
-
+	
 	def read_idn(self):
 		idn = self.instance.query('*IDN?')
 		print(idn)
 		return idn
-
+	
 	def set_att(self):
 		self.instance.write('ATT1:ATT %s' % self.att)
-
+	
 	def set_freq(self):
 		self.instance.write('ATT1:FREQ %s' % self.freq)
-
+	
 	def set_corr_on(self):
 		self.instance.write('ATT1:CORR ON')
-
+	
 	def set_corr_off(self):
 		self.instance.write('ATT1:CORR OFF')
 
@@ -43,7 +43,7 @@ class RSC:
 class HMP:
 	def __init__(self):
 		self.resourceManager = pyvisa.ResourceManager()
-
+	
 	def open(self, ip):
 		address = 'TCPIP::%s::5025::SOCKET' % ip
 		self.instance = self.resourceManager.open_resource(address, read_termination='\n')
@@ -54,67 +54,67 @@ class HMP:
 			result = False
 			print('连接失败')
 		return result
-
+	
 	def close(self):
 		self.instance.close()
 		self.instance = None
-
+	
 	def reset(self):
 		self.instance.write('*RST')
-
+	
 	def set_default(self, chan, volt, curr):
 		self.instance.write('INST:NSEL %s' % chan)
 		self.instance.write('VOLT %s' % volt)
 		self.instance.write('CURR %s' % curr)
-
+	
 	def return_status_idn(self):
 		idn = self.instance.query('*IDN?')
 		print('设备IDN号为：' + idn)
 		return idn
-
+	
 	def return_status_chan(self):
 		chan = self.instance.query('INST:NSEL?')
 		print('当前选择的通道：' + chan)
 		return chan
-
+	
 	def return_status_volt(self):
 		volt = self.instance.query('VOLT?')
 		print('当前设置的电压值：' + volt)
 		return volt
-
+	
 	def return_status_curr(self):
 		curr = self.instance.query('CURR?')
 		print('当前设置的电流值：' + curr)
 		return curr
-
+	
 	def return_status_volt_output(self):
 		volt = self.instance.query('MEAS:VOLT?')
 		print('当前输出的电压值：' + volt)
 		return volt
-
+	
 	def return_status_curr_output(self):
 		curr = self.instance.query('MEAS:CURR?')
 		print('当前输出的电流值：' + curr)
 		return curr
-
+	
 	def select_chan(self, chan):
 		self.instance.write('INST:NSEL %s' % chan)
-
+	
 	def set_volt(self, volt):
 		self.instance.write('VOLT %s' % volt)
-
+	
 	def set_curr(self, curr):
 		self.instance.write('CURR %s' % curr)
-
+	
 	def set_chan_on(self):
 		self.instance.write('OUTP:SEL ON')
-
+	
 	def set_chan_off(self):
 		self.instance.write('OUTP:SEL OFF')
-
+	
 	def set_output_on(self):
 		self.instance.write('OUTP ON')
-
+	
 	def set_output_off(self):
 		self.instance.write('OUTP OFF')
 
@@ -124,18 +124,18 @@ class FSW:
 		self.ip = ip
 		self.address = 'TCPIP0::%s::inst0::INSTR' % self.ip
 		self.resourceManager = pyvisa.ResourceManager()
-
+	
 	def open(self):
 		self.instance = self.resourceManager.open_resource(self.address)
-
+	
 	def close(self):
 		if self.instance is not None:
 			self.instance.close()
 			self.instance = None
-
+	
 	def reset(self):
 		self.instance.write('*RST')
-
+	
 	def read_idn(self):
 		idn = self.instance.query("*IDN?")
 		print(idn)
@@ -146,18 +146,18 @@ class RTO:
 		self.ip = ip
 		self.address = 'TCPIP0::%s::inst0::INSTR' % self.ip
 		self.resourceManager = pyvisa.ResourceManager()
-
+	
 	def open(self):
 		self.instance = self.resourceManager.open_resource(self.address)
-
+	
 	def close(self):
 		if self.instance is not None:
 			self.instance.close()
 			self.instance = None
-
+	
 	def reset(self):
 		self.instance.write('*RST')
-
+	
 	def read_idn(self):
 		idn = self.instance.query('*IDN?')
 		print(idn)
@@ -169,18 +169,18 @@ class SMW:
 		self.ip = ip
 		self.address = 'TCPIP::%s::inst0::INSTR' % self.ip
 		self.resourceManager = pyvisa.ResourceManager()
-
+	
 	def open(self):
 		self.instance = self.resourceManager.open_resource(self.address)
-
+	
 	def close(self):
 		if self.instance is not None:
 			self.instance.close()
 			self.instance = None
-
+	
 	def reset(self):
 		self.instance.write('*RST')
-
+	
 	def read_idn(self):
 		idn = self.instance.query('*IDN?')
 		print(idn)
@@ -197,7 +197,7 @@ class ARTS:
 		self.freq = 76250000
 		self.gain_s = 46
 		self.rut_distance = 0
-
+	
 	def connect(self, ip):
 		self.ip = ctypes.c_char_p(ip.encode('utf-8'))
 		if self.status == 0:
@@ -209,7 +209,7 @@ class ARTS:
 				print('连接失败')
 		else:
 			print('ARTS已连接')
-
+	
 	def disconnect(self):
 		if self.status == 1:
 			result = self.dll.Disconnect()
@@ -220,7 +220,7 @@ class ARTS:
 				print('断开连接失败')
 		else:
 			print('ARTS未连接')
-
+	
 	def check_connect_status(self):
 		self.status = self.dll.CheckConnectionStatus()
 		if self.status == 1:
@@ -228,20 +228,20 @@ class ARTS:
 		else:
 			print('系统未连接')
 		return self.status
-
+	
 	def reboot(self):
 		result = self.dll.Reboot()
 		if result == 0:
 			print('系统开始重启......')
 		return result
-
+	
 	def set_freq(self, freq):
 		self.freq = freq
 		result = self.dll.SetRfFreq_kHz(ctypes.byref(ctypes.c_int(freq)))
 		if result == 0:
 			print('频率已设置为%dKHz' % freq)
 		return result
-
+	
 	def set_trims(self, gain_trim, range_trim, rut_distance):
 		self.gain_trim = ctypes.c_double(gain_trim)
 		self.range_trim = ctypes.c_double(range_trim)
@@ -252,37 +252,37 @@ class ARTS:
 			self.rut_distance)
 		if result == 0:
 			print('已设置GainTrim为%ddB，已设置RangeTrim为%dm,已设置RUTDistance为%dm ' %
-			      (gain_trim, range_trim, rut_distance))
+				  (gain_trim, range_trim, rut_distance))
 		return result
-
+	
 	def set_rx_attenuation(self, attenuation):
 		result = self.dll.SetRxAttn(attenuation)
 		if result == 0:
 			print('RF Attenuation已成功设置为%ddB' % attenuation)
 		return result
-
+	
 	def set_adc_saturation_threshold(self, threshold):
 		result = self.dll.SetAdcSatThreshBackoff(threshold)
 		if result == 0:
 			print('ADC采样阈值已成功设置为%ddB' % threshold)
 		return result
-
+	
 	def set_mode_static(self):
 		result = self.dll.SetStaticMode(1)
 		if result == 0:
 			print('已设置为静态工作模式')
 		return result
-
+	
 	def set_mode_dynamic(self):
 		result = self.dll.SetStaticMode(0)
 		if result == 0:
 			self.mode = 0
 			print('已设置为动态工作模式')
 		return result
-
+	
 	def set_tx_chan_static(self, speed_ch1, speed_ch2, speed_ch3, speed_ch4,
-	                       rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4,
-	                       range_ch1, range_ch2, range_ch3, range_ch4):
+			rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4,
+			range_ch1, range_ch2, range_ch3, range_ch4):
 		# Set Tx Channel Parameters in "normal operating units": Speed (kph), Gain (dB), Range (m).
 		wave_speed = 3 * 10 ** 8
 		wave_period = 1 / (self.freq * 10 ** 3)
@@ -318,22 +318,22 @@ class ARTS:
 			ctypes.byref(self.range_ch4))
 		if result == 0:
 			print('静态目标设置成功\n'
-			      '目标1：速度%dkm/h，距离%dm，RCS%ddBsm\n'
-			      '目标2：速度%dkm/h，距离%dm，RCS%ddBsm\n'
-			      '目标3：速度%dkm/h，距离%dm，RCS%ddBsm\n'
-			      '目标4：速度%dkm/h，距离%dm，RCS%ddBsm\n' %
-			      (speed_ch1, range_ch1, rcs_ch1,
-			       speed_ch2, range_ch2, rcs_ch2,
-			       speed_ch3, range_ch3, rcs_ch3,
-			       speed_ch4, range_ch4, rcs_ch4))
+				  '目标1：速度%dkm/h，距离%dm，RCS%ddBsm\n'
+				  '目标2：速度%dkm/h，距离%dm，RCS%ddBsm\n'
+				  '目标3：速度%dkm/h，距离%dm，RCS%ddBsm\n'
+				  '目标4：速度%dkm/h，距离%dm，RCS%ddBsm\n' %
+				  (speed_ch1, range_ch1, rcs_ch1,
+				   speed_ch2, range_ch2, rcs_ch2,
+				   speed_ch3, range_ch3, rcs_ch3,
+				   speed_ch4, range_ch4, rcs_ch4))
 		return result
-
+	
 	def set_tx_chan_dynamic(self,
-	                        start_speed_ch1, start_speed_ch2, start_speed_ch3, start_speed_ch4,
-	                        stop_speed_ch1, stop_speed_ch2, stop_speed_ch3, stop_speed_ch4,
-	                        start_range_ch1, start_range_ch2, start_range_ch3, start_range_ch4,
-	                        stop_range_ch1, stop_range_ch2, stop_range_ch3, stop_range_ch4,
-	                        rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4):
+			start_speed_ch1, start_speed_ch2, start_speed_ch3, start_speed_ch4,
+			stop_speed_ch1, stop_speed_ch2, stop_speed_ch3, stop_speed_ch4,
+			start_range_ch1, start_range_ch2, start_range_ch3, start_range_ch4,
+			stop_range_ch1, stop_range_ch2, stop_range_ch3, stop_range_ch4,
+			rcs_ch1, rcs_ch2, rcs_ch3, rcs_ch4):
 		# // enable 1/R^4 power attenuation
 		# // 0=no file created; 1=binary file; 2=ASCII file
 		# // can be NULL if no file created
@@ -388,19 +388,19 @@ class ARTS:
 			1, 0)
 		if result == 0:
 			print('静态目标设置成功\n'
-			      '目标1：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
-			      '目标2：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
-			      '目标3：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
-			      '目标4：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n' %
-			      (start_speed_ch1, stop_speed_ch1, start_range_ch1, stop_range_ch1, rcs_ch1,
-			       start_speed_ch2, stop_speed_ch2, start_range_ch2, stop_range_ch2, rcs_ch2,
-			       start_speed_ch3, stop_speed_ch3, start_range_ch3, stop_range_ch3, rcs_ch3,
-			       start_speed_ch4, stop_speed_ch4, start_range_ch4, stop_range_ch4, rcs_ch4,
-			       ))
+				  '目标1：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
+				  '目标2：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
+				  '目标3：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n'
+				  '目标4：起始速度%dkm/h，终止速度%dkm/h，起始距离%dm，终止距离%dm，RCS%ddBsm\n' %
+				  (start_speed_ch1, stop_speed_ch1, start_range_ch1, stop_range_ch1, rcs_ch1,
+				   start_speed_ch2, stop_speed_ch2, start_range_ch2, stop_range_ch2, rcs_ch2,
+				   start_speed_ch3, stop_speed_ch3, start_range_ch3, stop_range_ch3, rcs_ch3,
+				   start_speed_ch4, stop_speed_ch4, start_range_ch4, stop_range_ch4, rcs_ch4,
+				   ))
 		# if r4_enable == 1:
 		#     print('功率距离自适应开启')
 		return result
-
+	
 	def set_tx_chan_enable(self, tx1, tx2, tx3, tx4):
 		# Transmit Channel Enable. Enables (1) or disables (0) each of the four transmit channels.
 		result = self.dll.TxChanEnable(tx1, tx2, tx3, tx4)
@@ -423,7 +423,7 @@ class ARTS:
 			else:
 				print('通道4关闭')
 		return result
-
+	
 	def download_wave_form(self, waveform_format_code):
 		# // 0=DLL internal memory; 1=binary file; 2=ASCII file
 		# // can be NULL if no file used
@@ -432,7 +432,7 @@ class ARTS:
 			print('波形入口已选择')
 			if waveform_format_code == 0:
 				print('波形入口为当前界面')
-
+	
 	def run_wave_form(self, continuous, ext_trigger):
 		# // 0=one-shot playback; 1=continuously looping playback
 		# // 0=start playback immediately; 1=wait for external trigger
@@ -447,13 +447,13 @@ class ARTS:
 				print('发射模式不载入外部触发信号')
 			else:
 				print('发射模式载入外部触发信号')
-
+	
 	def reset(self):
 		result = self.dll.Reset()
 		if result == 0:
 			print('系统完成重置')
 		return result
-
+	
 	def set_tr_on(self):
 		result = 1
 		if self.dll.CheckConnectionStatus() == 1:
@@ -464,7 +464,7 @@ class ARTS:
 		else:
 			print('ARTS未连接')
 		return result
-
+	
 	def set_tr_off(self):
 		result = 1
 		if self.dll.CheckConnectionStatus() == 1:
@@ -475,7 +475,7 @@ class ARTS:
 		else:
 			print('ARTS未连接')
 		return result
-
+	
 	def set_output_on(self):
 		result = 1
 		if self.dll.CheckConnectionStatus() == 1:
@@ -486,7 +486,7 @@ class ARTS:
 		else:
 			print('ARTS未连接')
 		return result
-
+	
 	def set_output_off(self):
 		result = 1
 		if self.dll.CheckConnectionStatus() == 1:
@@ -497,7 +497,7 @@ class ARTS:
 		else:
 			print('ARTS未连接')
 		return result
-
+	
 	def get_system_status(self):
 		self.dll.GetSystemStatus()
 
@@ -509,9 +509,9 @@ class TurnTable:
 	# fSetVel：° / s（对转台而言）或者mm / s(对扫描架而言)
 	# iDevice：设备地址号，转台iDevice = 0。
 	def __init__(self):
-		self.dll = ctypes.CDLL('D:\\files\python_learn\\auto_test\\dll\\PcommDllx64.dll')
+		self.dll = ctypes.CDLL("D:\\files\python_learn\\auto_test\\dll\\PcommDllx64.dll")
 		self.i_device = ctypes.c_short(0)
-
+	
 	def connect(self):
 		# // 参数：iDevice –设备地址号，对本扫描架来说iDevice = 0；
 		# // 返回值：true - 成功、false - 失败
@@ -520,7 +520,7 @@ class TurnTable:
 			print('转台连接成功')
 		else:
 			print('转台连接失败')
-
+	
 	def disconnect(self):
 		# // 参数：iDevice –设备地址号；
 		# // 返回值：true - 成功、false - 失败
@@ -529,7 +529,7 @@ class TurnTable:
 			print('转台断开成功')
 		else:
 			print('转台断开失败')
-
+	
 	def move_to_position(self, n_axis, set_pos, set_vel, b_abs=True):
 		# // 参数：fSetPos –对应轴号所设置的位置值；
 		# // 参数：fSetVel –对应轴号所设置的速度值；
@@ -543,7 +543,7 @@ class TurnTable:
 		if result == 1:
 			print('开始常规模式转动' + str(set_pos) + '°\n')
 		return result
-
+	
 	def move_to_position_by_type(self, n_axis, to_start, to_end, to_speed, start_equ, end_equ, step_pos, speed, delta_step, i_time):
 		# // 参数：iDevice –设备地址号；
 		# // 参数：nAxis –轴号；
@@ -561,7 +561,7 @@ class TurnTable:
 		if result == 1:
 			print('开始TTL模式转动')
 		return result
-
+	
 	def get_motor_idle(self, n_axis):
 		# // 电机运动状态
 		# // 是否停止，TRUE - 停止1，FALSE - 运动；
@@ -571,7 +571,7 @@ class TurnTable:
 		else:
 			print('电机处于运动状态')
 		return result
-
+	
 	def get_pos_limit(self, n_axis):
 		# // 是否正限位，TRUE - 正限位，FALSE - 未正限位；
 		result = self.dll.GetPosLimit(self.i_device, ctypes.c_short(n_axis))
@@ -580,7 +580,7 @@ class TurnTable:
 		else:
 			print('电机未正限位')
 		return result
-
+	
 	def get_neg_limit(self, n_axis):
 		# // 是否负限位，TRUE - 负限位，FALSE - 未负限位；
 		result = self.dll.GetNegLimit(self.i_device, ctypes.c_short(n_axis))
@@ -589,7 +589,7 @@ class TurnTable:
 		else:
 			print('电机未负限位')
 		return result
-
+	
 	def get_home_complete(self, n_axis):
 		# // 寻零是否完成，TRUE - 寻零完成，FALSE - 寻零未完成；
 		result = self.dll.GetHomeComplete(self.i_device, ctypes.c_short(n_axis))
@@ -598,7 +598,7 @@ class TurnTable:
 		else:
 			print('电机未完成寻零')
 		return result
-
+	
 	def stop(self, n_axis):
 		# // 停止转动；nAxis - 轴，详见前文说明；
 		# // 返回值：true - 成功、false - 失败
@@ -606,7 +606,7 @@ class TurnTable:
 		if result == 1:
 			print('设备已停止转动')
 		return result
-
+	
 	def s_home(self, n_axis):
 		# // 停止转动；nAxis - 轴，详见前文说明；
 		# // 返回值：true - 成功、false - 失败
@@ -614,7 +614,7 @@ class TurnTable:
 		if result == 1:
 			print('设备开始寻零')
 		return result
-
+	
 	def get_position(self, n_axis):
 		# // 获取位置；nAxis - 轴，详见前文说明；
 		# // 参数iDevice恒定为0；
@@ -638,7 +638,7 @@ if __name__ == '__main__':
 	# time.sleep(3)
 	# rsc.set_corr_off()
 	# rsc.close()
-
+	
 	# HMP连接测试
 	# hmp = HMP()
 	# hmp.open('192.168.0.105')
@@ -652,7 +652,7 @@ if __name__ == '__main__':
 	# hmp.read_idn()
 	# hmp.return_status()
 	# hmp.close()
-
+	
 	# FSW连接测试
 	# fsw = FSW('192.168.0.30')
 	# fsw.open()
@@ -660,19 +660,19 @@ if __name__ == '__main__':
 	# fsw.reset()
 	# fsw.read_idn()
 	# fsw.close()
-
+	
 	# RTO连接测试
 	# rto = RTO('192.168.0.33')
 	# rto.open()
 	# rto.read_idn()
 	# rto.close()
-
+	
 	# SMW连接测试
 	# smw = SMW('192.168.0.22')
 	# smw.open()
 	# smw.read_idn()
 	# smw.close()
-
+	
 	# turntable连接测试
 	# turntable = TurnTable()
 	# turntable.connect()
@@ -682,36 +682,36 @@ if __name__ == '__main__':
 	# turntable.get_position(1)
 	# turntable.s_home(1)
 	# turntable.s_home(2)
-
+	
 	# ARTS连接测试
 	arts = ARTS()
 	arts.connect('192.168.0.20')
-	# time.sleep(1)
-	# arts.set_freq(76250000)
-	# arts.set_tr_on()
-	# time.sleep(2)
-	# arts.set_tr_off()
-	# time.sleep(2)
-	# arts.set_mode_static()
-	# arts.set_mode_dynamic()
-	# arts.reset()
-	# arts.set_trims(10, 10, 5)
-	# time.sleep(2)
-	# arts.set_tx_chan_static(0,0,0,0,-5,10,10,-10,100,80,120,140)
-	# arts.set_tx_chan_dynamic(5, 20, 30, 40, 5, 20, 30, 40, 80, 100, 110, 120, 180, 190, 200, 210, 15, -5, -5, -5)
-	# arts.reset()
-	# time.sleep(4)
-	# arts.set_tx_chan_enable(1, 0, 0, 0)
-	# time.sleep(1)
-	# arts.set_tr_on()
-	# time.sleep(4)
-	# arts.set_output_on()
-	# time.sleep(3)
-	# arts.download_wave_form(0)
-	# time.sleep(4)
-	# arts.run_wave_form(1, 0)
-	# time.sleep(4)
-	# arts.set_output_off()
-	# time.sleep(2)
-	# arts.set_tr_off()
-	# arts.disconnect()
+# time.sleep(1)
+# arts.set_freq(76250000)
+# arts.set_tr_on()
+# time.sleep(2)
+# arts.set_tr_off()
+# time.sleep(2)
+# arts.set_mode_static()
+# arts.set_mode_dynamic()
+# arts.reset()
+# arts.set_trims(10, 10, 5)
+# time.sleep(2)
+# arts.set_tx_chan_static(0,0,0,0,-5,10,10,-10,100,80,120,140)
+# arts.set_tx_chan_dynamic(5, 20, 30, 40, 5, 20, 30, 40, 80, 100, 110, 120, 180, 190, 200, 210, 15, -5, -5, -5)
+# arts.reset()
+# time.sleep(4)
+# arts.set_tx_chan_enable(1, 0, 0, 0)
+# time.sleep(1)
+# arts.set_tr_on()
+# time.sleep(4)
+# arts.set_output_on()
+# time.sleep(3)
+# arts.download_wave_form(0)
+# time.sleep(4)
+# arts.run_wave_form(1, 0)
+# time.sleep(4)
+# arts.set_output_off()
+# time.sleep(2)
+# arts.set_tr_off()
+# arts.disconnect()

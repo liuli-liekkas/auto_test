@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/config/HorizontalPowerTest.txt" charset="GBK" />
     <file url="file://$PROJECT_DIR$/config/PowerSupply.txt" charset="GBK" />
     <file url="file://$PROJECT_DIR$/config/TurnTable.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/config/VerticalPowerTest.txt" charset="GBK" />
   </component>
 </project>

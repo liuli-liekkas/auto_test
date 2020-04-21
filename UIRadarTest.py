@@ -4,7 +4,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 import sys
 import pyqtgraph as pg
-# from ThreadMission import *
+from ThreadMission import *
 import time
 import numpy as np
 import array
@@ -61,7 +61,8 @@ class RadarTestMain(QMainWindow):
 		# 新建
 		new_mission_act = QAction('新建', self)
 		mission_menu.addAction(new_mission_act)
-		new_mission_act.triggered.connect(self.add_mission_config)
+		self.add_mission = AddMission()
+		new_mission_act.triggered.connect(self.add_mission.show)
 		# 修改
 		edit_mission_act = QAction('修改', self)
 		mission_menu.addAction(edit_mission_act)
@@ -69,7 +70,8 @@ class RadarTestMain(QMainWindow):
 		# 配置菜单
 		# 电源
 		power_supply_act = QAction('电源', self)
-		power_supply_act.triggered.connect(self.power_supply_config)
+		self.power_supply = PowerSupplyConfig()
+		power_supply_act.triggered.connect(self.power_supply.show)
 		config_menu.addAction(power_supply_act)
 		# 频谱仪
 		frequency_analysis_act = QAction('频谱仪', self)
@@ -86,7 +88,8 @@ class RadarTestMain(QMainWindow):
 		# 转台
 		turn_table_act = QAction('转台', self)
 		config_menu.addAction(turn_table_act)
-		turn_table_act.triggered.connect(self.turn_table_config)
+		self.turn_table = TurnTableConfig()
+		turn_table_act.triggered.connect(self.turn_table.show)
 		# 自检菜单
 		radar_connection_act = QAction('连接雷达', self)
 		self_test_menu.addAction(radar_connection_act)
@@ -191,8 +194,9 @@ class RadarTestMain(QMainWindow):
 		self.tab2_test_stop_button = QPushButton('终止测试')
 		self.tab2_horizontal_power_config_button = QPushButton('设置')
 		self.tab2_horizontal_power_config_button.setEnabled(False)
+		self.horizontal_power_config_menu_window = HorizontalPowerMenu()
 		self.tab2_horizontal_power_config_button.clicked.connect(
-			self.horizontal_power_config_window)
+			self.horizontal_power_config_menu_window.show)
 		# 水平威力范围按钮显示，勾取后可以设置
 		self.tab2_horizontal_power_box.stateChanged.connect(lambda:
 			self.tab2_horizontal_power_config_button.setEnabled(True)
@@ -200,6 +204,7 @@ class RadarTestMain(QMainWindow):
 			else self.tab2_horizontal_power_config_button.setEnabled(False))
 		self.tab2_vertical_power_config_button = QPushButton('设置')
 		self.tab2_vertical_power_config_button.setEnabled(False)
+		
 		# 垂直威力范围按钮显示，勾取后可以设置
 		self.tab2_vertical_power_box.stateChanged.connect(lambda:
 			self.tab2_vertical_power_config_button.setEnabled(True)
@@ -270,8 +275,15 @@ class RadarTestMain(QMainWindow):
 			else self.tab2_speed_distinction_config_button.setEnabled(False))
 		# 状态栏
 		self.tab2_status_test_label = QLabel('测试状态')
-		self.tab2_status_test_edit = QTextEdit()
+		self.tab2_status_test_edit = QTextBrowser()
 		self.tab2_status_test_edit.setStyleSheet('background-color:white;font-size:12px')
+		# 状态栏始终显示底部
+		self.tab2_status_test_edit.ensureCursorVisible()		# 游标可用
+		cursor = self.tab2_status_test_edit.textCursor()		# 设置游标
+		pos = len(self.tab2_status_test_edit.toPlainText())		# 获取文本尾部的位置
+		cursor.setPosition(pos)									# 游标位置设置为尾部
+		self.tab2_status_test_edit.setTextCursor(cursor)		# 滚动到游标位置
+		# 试验结果栏
 		self.tab2_result_test_label = QLabel('试验结果')
 		self.tab2_result_test_edit = QTextBrowser()
 		# 目标信息栏
@@ -357,46 +369,6 @@ class RadarTestMain(QMainWindow):
 		self.tab2_5_v_layout.addWidget(self.tab2_3_h_splitter)
 		self.tab2_central_widget.setLayout(self.tab2_5_v_layout)
 
-	# 水平威力范围主界面设置按钮跳转
-	def horizontal_power_config_window(self):
-		self.horizontal_power_config_menu_window = HorizontalPowerMenu()
-		self.horizontal_power_config_menu_window.show()
-		self.horizontal_power_config_menu_window.confirm_button.clicked.connect(
-			self.horizontal_power_config_confirm)
-
-	# 水平威力范围副界面确认按钮功能
-	def horizontal_power_config_confirm(self):
-		if self.horizontal_power_config_menu_window.motor_pattern_round_trip_button.isChecked():
-			motor_pattern = '往返运动'
-			motor_pattern_one_way = '无效'
-		else:
-			motor_pattern = '单向运动'
-			motor_pattern_one_way = self.horizontal_power_config_menu_window.motor_pattern_one_way_combo.currentText()
-		self.tab2_status_test_edit.setPlainText(
-			'目标RCS设置为:%sdBsm\n'
-			'最小测试距离设置为：%sm\n'
-			'最大测试距离设置为：%sm\n'
-			'最小测试角度设置为：%s°\n'
-			'最大测试角度设置为：%s°\n'
-			'步进距离设置为：%sm\n'
-			'步进角度设置为：%sm\n'
-			'驻留时间设置为：%ss\n'
-			'运动模式设置为：%s\n'
-			'单向运动模式设置为：%s\n'
-			'测试模式设置为：%s\n' % (
-				self.horizontal_power_config_menu_window.target_rcs_edit.toPlainText(),
-				self.horizontal_power_config_menu_window.min_range_edit.toPlainText(),
-				self.horizontal_power_config_menu_window.max_range_edit.toPlainText(),
-				self.horizontal_power_config_menu_window.min_angle_edit.toPlainText(),
-				self.horizontal_power_config_menu_window.max_angle_edit.toPlainText(),
-				self.horizontal_power_config_menu_window.step_range_edit.toPlainText(),
-				self.horizontal_power_config_menu_window.step_angle_edit.toPlainText(),
-				self.horizontal_power_config_menu_window.dwell_time_edit.toPlainText(),
-				motor_pattern,
-				motor_pattern_one_way,
-				self.horizontal_power_config_menu_window.test_mode_combo.currentText()))
-		self.horizontal_power_config_menu_window.close()
-
 	# 自检菜单选项
 	# 雷达信号接收
 	def get_radar_message(self):
@@ -414,6 +386,7 @@ class RadarTestMain(QMainWindow):
 
 	def paint_message(self, message):
 		new_message = np.array(message)
+		self.tab2_realtime_table.clear()
 		if len(new_message) > 0:
 			self.tab2_realtime_plot_ready.setData(new_message[:, 2], new_message[:, 1], pen=None, symbol='o')
 			# print(new_message)
@@ -423,29 +396,14 @@ class RadarTestMain(QMainWindow):
 					item_ij = self.tab2_realtime_table.item(i, j)
 					item_ij.setTextAlignment(Qt.AlignCenter)
 
-	# 设置菜单选项
-	# 电源模块主界面设置按钮跳转
-	def power_supply_config(self):
-		self.power_supply = PowerSupplyConfig()
-		self.power_supply.show()
-
-	# 转台主界面设置按钮跳转
-	def turn_table_config(self):
-		self.turn_table = TurnTableConfig()
-		self.turn_table.show()
-
 	# 目标模拟器主界面设置按钮跳转
 	def target_simulate_config(self):
 		self.target_simulate = ARTS()
 		# self.target_simulate.show()
 
-	def add_mission_config(self):
-		self.add_mission = AddMission()
-		self.add_mission.show()
-
 	def tab3_ui(self):
 		pass
-
+	
 
 # 水平威力范围详细菜单
 class HorizontalPowerMenu(QWidget):
@@ -573,7 +531,7 @@ class HorizontalPowerMenu(QWidget):
 		           '最小测试角度设置为:%s°\n'
 		           '最大测试角度设置为:%s°\n'
 		           '步进距离设置为:%sm\n'
-		           '步进角度设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
 		           '驻留时间设置为:%ss\n'
 		           '运动模式设置为:%s\n'
 		           '单向运动模式设置为:%s\n'
@@ -589,6 +547,8 @@ class HorizontalPowerMenu(QWidget):
 			           motor_pattern,
 			           motor_pattern_one_way,
 			           self.test_mode_combo.currentText()))
+		time.sleep(0.5)
+		self.close()
 
 
 # 垂直威力范围详细菜单
@@ -717,7 +677,7 @@ class VerticalPowerMenu(QWidget):
 		           '最小测试角度设置为:%s°\n'
 		           '最大测试角度设置为:%s°\n'
 		           '步进距离设置为:%sm\n'
-		           '步进角度设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
 		           '驻留时间设置为:%ss\n'
 		           '运动模式设置为:%s\n'
 		           '单向运动模式设置为:%s\n'
@@ -852,6 +812,123 @@ class AddMission(QWidget):
 		self.supervise_worker_text.setAlignment(QtCore.Qt.AlignCenter)
 
 
+# 目标模拟器配置菜单
+class TargetSimulateMenu(QWidget):
+	def __init__(self):
+		super(TargetSimulateMenu, self).__init__()
+		self.file = open('./config/TargetSimulate.txt', 'r', encoding='unicode_escape')
+		self.config_result = self.file.readlines()
+		self.setWindowTitle('目标模拟器设置')
+		self.ip_config_label = QLabel('IP地址:')
+		self.ip_config_edit = QTextEdit()
+		self.ip_config_edit.setText(self.config_result[0].split(':')[1][0:-1])
+		self.ip_config_edit.setMaximumSize(130, 25)
+		self.ip_config_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.ip_config_confirm_button = QPushButton('连接')
+		self.ip_config_confirm_button.clicked.connect(self.power_supply_connect)
+		self.volt_config_label = QLabel('工作电压:')
+		self.volt_config_edit = QTextEdit()
+		self.volt_config_edit.setText(self.config_result[2].split(':')[1][0:-2])
+		self.volt_config_edit.setMaximumSize(50, 25)
+		self.volt_config_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.volt_config_unit_label = QLabel('V')
+		self.curr_config_label = QLabel('工作电流:')
+		self.curr_config_edit = QTextEdit()
+		self.curr_config_edit.setText(self.config_result[3].split(':')[1][0:-2])
+		self.curr_config_edit.setMaximumSize(50, 25)
+		self.curr_config_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.curr_config_unit_label = QLabel('A')
+		self.chan_config_label = QLabel('工作通道:')
+		self.chan_config_combo = QComboBox()
+		self.chan_config_combo.addItems(('1', '2'))
+		self.query_button = QPushButton('查询')
+		self.query_button.clicked.connect(self.query_result)
+		self.confirm_button = QPushButton('确认')
+		self.confirm_button.clicked.connect(self.confirm_config)
+		self.power_on_button = QPushButton('加电')
+		self.power_on_button.clicked.connect(self.power_on)
+		self.power_off_button = QPushButton('断电')
+		self.power_off_button.clicked.connect(self.power_off)
+		self.result_label = QLabel('状态显示')
+		self.result_edit = QTextBrowser()
+		self.result_edit.setMinimumHeight(300)
+		self.layout_init()
+	
+	def layout_init(self):
+		self.grid_layout = QGridLayout()
+		self.h_layout = QHBoxLayout()
+		self.v_layout = QVBoxLayout()
+		self.grid_layout.addWidget(self.ip_config_label, 0, 0, 1, 1)
+		self.grid_layout.addWidget(self.ip_config_edit, 0, 1, 1, 2)
+		self.grid_layout.addWidget(self.ip_config_confirm_button, 0, 3, 1, 1)
+		self.grid_layout.addWidget(self.chan_config_label, 1, 0, 1, 1)
+		self.grid_layout.addWidget(self.chan_config_combo, 1, 1, 1, 2)
+		self.grid_layout.addWidget(self.confirm_button, 1, 3, 1, 1)
+		self.grid_layout.addWidget(self.volt_config_label, 2, 0, 1, 1)
+		self.grid_layout.addWidget(self.volt_config_edit, 2, 1, 1, 1)
+		self.grid_layout.addWidget(self.volt_config_unit_label, 2, 2, 1, 1)
+		self.grid_layout.addWidget(self.query_button, 2, 3, 1, 1)
+		self.grid_layout.addWidget(self.curr_config_label, 3, 0, 1, 1)
+		self.grid_layout.addWidget(self.curr_config_edit, 3, 1, 1, 1)
+		self.grid_layout.addWidget(self.curr_config_unit_label, 3, 2, 1, 1)
+		self.grid_layout.addWidget(self.power_on_button, 3, 3, 1, 1)
+		self.grid_layout.addWidget(self.power_off_button, 4, 3, 1, 1)
+		self.v_layout.addLayout(self.grid_layout)
+		self.v_layout.addWidget(self.result_label)
+		self.v_layout.addWidget(self.result_edit)
+		self.setLayout(self.v_layout)
+	
+	def power_supply_connect(self):
+		self.power_supply = HMP()
+		self.power_supply.open('192.168.0.105')
+		self.result_edit.append('电源连接成功' + time.strftime('%H:%M:%S') + '\n')
+		time.sleep(0.1)
+		self.power_supply.reset()
+	
+	def confirm_config(self):
+		file = open('./config/PowerSupply.txt', 'w+')
+		file.write('设置IP地址:%s\n'
+				   '设置通道:%s\n'
+				   '设置电压:%sV\n'
+				   '设置电流:%sA\n' % (
+					   self.ip_config_edit.toPlainText(),
+					   self.chan_config_combo.currentText(),
+					   self.volt_config_edit.toPlainText(),
+					   self.curr_config_edit.toPlainText()))
+		self.power_supply.select_chan(int(self.chan_config_combo.currentText()))
+		time.sleep(0.1)
+		self.power_supply.set_volt(int(self.volt_config_edit.toPlainText()))
+		time.sleep(0.1)
+		self.power_supply.set_curr(int(self.curr_config_edit.toPlainText()))
+		time.sleep(2)
+		self.result_edit.append('完成设置通道：' +
+								self.power_supply.return_status_chan() + 'V ' +
+								time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('完成设置电压：' +
+								self.power_supply.return_status_volt() + 'V ' +
+								time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('完成设置电流：' +
+								self.power_supply.return_status_curr() + 'V ' +
+								time.strftime('%H:%M:%S') + '\n')
+	
+	def query_result(self):
+		self.result_edit.append('当前设置通道：' +
+								self.power_supply.return_status_chan() + 'V ' +
+								time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('当前设置电压：' +
+								self.power_supply.return_status_volt() + 'V ' +
+								time.strftime('%H:%M:%S') + '\n')
+		self.result_edit.append('当前设置电流：' +
+								self.power_supply.return_status_curr() + 'V ' +
+								time.strftime('%H:%M:%S') + '\n')
+	
+	def power_on(self):
+		self.power_supply.set_output_on()
+	
+	def power_off(self):
+		self.power_supply.set_output_off()
+	
+	
 # 电源模块配置菜单
 class PowerSupplyConfig(QWidget):
 	def __init__(self):

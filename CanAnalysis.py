@@ -165,3 +165,4 @@ if __name__ == '__main__':
 	can_control.init_channel(0)
 	while True:
 		can_control.get_message(0)
+		print(can_control.data)
