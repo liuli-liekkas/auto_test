@@ -289,7 +289,8 @@ class RadarTestMain(QMainWindow):
 		# 目标信息栏
 		self.tab2_realtime_plot = pg.PlotWidget()
 		self.tab2_realtime_plot.showGrid(x=True, y=True)
-		self.tab2_realtime_plot.setRange(xRange=[-5, 5], yRange=[0, 50])
+		self.tab2_realtime_plot.setXRange(-5, 5)
+		self.tab2_realtime_plot.setYRange(0, 100)
 		self.tab2_realtime_plot_ready = self.tab2_realtime_plot.plot(np.random.normal(size=1000), np.random.normal(size=1000))
 		self.tab2_realtime_table = QTableWidget()
 		self.tab2_realtime_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -411,21 +412,6 @@ class HorizontalPowerMenu(QWidget):
 		super(HorizontalPowerMenu, self).__init__()
 		self.resize(200, 200)
 		self.setWindowTitle('水平威力范围设置')
-		try:
-			self.file = open('./config/HorizontalPowerTest.txt', 'r', encoding='unicode_escape')
-			self.edit_result = self.file.readlines()
-			self.target_rcs_edit.setText(self.edit_result[0].split(':')[1][0:-5])
-			self.min_range_edit.setText(self.edit_result[1].split(':')[1][0:-2])
-			self.max_range_edit.setText(self.edit_result[2].split(':')[1][0:-2])
-			self.min_angle_edit.setText(self.edit_result[3].split(':')[1][0:-3])
-			self.max_angle_edit.setText(self.edit_result[4].split(':')[1][0:-3])
-			self.step_range_edit.setText(self.edit_result[5].split(':')[1][0:-2])
-			self.step_angle_edit.setText(self.edit_result[6].split(':')[1][0:-2])
-			self.dwell_time_edit.setText(self.edit_result[7].split(':')[1][0:-2])
-		except IOError:
-			print('读取文件失败!')
-		else:
-			self.file.close()
 		self.target_rcs_label = QLabel('目标RCS数值')
 		self.target_rcs_edit = QTextEdit()
 		self.target_rcs_edit.setMaximumSize(50, 25)
@@ -477,6 +463,23 @@ class HorizontalPowerMenu(QWidget):
 		self.test_mode_combo.addItems(('先距离后角度', '先角度后距离'))
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
+		# 界面数据初始化
+		try:
+			self.file = open('./config/HorizontalPowerTest.txt', encoding='unicode_escape')
+			self.edit_result = self.file.readlines()
+			self.target_rcs_edit.setText(self.edit_result[0].split(':')[1][0:-5])
+			self.min_range_edit.setText(self.edit_result[1].split(':')[1][0:-2])
+			self.max_range_edit.setText(self.edit_result[2].split(':')[1][0:-2])
+			self.min_angle_edit.setText(self.edit_result[3].split(':')[1][0:-3])
+			self.max_angle_edit.setText(self.edit_result[4].split(':')[1][0:-3])
+			self.step_range_edit.setText(self.edit_result[5].split(':')[1][0:-2])
+			self.step_angle_edit.setText(self.edit_result[6].split(':')[1][0:-2])
+			self.dwell_time_edit.setText(self.edit_result[7].split(':')[1][0:-2])
+		except IOError:
+			print('读取文件失败!')
+		else:
+			self.file.close()
+		# 布局初始化
 		self.layout_init()
 
 	def layout_init(self):
@@ -563,7 +566,7 @@ class VerticalPowerMenu(QWidget):
 		self.resize(200, 200)
 		self.setWindowTitle('垂直威力范围设置')
 		try:
-			self.file = open('./config/VerticalPowerTest.txt', 'r', encoding='unicode_escape')
+			self.file = open('./config/VerticalPowerTest.txt', encoding='unicode_escape')
 			self.edit_result = self.file.readlines()
 			self.target_rcs_edit.setText(self.edit_result[0].split(':')[1][0:-5])
 			self.min_range_edit.setText(self.edit_result[1].split(':')[1][0:-2])
@@ -704,6 +707,163 @@ class VerticalPowerMenu(QWidget):
 			           motor_pattern_one_way,
 			           self.test_mode_combo.currentText()))
 
+
+# 距离分辨率详细菜单
+class VerticalPowerMenu(QWidget):
+	def __init__(self):
+		super(VerticalPowerMenu, self).__init__()
+		self.resize(200, 200)
+		self.setWindowTitle('垂直威力范围设置')
+		try:
+			self.file = open('./config/VerticalPowerTest.txt', encoding='unicode_escape')
+			self.edit_result = self.file.readlines()
+			self.target_rcs_edit.setText(self.edit_result[0].split(':')[1][0:-5])
+			self.min_range_edit.setText(self.edit_result[1].split(':')[1][0:-2])
+			self.max_range_edit.setText(self.edit_result[2].split(':')[1][0:-2])
+			self.min_angle_edit.setText(self.edit_result[3].split(':')[1][0:-3])
+			self.max_angle_edit.setText(self.edit_result[4].split(':')[1][0:-3])
+			self.step_range_edit.setText(self.edit_result[5].split(':')[1][0:-2])
+			self.step_angle_edit.setText(self.edit_result[6].split(':')[1][0:-2])
+			self.dwell_time_edit.setText(self.edit_result[7].split(':')[1][0:-2])
+		except IOError:
+			print('读取文件失败!')
+		else:
+			self.file.close()
+		self.target_rcs_label = QLabel('目标RCS数值')
+		self.target_rcs_edit = QTextEdit()
+		self.target_rcs_edit.setMaximumSize(50, 25)
+		self.target_rcs_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.target_rcs_unit_label = QLabel('dBsm')
+		self.min_range_label = QLabel('最小测试距离')
+		self.min_range_edit = QTextEdit()
+		self.min_range_edit.setMaximumSize(50, 25)
+		self.min_range_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.min_range_unit_label = QLabel('m')
+		self.max_range_label = QLabel('最大测试距离')
+		self.max_range_edit = QTextEdit()
+		self.max_range_edit.setMaximumSize(50, 25)
+		self.max_range_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.max_range_unit_label = QLabel('m')
+		self.min_angle_label = QLabel('最小测试角度')
+		self.min_angle_edit = QTextEdit()
+		self.min_angle_edit.setMaximumSize(50, 25)
+		self.min_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.min_angle_unit_label = QLabel('°')
+		self.max_angle_label = QLabel('最大测试角度')
+		self.max_angle_edit = QTextEdit()
+		self.max_angle_edit.setMaximumSize(50, 25)
+		self.max_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.max_angle_unit_label = QLabel('°')
+		self.step_range_label = QLabel('距离步进')
+		self.step_range_edit = QTextEdit()
+		self.step_range_edit.setMaximumSize(50, 25)
+		self.step_range_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.step_range_unit_label = QLabel('m')
+		self.step_angle_label = QLabel('角度步进')
+		self.step_angle_edit = QTextEdit()
+		self.step_angle_edit.setMaximumSize(50, 25)
+		self.step_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.step_angle_unit_label = QLabel('°')
+		self.dwell_time_label = QLabel('驻留时间')
+		self.dwell_time_edit = QTextEdit()
+		self.dwell_time_edit.setMaximumSize(50, 25)
+		self.dwell_time_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.dwell_time_unit_label = QLabel('s')
+		self.motor_pattern_one_way_button = QRadioButton('单向运动')
+		self.motor_pattern_round_trip_button = QRadioButton('往返运动')
+		self.motor_pattern_round_trip_button.setChecked(True)
+		self.motor_pattern_round_trip_button.toggled.connect(self.radiobutton_select)
+		self.motor_pattern_one_way_combo = QComboBox()
+		self.motor_pattern_one_way_combo.addItems(('远离', '靠近'))
+		self.motor_pattern_one_way_combo.setEnabled(False)
+		self.test_mode_combo = QComboBox()
+		self.test_mode_combo.addItems(('先距离后角度', '先角度后距离'))
+		self.confirm_button = QPushButton('确认')
+		self.confirm_button.clicked.connect(self.confirm_config)
+		self.layout_init()
+
+	def layout_init(self):
+		self.grid_layout = QGridLayout()
+		self.h_layout = QHBoxLayout()
+		self.v_layout = QVBoxLayout()
+		self.grid_layout.addWidget(self.target_rcs_label, 0, 0, 1, 1)
+		self.grid_layout.addWidget(self.target_rcs_edit, 0, 1, 1, 2)
+		self.grid_layout.addWidget(self.target_rcs_unit_label, 0, 3, 1, 1)
+		self.grid_layout.addWidget(self.min_range_label, 1, 0, 1, 1)
+		self.grid_layout.addWidget(self.min_range_edit, 1, 1, 1, 2)
+		self.grid_layout.addWidget(self.min_range_unit_label, 1, 3, 1, 1)
+		self.grid_layout.addWidget(self.max_range_label, 2, 0, 1, 1)
+		self.grid_layout.addWidget(self.max_range_edit, 2, 1, 1, 2)
+		self.grid_layout.addWidget(self.max_range_unit_label, 2, 3, 1, 1)
+		self.grid_layout.addWidget(self.min_angle_label, 3, 0, 1, 1)
+		self.grid_layout.addWidget(self.min_angle_edit, 3, 1, 1, 2)
+		self.grid_layout.addWidget(self.min_angle_unit_label, 3, 3, 1, 1)
+		self.grid_layout.addWidget(self.max_angle_label, 4, 0, 1, 1)
+		self.grid_layout.addWidget(self.max_angle_edit, 4, 1, 1, 2)
+		self.grid_layout.addWidget(self.max_angle_unit_label, 4, 3, 1, 1)
+		self.grid_layout.addWidget(self.step_range_label, 5, 0, 1, 1)
+		self.grid_layout.addWidget(self.step_range_edit, 5, 1, 1, 2)
+		self.grid_layout.addWidget(self.step_range_unit_label, 5, 3, 1, 1)
+		self.grid_layout.addWidget(self.step_angle_label, 6, 0, 1, 1)
+		self.grid_layout.addWidget(self.step_angle_edit, 6, 1, 1, 2)
+		self.grid_layout.addWidget(self.step_angle_unit_label, 6, 3, 1, 1)
+		self.grid_layout.addWidget(self.dwell_time_label, 7, 0, 1, 1)
+		self.grid_layout.addWidget(self.dwell_time_edit, 7, 1, 1, 2)
+		self.grid_layout.addWidget(self.dwell_time_unit_label, 7, 3, 1, 1)
+		self.v_layout.addWidget(self.motor_pattern_round_trip_button)
+		self.v_layout.addWidget(self.motor_pattern_one_way_button)
+		self.v_layout.addWidget(self.motor_pattern_one_way_combo)
+		self.v_layout.addWidget(self.test_mode_combo)
+		self.v_layout.addWidget(self.confirm_button)
+		self.h_layout.addLayout(self.grid_layout)
+		self.h_layout.addLayout(self.v_layout)
+		self.setLayout(self.h_layout)
+
+	def radiobutton_select(self):
+		if self.motor_pattern_round_trip_button.isChecked():
+			self.motor_pattern_one_way_combo.setEnabled(False)
+		else:
+			self.motor_pattern_one_way_combo.setEnabled(True)
+
+	def confirm_config(self):
+		if self.motor_pattern_round_trip_button.isChecked():
+			motor_pattern = '往返运动'
+			motor_pattern_one_way = '无效'
+		else:
+			motor_pattern = '单向运动'
+			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
+		file = open('./config/HorizontalPowerTest.txt', 'w+')
+		file.write('目标RCS设置为:%sdBsm\n'
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
+		
+
+# 距离区分度详细菜单
+# 水平角度范围详细菜单
+# 垂直角度范围详细菜单
+# 角度分辨率详细菜单
+# 角度区分度详细菜单
+# 速度范围详细菜单
+# 速度区分度详细菜单
 
 # 新建任务
 class AddMission(QWidget):
