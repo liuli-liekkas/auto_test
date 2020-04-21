@@ -4,7 +4,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 import sys
 import pyqtgraph as pg
-from ThreadMission import *
+# from ThreadMission import *
 import time
 import numpy as np
 import array
@@ -191,38 +191,83 @@ class RadarTestMain(QMainWindow):
 		self.tab2_test_stop_button = QPushButton('终止测试')
 		self.tab2_horizontal_power_config_button = QPushButton('设置')
 		self.tab2_horizontal_power_config_button.setEnabled(False)
-		self.tab2_horizontal_power_config_button.clicked.connect(self.horizontal_power_config_window)
-		self.tab2_horizontal_power_box.stateChanged.connect(self.tab2_horizontal_power_button_status)
+		self.tab2_horizontal_power_config_button.clicked.connect(
+			self.horizontal_power_config_window)
+		# 水平威力范围按钮显示，勾取后可以设置
+		self.tab2_horizontal_power_box.stateChanged.connect(lambda:
+			self.tab2_horizontal_power_config_button.setEnabled(True)
+			if self.tab2_horizontal_power_box.checkState() == 2
+			else self.tab2_horizontal_power_config_button.setEnabled(False))
 		self.tab2_vertical_power_config_button = QPushButton('设置')
 		self.tab2_vertical_power_config_button.setEnabled(False)
-		self.tab2_vertical_power_box.stateChanged.connect(self.tab2_vertical_power_button_status)
+		# 垂直威力范围按钮显示，勾取后可以设置
+		self.tab2_vertical_power_box.stateChanged.connect(lambda:
+			self.tab2_vertical_power_config_button.setEnabled(True)
+			if self.tab2_vertical_power_box.checkState() == 2
+			else self.tab2_vertical_power_config_button.setEnabled(False))
 		self.tab2_distance_resolution_config_button = QPushButton('设置')
 		self.tab2_distance_resolution_config_button.setEnabled(False)
-		self.tab2_distance_resolution_box.stateChanged.connect(self.tab2_distance_resolution_button_status)
+		# 距离分辨率按钮显示，勾取后可以设置
+		self.tab2_distance_resolution_box.stateChanged.connect(lambda:
+			self.tab2_distance_resolution_config_button.setEnabled(True)
+			if self.tab2_distance_resolution_box.checkState() == 2
+			else self.tab2_distance_resolution_config_button.setEnabled(False))
 		self.tab2_distance_distinction_config_button = QPushButton('设置')
 		self.tab2_distance_distinction_config_button.setEnabled(False)
-		self.tab2_distance_distinction_box.stateChanged.connect(self.tab2_distance_distinction_button_status)
+		# 距离区分度按钮显示，勾取后可以设置
+		self.tab2_distance_distinction_box.stateChanged.connect(lambda:
+			self.tab2_distance_distinction_config_button.setEnabled(True)
+			if self.tab2_distance_distinction_box.checkState() == 2
+			else self.tab2_distance_resolution_config_button.setEnabled(False))
 		self.tab2_horizontal_angular_range_config_button = QPushButton('设置')
 		self.tab2_horizontal_angular_range_config_button.setEnabled(False)
-		self.tab2_horizontal_angular_range_box.stateChanged.connect(self.tab2_horizontal_angular_range_button_status)
+		# 水平角度范围按钮显示，勾取后可以设置
+		self.tab2_horizontal_angular_range_box.stateChanged.connect(lambda:
+			self.tab2_horizontal_angular_range_config_button.setEnabled(True)
+			if self.tab2_horizontal_angular_range_box.checkState() == 2
+			else self.tab2_horizontal_angular_range_config_button.setEnabled(False))
 		self.tab2_vertical_angular_range_config_button = QPushButton('设置')
 		self.tab2_vertical_angular_range_config_button.setEnabled(False)
-		self.tab2_vertical_angular_range_box.stateChanged.connect(self.tab2_vertical_angular_range_button_status)
+		# 垂直角度范围按钮显示，勾取后可以设置
+		self.tab2_vertical_angular_range_box.stateChanged.connect(lambda:
+			self.tab2_vertical_angular_range_config_button.setEnabled(True)
+			if self.tab2_vertical_angular_range_box.checkState() == 2
+			else self.tab2_vertical_angular_range_config_button.setEnabled(False))
 		self.tab2_angular_resolution_config_button = QPushButton('设置')
 		self.tab2_angular_resolution_config_button.setEnabled(False)
-		self.tab2_angular_resolution_box.stateChanged.connect(self.tab2_angular_resolution_button_status)
+		# 角度分辨率按钮显示，勾取后可以设置
+		self.tab2_angular_resolution_box.stateChanged.connect(lambda:
+			self.tab2_angular_resolution_config_button.setEnabled(True)
+			if self.tab2_angular_resolution_box.checkState() == 2
+			else self.tab2_angular_resolution_config_button.setEnabled(False))
 		self.tab2_horizontal_distinction_config_button = QPushButton('设置')
 		self.tab2_horizontal_distinction_config_button.setEnabled(False)
-		self.tab2_horizontal_distinction_box.stateChanged.connect(self.tab2_horizontal_distinction_button_status)
+		# 角度区分度按钮显示，勾取后可以设置
+		self.tab2_horizontal_distinction_box.stateChanged.connect(lambda:
+			self.tab2_horizontal_distinction_config_button.setEnabled(True)
+			if self.tab2_horizontal_distinction_box.checkState() == 2
+			else self.tab2_horizontal_distinction_config_button.setEnabled(False))
 		self.tab2_speed_range_config_button = QPushButton('设置')
 		self.tab2_speed_range_config_button.setEnabled(False)
-		self.tab2_speed_range_box.stateChanged.connect(self.tab2_speed_range_button_status)
+		# 速度范围按钮显示，勾取后可以设置
+		self.tab2_speed_range_box.stateChanged.connect(lambda:
+			self.tab2_speed_range_config_button.setEnabled(True)
+			if self.tab2_speed_range_box.checkState() == 2
+			else self.tab2_speed_range_config_button.setEnabled(False))
 		self.tab2_speed_resolution_config_button = QPushButton('设置')
 		self.tab2_speed_resolution_config_button.setEnabled(False)
-		self.tab2_speed_resolution_box.stateChanged.connect(self.tab2_speed_resolution_button_status)
+		# 速度分辨率按钮显示，勾取后可以设置
+		self.tab2_speed_resolution_box.stateChanged.connect(lambda:
+			self.tab2_speed_resolution_config_button.setEnabled(True)
+			if self.tab2_speed_resolution_box.checkState() == 2
+			else self.tab2_speed_resolution_config_button.setEnabled(False))
 		self.tab2_speed_distinction_config_button = QPushButton('设置')
 		self.tab2_speed_distinction_config_button.setEnabled(False)
-		self.tab2_speed_distinction_box.stateChanged.connect(self.tab2_speed_distinction_button_status)
+		# 速度区分度按钮显示，勾取后可以设置
+		self.tab2_speed_distinction_box.stateChanged.connect(lambda:
+			self.tab2_speed_distinction_config_button.setEnabled(True)
+			if self.tab2_speed_distinction_box.checkState() == 2
+			else self.tab2_speed_distinction_config_button.setEnabled(False))
 		# 状态栏
 		self.tab2_status_test_label = QLabel('测试状态')
 		self.tab2_status_test_edit = QTextEdit()
@@ -312,13 +357,6 @@ class RadarTestMain(QMainWindow):
 		self.tab2_5_v_layout.addWidget(self.tab2_3_h_splitter)
 		self.tab2_central_widget.setLayout(self.tab2_5_v_layout)
 
-	# 水平威力范围按钮显示，勾取后可以设置
-	def tab2_horizontal_power_button_status(self):
-		if self.tab2_horizontal_power_box.checkState() == 2:
-			self.tab2_horizontal_power_config_button.setEnabled(True)
-		else:
-			self.tab2_horizontal_power_config_button.setEnabled(False)
-
 	# 水平威力范围主界面设置按钮跳转
 	def horizontal_power_config_window(self):
 		self.horizontal_power_config_menu_window = HorizontalPowerMenu()
@@ -358,76 +396,6 @@ class RadarTestMain(QMainWindow):
 				motor_pattern_one_way,
 				self.horizontal_power_config_menu_window.test_mode_combo.currentText()))
 		self.horizontal_power_config_menu_window.close()
-
-	# 垂直威力范围按钮显示，勾取后可以设置
-	def tab2_vertical_power_button_status(self):
-		if self.tab2_vertical_power_box.checkState() == 2:
-			self.tab2_vertical_power_config_button.setEnabled(True)
-		else:
-			self.tab2_vertical_power_config_button.setEnabled(False)
-
-	# 距离分辨率按钮显示，勾取后可以设置
-	def tab2_distance_resolution_button_status(self):
-		if self.tab2_distance_resolution_box.checkState() == 2:
-			self.tab2_distance_resolution_config_button.setEnabled(True)
-		else:
-			self.tab2_distance_resolution_config_button.setEnabled(False)
-
-	# 距离区分度按钮显示，勾取后可以设置
-	def tab2_distance_distinction_button_status(self):
-		if self.tab2_distance_distinction_box.checkState() == 2:
-			self.tab2_distance_distinction_config_button.setEnabled(True)
-		else:
-			self.tab2_distance_distinction_config_button.setEnabled(False)
-
-	# 水平角度范围按钮显示，勾取后可以设置
-	def tab2_horizontal_angular_range_button_status(self):
-		if self.tab2_horizontal_angular_range_box.checkState() == 2:
-			self.tab2_horizontal_angular_range_config_button.setEnabled(True)
-		else:
-			self.tab2_horizontal_angular_range_config_button.setEnabled(False)
-
-	# 垂直角度范围按钮显示，勾取后可以设置
-	def tab2_vertical_angular_range_button_status(self):
-		if self.tab2_vertical_angular_range_box.checkState() == 2:
-			self.tab2_vertical_angular_range_config_button.setEnabled(True)
-		else:
-			self.tab2_vertical_angular_range_config_button.setEnabled(False)
-
-	# 角度分辨率按钮显示，勾取后可以设置
-	def tab2_angular_resolution_button_status(self):
-		if self.tab2_angular_resolution_box.checkState() == 2:
-			self.tab2_angular_resolution_config_button.setEnabled(True)
-		else:
-			self.tab2_angular_resolution_config_button.setEnabled(False)
-
-	# 角度区分度按钮显示，勾取后可以设置
-	def tab2_horizontal_distinction_button_status(self):
-		if self.tab2_horizontal_distinction_box.checkState() == 2:
-			self.tab2_horizontal_distinction_config_button.setEnabled(True)
-		else:
-			self.tab2_horizontal_distinction_config_button.setEnabled(False)
-
-	# 速度范围按钮显示，勾取后可以设置
-	def tab2_speed_range_button_status(self):
-		if self.tab2_speed_range_box.checkState() == 2:
-			self.tab2_speed_range_config_button.setEnabled(True)
-		else:
-			self.tab2_speed_range_config_button.setEnabled(False)
-
-	# 速度分辨率按钮显示，勾取后可以设置
-	def tab2_speed_resolution_button_status(self):
-		if self.tab2_speed_resolution_box.checkState() == 2:
-			self.tab2_speed_resolution_config_button.setEnabled(True)
-		else:
-			self.tab2_speed_resolution_config_button.setEnabled(False)
-
-	# 速度区分度按钮显示，勾取后可以设置
-	def tab2_speed_distinction_button_status(self):
-		if self.tab2_speed_distinction_box.checkState() == 2:
-			self.tab2_speed_distinction_config_button.setEnabled(True)
-		else:
-			self.tab2_speed_distinction_config_button.setEnabled(False)
 
 	# 自检菜单选项
 	# 雷达信号接收
@@ -487,6 +455,150 @@ class HorizontalPowerMenu(QWidget):
 		self.edit_result = self.file.readlines()
 		self.resize(200, 200)
 		self.setWindowTitle('水平威力范围设置')
+		self.target_rcs_label = QLabel('目标RCS数值')
+		self.target_rcs_edit = QTextEdit()
+		self.target_rcs_edit.setText(self.edit_result[0].split(':')[1][0:-5])
+		self.target_rcs_edit.setMaximumSize(50, 25)
+		self.target_rcs_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.target_rcs_unit_label = QLabel('dBsm')
+		self.min_range_label = QLabel('最小测试距离')
+		self.min_range_edit = QTextEdit()
+		self.min_range_edit.setText(self.edit_result[1].split(':')[1][0:-2])
+		self.min_range_edit.setMaximumSize(50, 25)
+		self.min_range_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.min_range_unit_label = QLabel('m')
+		self.max_range_label = QLabel('最大测试距离')
+		self.max_range_edit = QTextEdit()
+		self.max_range_edit.setText(self.edit_result[2].split(':')[1][0:-2])
+		self.max_range_edit.setMaximumSize(50, 25)
+		self.max_range_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.max_range_unit_label = QLabel('m')
+		self.min_angle_label = QLabel('最小测试角度')
+		self.min_angle_edit = QTextEdit()
+		self.min_angle_edit.setText(self.edit_result[3].split(':')[1][0:-3])
+		self.min_angle_edit.setMaximumSize(50, 25)
+		self.min_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.min_angle_unit_label = QLabel('°')
+		self.max_angle_label = QLabel('最大测试角度')
+		self.max_angle_edit = QTextEdit()
+		self.max_angle_edit.setText(self.edit_result[4].split(':')[1][0:-3])
+		self.max_angle_edit.setMaximumSize(50, 25)
+		self.max_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.max_angle_unit_label = QLabel('°')
+		self.step_range_label = QLabel('距离步进')
+		self.step_range_edit = QTextEdit()
+		self.step_range_edit.setText(self.edit_result[5].split(':')[1][0:-2])
+		self.step_range_edit.setMaximumSize(50, 25)
+		self.step_range_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.step_range_unit_label = QLabel('m')
+		self.step_angle_label = QLabel('角度步进')
+		self.step_angle_edit = QTextEdit()
+		self.step_angle_edit.setText(self.edit_result[6].split(':')[1][0:-2])
+		self.step_angle_edit.setMaximumSize(50, 25)
+		self.step_angle_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.step_angle_unit_label = QLabel('°')
+		self.dwell_time_label = QLabel('驻留时间')
+		self.dwell_time_edit = QTextEdit()
+		self.dwell_time_edit.setText(self.edit_result[7].split(':')[1][0:-2])
+		self.dwell_time_edit.setMaximumSize(50, 25)
+		self.dwell_time_edit.setAlignment(QtCore.Qt.AlignCenter)
+		self.dwell_time_unit_label = QLabel('s')
+		self.motor_pattern_one_way_button = QRadioButton('单向运动')
+		self.motor_pattern_round_trip_button = QRadioButton('往返运动')
+		self.motor_pattern_round_trip_button.setChecked(True)
+		self.motor_pattern_round_trip_button.toggled.connect(self.radiobutton_select)
+		self.motor_pattern_one_way_combo = QComboBox()
+		self.motor_pattern_one_way_combo.addItems(('远离', '靠近'))
+		self.motor_pattern_one_way_combo.setEnabled(False)
+		self.test_mode_combo = QComboBox()
+		self.test_mode_combo.addItems(('先距离后角度', '先角度后距离'))
+		self.confirm_button = QPushButton('确认')
+		self.confirm_button.clicked.connect(self.confirm_config)
+		self.layout_init()
+
+	def layout_init(self):
+		self.grid_layout = QGridLayout()
+		self.h_layout = QHBoxLayout()
+		self.v_layout = QVBoxLayout()
+		self.grid_layout.addWidget(self.target_rcs_label, 0, 0, 1, 1)
+		self.grid_layout.addWidget(self.target_rcs_edit, 0, 1, 1, 2)
+		self.grid_layout.addWidget(self.target_rcs_unit_label, 0, 3, 1, 1)
+		self.grid_layout.addWidget(self.min_range_label, 1, 0, 1, 1)
+		self.grid_layout.addWidget(self.min_range_edit, 1, 1, 1, 2)
+		self.grid_layout.addWidget(self.min_range_unit_label, 1, 3, 1, 1)
+		self.grid_layout.addWidget(self.max_range_label, 2, 0, 1, 1)
+		self.grid_layout.addWidget(self.max_range_edit, 2, 1, 1, 2)
+		self.grid_layout.addWidget(self.max_range_unit_label, 2, 3, 1, 1)
+		self.grid_layout.addWidget(self.min_angle_label, 3, 0, 1, 1)
+		self.grid_layout.addWidget(self.min_angle_edit, 3, 1, 1, 2)
+		self.grid_layout.addWidget(self.min_angle_unit_label, 3, 3, 1, 1)
+		self.grid_layout.addWidget(self.max_angle_label, 4, 0, 1, 1)
+		self.grid_layout.addWidget(self.max_angle_edit, 4, 1, 1, 2)
+		self.grid_layout.addWidget(self.max_angle_unit_label, 4, 3, 1, 1)
+		self.grid_layout.addWidget(self.step_range_label, 5, 0, 1, 1)
+		self.grid_layout.addWidget(self.step_range_edit, 5, 1, 1, 2)
+		self.grid_layout.addWidget(self.step_range_unit_label, 5, 3, 1, 1)
+		self.grid_layout.addWidget(self.step_angle_label, 6, 0, 1, 1)
+		self.grid_layout.addWidget(self.step_angle_edit, 6, 1, 1, 2)
+		self.grid_layout.addWidget(self.step_angle_unit_label, 6, 3, 1, 1)
+		self.grid_layout.addWidget(self.dwell_time_label, 7, 0, 1, 1)
+		self.grid_layout.addWidget(self.dwell_time_edit, 7, 1, 1, 2)
+		self.grid_layout.addWidget(self.dwell_time_unit_label, 7, 3, 1, 1)
+		self.v_layout.addWidget(self.motor_pattern_round_trip_button)
+		self.v_layout.addWidget(self.motor_pattern_one_way_button)
+		self.v_layout.addWidget(self.motor_pattern_one_way_combo)
+		self.v_layout.addWidget(self.test_mode_combo)
+		self.v_layout.addWidget(self.confirm_button)
+		self.h_layout.addLayout(self.grid_layout)
+		self.h_layout.addLayout(self.v_layout)
+		self.setLayout(self.h_layout)
+
+	def radiobutton_select(self):
+		if self.motor_pattern_round_trip_button.isChecked():
+			self.motor_pattern_one_way_combo.setEnabled(False)
+		else:
+			self.motor_pattern_one_way_combo.setEnabled(True)
+
+	def confirm_config(self):
+		if self.motor_pattern_round_trip_button.isChecked():
+			motor_pattern = '往返运动'
+			motor_pattern_one_way = '无效'
+		else:
+			motor_pattern = '单向运动'
+			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
+		file = open('./config/HorizontalPowerTest.txt', 'w+')
+		file.write('目标RCS设置为:%sdBsm\n'
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%sm\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
+
+
+# 垂直威力范围详细菜单
+class VerticalPowerMenu(QWidget):
+	def __init__(self):
+		super(VerticalPowerMenu, self).__init__()
+		self.file = open('./config/VerticalPowerTest.txt', 'r', encoding='unicode_escape')
+		self.edit_result = self.file.readlines()
+		self.resize(200, 200)
+		self.setWindowTitle('垂直威力范围设置')
 		self.target_rcs_label = QLabel('目标RCS数值')
 		self.target_rcs_edit = QTextEdit()
 		self.target_rcs_edit.setText(self.edit_result[0].split(':')[1][0:-5])
