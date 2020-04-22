@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtGui import QFont
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 import sys
@@ -8,11 +8,13 @@ from ThreadMission import *
 import time
 import numpy as np
 import array
+from MachineClass import *
 
 
 # 主界面
 class RadarTestMain(QMainWindow):
 	def __init__(self):
+		# noinspection PyArgumentList
 		super(RadarTestMain, self).__init__()
 		self.init_ui()
 
@@ -35,17 +37,17 @@ class RadarTestMain(QMainWindow):
 		menubar = self.menuBar()
 		file_menu = menubar.addMenu("文件")
 		mission_menu = menubar.addMenu("任务")
-		view_menu = menubar.addMenu("视图")
+		# view_menu = menubar.addMenu("视图")
 		config_menu = menubar.addMenu("配置")
-		analysis_menu = menubar.addMenu("分析")
+		# analysis_menu = menubar.addMenu("分析")
 		self_test_menu = menubar.addMenu("自检")
 		tool_menu = menubar.addMenu("工具")
-		help_menu = menubar.addMenu("帮助")
+		# help_menu = menubar.addMenu("帮助")
 		# 文件菜单
 		# 打开
 		open_act = QAction("打开", self)
 		open_act.setShortcut('Ctrl+O')
-		open_act.triggered.connect(lambda: QFileDialog.getOpenFileName(self, '打开文件', '/home'))
+		open_act.triggered.connect(lambda: QFileDialog.getOpenFileName(self.menu_init, '打开文件', '/home'))
 		file_menu.addAction(open_act)
 		# 保存
 		save_act = QAction("保存", self)
@@ -106,8 +108,11 @@ class RadarTestMain(QMainWindow):
 
 	def tab_menu_init(self):
 		self.tab_widget = QTabWidget(self)
+		# noinspection PyArgumentList
 		self.tab1_central_widget = QWidget(self.tab_widget)
+		# noinspection PyArgumentList
 		self.tab2_central_widget = QWidget(self.tab_widget)
+		# noinspection PyArgumentList
 		self.tab3_central_widget = QWidget(self.tab_widget)
 		self.tab_widget.addTab(self.tab1_central_widget, "射频性能测试")
 		self.tab_widget.addTab(self.tab2_central_widget, "探测性能测试")

@@ -15,8 +15,7 @@ class Struct_INIT_CONFIG(ctypes.Structure):
 				("Filter", ctypes.c_ubyte),
 				("Timing0", ctypes.c_ubyte),
 				("Timing1", ctypes.c_ubyte),
-				("Mode", ctypes.c_ubyte)
-				)
+				("Mode", ctypes.c_ubyte))
 
 
 class Struct_CAN_OBJ(ctypes.Structure):
@@ -28,8 +27,7 @@ class Struct_CAN_OBJ(ctypes.Structure):
 				("ExternFlag", ctypes.c_ubyte),
 				("DataLen", ctypes.c_ubyte),
 				("Data", ctypes.c_ubyte * 8),
-				("Reserved", ctypes.c_ubyte * 3)
-				]
+				("Reserved", ctypes.c_ubyte * 3)]
 
 
 class CanControl:
