@@ -1,49 +1,48 @@
-import sys
-import random
-import numpy as np
-import pyqtgraph as pg
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 
-class Demo(QWidget):
-    def __init__(self):
-        super(Demo, self).__init__()
-        self.resize(600, 600)
-
-        # 1
-        pg.setConfigOptions(leftButtonPan=False)
-        pg.setConfigOption('background', 'w')
-        pg.setConfigOption('foreground', 'k')
-
-        # 2
-        x = np.random.normal(size=1000)
-        y = np.random.normal(size=1000)
-        r_symbol = random.choice(['o', 's', 't', 't1', 't2', 't3', 'd', '+', 'x', 'p', 'h', 'star'])
-        r_color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k', 'd', 'l', 's'])
-
-        # 3
-        self.pw = pg.PlotWidget(self)
-        self.plot_data = self.pw.plot(x, y, pen=None, symbol=r_symbol, symbolBrush=r_color)
-
-        # 4
-        self.plot_btn = QPushButton('Replot', self)
-        self.plot_btn.clicked.connect(self.plot_slot)
-
-        self.v_layout = QVBoxLayout()
-        self.v_layout.addWidget(self.pw)
-        self.v_layout.addWidget(self.plot_btn)
-        self.setLayout(self.v_layout)
-
-    def plot_slot(self):
-        x = np.random.normal(size=1000)
-        y = np.random.normal(size=1000)
-        r_symbol = random.choice(['o', 's', 't', 't1', 't2', 't3', 'd', '+', 'x', 'p', 'h', 'star'])
-        r_color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k', 'd', 'l', 's'])
-        self.plot_data.setData(x, y, pen=None, symbol=r_symbol, symbolBrush=r_color)
+class Main(QWidget):
+	def __init__(self, parent=None):
+		super(Main, self).__init__(parent)
+		
+		##创建一个线程实例并设置名称、变量、信号槽
+		self.thread = MyThread()
+		self.thread.setIdentity("thread1")
+		self.thread.sinOut.connect(self.outText)
+		self.thread.setVal(6)
+	
+	def outText(self, text):
+		print(text)
 
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    demo = Demo()
-    demo.show()
-    sys.exit(app.exec_())
+class MyThread(QThread):
+	sinOut = pyqtSignal(str)
+	
+	def __init__(self, parent=None):
+		super(MyThread, self).__init__(parent)
+		
+		self.identity = None
+	
+	def setIdentity(self, text):
+		self.identity = text
+	
+	def setVal(self, val):
+		self.times = int(val)
+		
+		##执行线程的run方法
+		self.start()
+	
+	def run(self):
+		while self.times > 0 and self.identity:
+			##发射信号
+			self.sinOut.emit(self.identity + " " + str(self.times))
+			self.times -= 1
+
+
+app = QApplication([])
+
+main = Main()
+main.show()
+
+app.exec_()

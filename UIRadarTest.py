@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 import sys
@@ -150,38 +150,50 @@ class RadarTestMain(QMainWindow):
 		# 目标信息栏
 		self.frame_4 = QFrame(self.tab2_central_widget)
 		self.frame_4.setFrameShape(QFrame.StyledPanel)
+		# 仪表状态栏
+		# self.frame_5 = QFrame(self.tab2_central_widget)
+		# self.frame_5.setFrameShape(QFrame.StyledPanel)
 		# 各控件信息
 		# 任务信息栏
-		self.tab2_sample_number_label = QLabel(self.frame_1)
+		self.tab2_sample_number_label = QLabel()
 		self.tab2_sample_number_label.setText('样品编号:')
 		self.tab2_sample_number_label.setMaximumWidth(55)
-		self.tab2_sample_number_browser = QTextBrowser(self.frame_1)
+		self.tab2_sample_number_browser = QTextBrowser()
 		self.tab2_sample_number_browser.setText('00001')
 		self.tab2_sample_number_browser.setMaximumSize(100, 20)
-		self.tab2_tester_name_label = QLabel(self.frame_1)
+		self.tab2_tester_name_label = QLabel()
 		self.tab2_tester_name_label.setText('测试人员:')
 		self.tab2_tester_name_label.setMaximumWidth(55)
-		self.tab2_tester_name_browser = QTextBrowser(self.frame_1)
+		self.tab2_tester_name_browser = QTextBrowser()
 		self.tab2_tester_name_browser.setText('薛岩')
 		self.tab2_tester_name_browser.setMaximumSize(80, 20)
-		self.tab2_supervisor_name_label = QLabel(self.frame_1)
+		self.tab2_supervisor_name_label = QLabel()
 		self.tab2_supervisor_name_label.setText('复核/监督人员:')
 		self.tab2_supervisor_name_label.setMaximumWidth(85)
-		self.tab2_supervisor_name_combo = QComboBox(self.frame_1)
+		self.tab2_supervisor_name_combo = QComboBox()
 		self.tab2_supervisor_name_combo.setMaximumSize(80, 20)
 		self.tab2_supervisor_name_combo.addItem('刘力')
 		self.tab2_supervisor_name_combo.addItem('申亚飞')
 		self.tab2_supervisor_name_combo.addItem('裴毓')
 		self.tab2_supervisor_name_combo.addItem('张晓蕾')
 		self.tab2_supervisor_name_combo.addItem('薛岩')
-		self.tab2_test_data_label = QLabel(self.frame_1)
+		self.tab2_test_data_label = QLabel()
 		self.tab2_test_data_label.setText('试验日期:')
 		self.tab2_test_data_label.setMaximumWidth(55)
-		self.tab2_test_data_edit = QDateEdit(self.frame_1)
+		self.tab2_test_data_edit = QDateEdit()
 		self.tab2_test_data_edit.setAlignment(QtCore.Qt.AlignCenter)
 		self.tab2_test_data_edit.setMaximumSize(100, 20)
 		self.tab2_test_data_edit.setCalendarPopup(True)
 		self.tab2_test_data_edit.setDate(QtCore.QDate.currentDate())
+		# 仪表状态栏
+		self.tab2_status_turntable_button = QPushButton('转台')
+		self.tab2_status_turntable_button.setIcon(QIcon('./image/wifi_off.png'))
+		self.tab2_status_power_supply_button = QPushButton('电源')
+		self.tab2_status_power_supply_button.setIcon(QIcon('./image/wifi_off.png'))
+		self.tab2_status_target_simulate_button = QPushButton('目标模拟器')
+		self.tab2_status_target_simulate_button.setIcon(QIcon('./image/wifi_off.png'))
+		self.tab2_status_radar_can_button = QPushButton('雷达CAN通信')
+		self.tab2_status_radar_can_button.setIcon(QIcon('./image/wifi_off.png'))
 		# 项目栏
 		self.tab2_horizontal_power_box = QCheckBox('水平探测威力')
 		self.tab2_vertical_power_box = QCheckBox('垂直探测威力')
@@ -349,16 +361,28 @@ class RadarTestMain(QMainWindow):
 	def tab2_layout_init(self):
 		# ---底层界面布局---
 		# 任务信息栏布局
-		self.tab2_1_h_layout = QHBoxLayout()
-		self.tab2_1_h_layout.addWidget(self.tab2_sample_number_label)
-		self.tab2_1_h_layout.addWidget(self.tab2_sample_number_browser)
-		self.tab2_1_h_layout.addWidget(self.tab2_tester_name_label)
-		self.tab2_1_h_layout.addWidget(self.tab2_tester_name_browser)
-		self.tab2_1_h_layout.addWidget(self.tab2_supervisor_name_label)
-		self.tab2_1_h_layout.addWidget(self.tab2_supervisor_name_combo)
-		self.tab2_1_h_layout.addWidget(self.tab2_test_data_label)
-		self.tab2_1_h_layout.addWidget(self.tab2_test_data_edit)
+		self.tab2_1_0_h_layout = QHBoxLayout()
+		self.tab2_1_0_h_layout.addWidget(self.tab2_sample_number_label)
+		self.tab2_1_0_h_layout.addWidget(self.tab2_sample_number_browser)
+		self.tab2_1_0_h_layout.addWidget(self.tab2_tester_name_label)
+		self.tab2_1_0_h_layout.addWidget(self.tab2_tester_name_browser)
+		self.tab2_1_0_h_layout.addWidget(self.tab2_supervisor_name_label)
+		self.tab2_1_0_h_layout.addWidget(self.tab2_supervisor_name_combo)
+		self.tab2_1_0_h_layout.addWidget(self.tab2_test_data_label)
+		self.tab2_1_0_h_layout.addWidget(self.tab2_test_data_edit)
+		# 仪表状态栏布局
+		self.tab_1_1_h_layout = QHBoxLayout()
+		self.tab_1_1_h_layout.addWidget(self.tab2_status_turntable_button)
+		self.tab_1_1_h_layout.addWidget(self.tab2_status_power_supply_button)
+		self.tab_1_1_h_layout.addWidget(self.tab2_status_target_simulate_button)
+		self.tab_1_1_h_layout.addWidget(self.tab2_status_radar_can_button)
+		
+		# 任务栏+ 仪表状态栏布局
+		self.tab2_1_h_layout = QVBoxLayout()
+		self.tab2_1_h_layout.addLayout(self.tab2_1_0_h_layout)
+		self.tab2_1_h_layout.addLayout(self.tab_1_1_h_layout)
 		self.frame_1.setLayout(self.tab2_1_h_layout)
+		
 		# 项目栏布局
 		self.tab2_2_grid_layout = QGridLayout()
 		self.tab2_2_grid_layout.addWidget(self.tab2_horizontal_power_box, 0, 0, 1, 1)

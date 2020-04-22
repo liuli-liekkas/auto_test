@@ -20,7 +20,7 @@ class HorizontalPowerTest(RadarTestMain):
 
 	def get_config(self):
 		self.horizontal_power_menu = HorizontalPowerMenu()
-		self.horizontal_power_test_config_file = open('./config/HorizontalPowerTest.txt', 'r')
+		self.horizontal_power_test_config_file = open('./config/HorizontalPowerTest.txt')
 		self.horizontal_power_test_config = self.horizontal_power_test_config_file.readlines()
 		self.target_rcs_config = int(self.horizontal_power_test_config[0].split(':')[1][0:-5])
 		self.min_range_config = int(self.horizontal_power_test_config[1].split(':')[1][0:-2])
@@ -98,7 +98,7 @@ class MyThread(QThread):
 		self.turn_table.connect()
 		self.target_simulate = ARTS()
 		self.target_simulate.connect('192.168.0.20')
-		self.horizontal_power_test_config_file = open('./config/HorizontalPowerTest.txt', 'r')
+		self.horizontal_power_test_config_file = open('./config/HorizontalPowerTest.txt')
 		self.horizontal_power_test_config = self.horizontal_power_test_config_file.readlines()
 		self.target_rcs_config = int(self.horizontal_power_test_config[0].split(':')[1][0:-5])
 		self.min_range_config = int(self.horizontal_power_test_config[1].split(':')[1][0:-2])
