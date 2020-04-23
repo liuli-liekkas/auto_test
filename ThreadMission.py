@@ -141,7 +141,10 @@ class HorizontalPowerTest(QThread):
 				self.turn_table.move_to_position(2, anger+0.6, 3)
 				self.turn_table.get_position(2)
 				for distance in range(self.min_range_config, self.max_range_config + 1, self.step_range_config):
-					self.target_simulate.set_tx_chan_static(0, 0, 0, 0, -10, -10, -10, -10, distance-2.59, distance-2.59, distance-2.59, distance-2.59)
+					self.target_simulate.set_tx_chan_static(
+							0, 0, 0, 0,
+							-10, -10, -10, -10,
+							distance-2.59, distance-2.59, distance-2.59, distance-2.59)
 					time.sleep(3)
 					self.my_signal.emit(
 						'当前角度{0}°，当前距离：{1}m---{2}---'.format(str(anger), str(distance), time.strftime('%H:%M:%S')), [anger, distance])
