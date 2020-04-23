@@ -153,6 +153,20 @@ class HorizontalPowerTest(QThread):
 		else:
 			print('测试模式错误')
 			
+			
+# class MissionInformation(QThread):
+# 	my_signal = pyqtSignal(list)
+#
+# 	def __init__(self):
+# 		super(MissionInformation, self).__init__()
+#
+# 	def run(self):
+# 		try:
+# 			self.file = open('./config/MissionInformation.txt')
+# 			self.edit_result = self.file.readlines()
+# 			if self.edit_result:
+# 				pass
+			
 
 if __name__ == '__main__':
 	can = GetMessage()
