@@ -19,7 +19,7 @@ class RadarTestMain(QMainWindow):
 
 	def init_ui(self):
 		self.resize(1100, 700)
-		self.setWindowTitle("毫米波雷达测试系统")
+		self.setWindowTitle("毫米波雷达自动化测试系统")
 		self.data = array.array('i')
 		self.center()
 		self.menu_init()
@@ -91,8 +91,8 @@ class RadarTestMain(QMainWindow):
 		# 转台
 		turn_table_act = QAction('转台', self)
 		config_menu.addAction(turn_table_act)
-		self.turn_table = TurnTableConfig()
-		turn_table_act.triggered.connect(self.turn_table.show)
+		self.turn_table_config = TurnTableConfig()
+		turn_table_act.triggered.connect(self.turn_table_config.show)
 		# 自检菜单
 		radar_connection_act = QAction('连接雷达', self)
 		self_test_menu.addAction(radar_connection_act)
@@ -185,6 +185,7 @@ class RadarTestMain(QMainWindow):
 		# 仪表状态栏
 		self.tab2_status_turntable_button = QPushButton('转台')
 		self.tab2_status_turntable_button.setIcon(QIcon('./image/wifi_off.png'))
+		self.turn_table_status = TurnTable()
 		self.tab2_status_power_supply_button = QPushButton('电源')
 		self.tab2_status_power_supply_button.setIcon(QIcon('./image/wifi_off.png'))
 		self.tab2_status_target_simulate_button = QPushButton('目标模拟器')

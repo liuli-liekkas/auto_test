@@ -157,6 +157,18 @@ class HorizontalPowerTest(QThread):
 			print('测试模式错误')
 			
 			
+class TurnTableStatus(QThread):
+	my_signal = pyqtSignal(str, list)
+	
+	def __init__(self, turn_table):
+		super(TurnTableStatus, self).__init__()
+		self.turn_table = turn_table
+		
+	def run(self):
+		self.turn_table.connect()
+		
+			
+			
 # class MissionInformation(QThread):
 # 	my_signal = pyqtSignal(list)
 #
