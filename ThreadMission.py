@@ -156,19 +156,29 @@ class HorizontalPowerTest(QThread):
 		else:
 			print('测试模式错误')
 			
-			
+
+# 转台无获取连接状态函数，再次覆盖连接无影响，只需读取角度信息
 class TurnTableStatus(QThread):
-	my_signal = pyqtSignal(str, list)
+	my_signal = pyqtSignal(list)
 	
-	def __init__(self, turn_table):
+	def __init__(self, turntable):
 		super(TurnTableStatus, self).__init__()
-		self.turn_table = turn_table
-		
+		self.turn_table = turntable
+	
 	def run(self):
-		self.turn_table.connect()
-		
-			
-			
+		# self.turn_table.connect()
+		while True:
+			try:
+				current_angle_azimuth = round(self.turn_table.get_position(2), 2)
+				current_angle_pitching = round(self.turn_table.get_position(1), 2)
+				self.msleep(100)
+			except IOError:
+				print('获取角度信息失败！')
+				current_angle_azimuth = 0
+				current_angle_pitching = 0
+			self.my_signal.emit(list((current_angle_azimuth, current_angle_pitching)))
+
+
 # class MissionInformation(QThread):
 # 	my_signal = pyqtSignal(list)
 #

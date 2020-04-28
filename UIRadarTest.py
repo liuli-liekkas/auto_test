@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtGui import QFont, QIcon, QPixmap
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QDate
 import sys
@@ -183,14 +183,17 @@ class RadarTestMain(QMainWindow):
 		self.tab2_test_data_edit.setCalendarPopup(True)
 		self.tab2_test_data_edit.setDate(QtCore.QDate.currentDate())
 		# 仪表状态栏
-		self.tab2_status_turntable_button = QPushButton('转台')
-		self.tab2_status_turntable_button.setIcon(QIcon('./image/wifi_off.png'))
-		self.turn_table_status = TurnTable()
-		self.tab2_status_power_supply_button = QPushButton('电源')
+		# self.tab2_status_turntable_button = QPushButton('连接转台')
+		self.tab2_status_turntable_button = QLabel()
+		self.tab2_status_turntable_button.setFixedSize(20, 20)
+		self.tab2_status_turntable_button.setScaledContents(True)
+		self.tab2_status_turntable_button.setPixmap(QPixmap('./image/wifi_off.png'))
+		# self.tab2_status_turntable_button.clicked.connect(self.get_turn_table_status)
+		self.tab2_status_power_supply_button = QPushButton('连接电源')
 		self.tab2_status_power_supply_button.setIcon(QIcon('./image/wifi_off.png'))
-		self.tab2_status_target_simulate_button = QPushButton('目标模拟器')
+		self.tab2_status_target_simulate_button = QPushButton('连接目标模拟器')
 		self.tab2_status_target_simulate_button.setIcon(QIcon('./image/wifi_off.png'))
-		self.tab2_status_radar_can_button = QPushButton('雷达CAN通信')
+		self.tab2_status_radar_can_button = QPushButton('连接雷达CAN通信')
 		self.tab2_status_radar_can_button.setIcon(QIcon('./image/wifi_off.png'))
 		# 项目栏
 		self.tab2_horizontal_power_box = QCheckBox('水平探测威力')
@@ -451,6 +454,25 @@ class RadarTestMain(QMainWindow):
 		self.tab2_5_v_layout.addWidget(self.tab2_3_h_splitter)
 		self.tab2_central_widget.setLayout(self.tab2_5_v_layout)
 
+	def get_turn_table_status(self):
+		if self.tab2_status_turntable_button.text() == '连接转台':
+			self.tab2_status_turntable_button.setIcon(QIcon('./image/wifi_on.png'))
+			self.tab2_status_turntable_button.setText('断开转台连接')
+			self.turn_table = TurnTable()
+			self.turn_table.connect()
+			self.turn_table_status = TurnTableStatus(self.turn_table)
+			self.turn_table_status.start()
+			self.turn_table_status.my_signal.connect(
+					self.display_turn_table_status)
+		else:
+			self.tab2_status_turntable_button.setText('连接转台')
+			self.tab2_status_turntable_button.setIcon(QIcon('./image/wifi_off.png'))
+	
+	def display_turn_table_status(self, angle):
+		print(angle[0])
+		print(angle[1])
+		pass
+		
 	# 自检菜单选项
 	# 雷达信号接收
 	def get_radar_message(self):
