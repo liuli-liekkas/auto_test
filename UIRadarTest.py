@@ -142,14 +142,14 @@ class RadarTestMain(QMainWindow):
 		# 项目栏
 		self.frame_2 = QFrame(self.tab2_central_widget)
 		self.frame_2.setFrameShape(QFrame.StyledPanel)
-		self.frame_2.setMaximumWidth(300)
+		# self.frame_2.setMaximumWidth(300)
 		# 状态栏
 		self.frame_3 = QFrame(self.tab2_central_widget)
 		self.frame_3.setFrameShape(QFrame.StyledPanel)
 		# 目标信息栏
 		self.frame_4 = QFrame(self.tab2_central_widget)
 		self.frame_4.setFrameShape(QFrame.StyledPanel)
-		self.frame_4.setMaximumWidth(300)
+		# self.frame_4.setMaximumWidth(300)
 		# 各控件信息
 		# 任务信息栏
 		self.tab2_sample_number_label = QLabel()
@@ -160,7 +160,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_sample_number_browser.setFixedSize(70, 20)
 		self.tab2_tester_name_label = QLabel()
 		self.tab2_tester_name_label.setText('测试人员:')
-		self.tab2_tester_name_label.setFixedSize(70, 20)
+		self.tab2_tester_name_label.setFixedSize(50, 20)
 		self.tab2_tester_name_browser = QTextBrowser()
 		self.tab2_tester_name_browser.setText('薛岩')
 		self.tab2_tester_name_browser.setFixedSize(70, 20)
@@ -190,10 +190,13 @@ class RadarTestMain(QMainWindow):
 		self.tab2_status_turntable_button.setPixmap(QPixmap('./image/wifi_off.png'))
 		# self.tab2_status_turntable_button.clicked.connect(self.get_turn_table_status)
 		self.tab2_status_power_supply_button = QPushButton('连接电源')
+		# self.tab2_status_power_supply_button.setFixedSize(100, 20)
 		self.tab2_status_power_supply_button.setIcon(QIcon('./image/wifi_off.png'))
 		self.tab2_status_target_simulate_button = QPushButton('连接目标模拟器')
+		# self.tab2_status_target_simulate_button.setFixedSize(100, 20)
 		self.tab2_status_target_simulate_button.setIcon(QIcon('./image/wifi_off.png'))
 		self.tab2_status_radar_can_button = QPushButton('连接雷达CAN通信')
+		# self.tab2_status_radar_can_button.setFixedSize(100, 20)
 		self.tab2_status_radar_can_button.setIcon(QIcon('./image/wifi_off.png'))
 		# 项目栏
 		self.tab2_horizontal_power_box = QCheckBox('水平探测威力')
@@ -360,15 +363,15 @@ class RadarTestMain(QMainWindow):
 		self.tab2_realtime_plot = pg.PlotWidget()
 		self.tab2_realtime_plot.showGrid(x=True, y=True)
 		self.tab2_realtime_plot.setXRange(-5, 5)
-		self.tab2_realtime_plot.setYRange(0, 100)
+		self.tab2_realtime_plot.setYRange(0, 40)
 		self.tab2_realtime_plot_ready = self.tab2_realtime_plot.plot(
 				np.random.normal(size=1), np.random.normal(size=1))
 		self.tab2_realtime_table = QTableWidget()
 		self.tab2_realtime_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-		self.tab2_realtime_table.setColumnCount(7)
-		self.tab2_realtime_table.setRowCount(10)
+		self.tab2_realtime_table.setColumnCount(6)
+		self.tab2_realtime_table.setRowCount(20)
 		self.tab2_realtime_table.setHorizontalHeaderLabels(
-				['ID', '垂直距离', '水平距离', '方位角度', '垂直速度', '水平速度', '目标RCS'])
+				['ID', '垂直距离', '水平距离', '垂直速度', '水平速度', '目标RCS'])
 		# 位置初始化
 		self.tab2_layout_init()
 
@@ -493,6 +496,8 @@ class RadarTestMain(QMainWindow):
 	def paint_message(self, message):
 		new_message = np.array(message)
 		self.tab2_realtime_table.clear()
+		self.tab2_realtime_table.setHorizontalHeaderLabels(
+				['ID', '垂直距离', '水平距离', '垂直速度', '水平速度', '目标RCS'])
 		if len(new_message) > 0:
 			self.tab2_realtime_plot_ready.setData(new_message[:, 2], new_message[:, 1], pen=None, symbol='o')
 			# print(new_message)
