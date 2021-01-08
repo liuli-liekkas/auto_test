@@ -778,18 +778,18 @@ class CanControl:
 
 
 if __name__ == '__main__':
-	# RCS连接测试
-	# rsc = RSC('192.168.0.101', 50, 2000000)
-	# rsc.open()
-	# rsc.reset()
-	# time.sleep(3)
-	# rsc.read_idn()
-	# rsc.set_att()
-	# rsc.set_freq()
-	# rsc.set_corr_on()
-	# time.sleep(3)
-	# rsc.set_corr_off()
-	# rsc.close()
+	#RCS连接测试
+	rsc = RSC('192.168.0.101', 50, 2000000)
+	rsc.open()
+	rsc.reset()
+	time.sleep(3)
+	rsc.read_idn()
+	rsc.set_att()
+	rsc.set_freq()
+	rsc.set_corr_on()
+	time.sleep(3)
+	rsc.set_corr_off()
+	rsc.close()
 	
 	# HMP连接测试
 	# hmp = HMP()
@@ -836,8 +836,8 @@ if __name__ == '__main__':
 	# turntable.s_home(2)
 	
 	# ARTS连接测试
-	arts = ARTS()
-	arts.connect('192.168.0.20')
+	# arts = ARTS()
+	# arts.connect('192.168.0.20')
 # time.sleep(1)
 # arts.set_freq(76250000)
 # arts.set_tr_on()
