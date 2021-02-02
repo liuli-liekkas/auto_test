@@ -1,11 +1,7 @@
 import ctypes
 from ctypes import wintypes
-from cantools import database
-import cantools
 import numpy as np
-import time
-import os
-import sys
+from cantools import database
 
 
 class Struct_INIT_CONFIG(ctypes.Structure):
@@ -155,6 +151,13 @@ class CanControl:
 		result = self.canDLL.CloseDevice(self.Struct_USBCAN2C, 0)
 		if result != self.STATUS_OK:
 			print('调用 Struct_CloseDevice出错\r\n')
+
+
+class CanFDControl:
+	def __init__(self):
+		self.canDLL = ctypes.CDLL('./dll/zlgcan.dll')
+
+	pass
 
 
 if __name__ == '__main__':

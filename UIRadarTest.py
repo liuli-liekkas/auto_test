@@ -2790,7 +2790,7 @@ class TurnTableConfig(QWidget):
 		super(TurnTableConfig, self).__init__()
 		self.file = open('./config/TurnTable.txt', encoding='unicode_escape')
 		self.config_result = self.file.readlines()
-		self.turn_table = TurnTable()
+		# self.turn_table = TurnTable()
 		self.setWindowTitle('转台设置')
 		self.group_box_1 = QGroupBox('控制方式')
 		self.auto_config_button = QRadioButton('自动设置')
