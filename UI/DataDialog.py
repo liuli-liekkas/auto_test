@@ -11,7 +11,7 @@ class DateDialog(QDialog):
         self.setWindowTitle("DataDialog")
         layout = QVBoxLayout(self)
         self.datetime = QDateTimeEdit(self)
-        self.datetime.setCalendarPopup(True)
+        self.datetime.setCalendarPaopup(True)
         self.datetime.setDateTime(QDateTime.currentDateTime())
 
         layout.addWidget(self.datetime)

@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -464,24 +464,7 @@
   </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>ConfirmButton</sender>
-   <signal>clicked()</signal>
-   <receiver>Form</receiver>
-   <slot>slot1()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>194</x>
-     <y>227</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>87</x>
-     <y>229</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>slot1()</slot>
  </slots>
