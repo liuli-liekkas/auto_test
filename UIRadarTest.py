@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont, QIcon, QPixmap
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QDate
+from PyQt5.QtCore import *
 import sys
 import pyqtgraph as pg
 from ThreadMission import *
@@ -13,20 +13,19 @@ from MachineClass import *
 # 主界面
 class RadarTestMain(QMainWindow):
 	def __init__(self):
-		# noinspection PyArgumentList
 		super(RadarTestMain, self).__init__()
 		self.init_ui()
 
 	def init_ui(self):
-		self.resize(1100, 700)
+		# self.resize(1100, 700)
 		self.setWindowTitle("毫米波雷达自动化测试系统")
 		self.data = array.array('i')
-		self.center()
+		self.move_center()
 		self.menu_init()
 		self.status_bar_init()
 		self.tab_menu_init()
 
-	def center(self):
+	def move_center(self):
 		qr = self.frameGeometry()
 		cp = QDesktopWidget().availableGeometry().center()
 		qr.moveCenter(cp)
@@ -34,15 +33,14 @@ class RadarTestMain(QMainWindow):
 
 	def menu_init(self):
 		# 菜单总览
-		menubar = self.menuBar()
-		file_menu = menubar.addMenu("文件")
-		mission_menu = menubar.addMenu("任务")
+		self.menubar = self.menuBar()
+		file_menu = self.menubar.addMenu("文件")
+		mission_menu = self.menubar.addMenu("任务")
 		# view_menu = menubar.addMenu("视图")
-		config_menu = menubar.addMenu("配置")
+		config_menu = self.menubar.addMenu("配置")
 		# analysis_menu = menubar.addMenu("分析")
-		self_test_menu = menubar.addMenu("自检")
-		tool_menu = menubar.addMenu("工具")
-		# help_menu = menubar.addMenu("帮助")
+		self_test_menu = self.menubar.addMenu("自检")
+		tool_menu = self.menubar.addMenu("工具")
 		# 文件菜单
 		# 打开
 		open_act = QAction("打开", self)
@@ -116,11 +114,12 @@ class RadarTestMain(QMainWindow):
 		self.tab_widget.addTab(self.tab2_central_widget, "探测性能测试")
 		self.tab_widget.addTab(self.tab3_central_widget, "天线性能测试")
 		self.tab_widget.setCurrentIndex(1)
-		self.tab_widget.setTabPosition(QTabWidget.South)
+		self.tab_widget.setTabPosition(QTabWidget.North)
 		self.tab_widget.setTabShape(QTabWidget.Triangular)
 		self.setCentralWidget(self.tab_widget)
+		# 设置选中为红色，设置字体及大小
 		self.tab_widget.setStyleSheet("QTabBar::tab:selected{color:red;background-color:rbg(200,200,255);} ")
-		self.tab_widget.setFont(QFont('KaiTi', 16))
+		self.tab_widget.setFont(QFont('KaiTi', 12))
 		self.tab1_ui()
 		self.tab2_ui()
 		self.tab3_ui()
@@ -154,21 +153,23 @@ class RadarTestMain(QMainWindow):
 		# 任务信息栏
 		self.tab2_sample_number_label = QLabel()
 		self.tab2_sample_number_label.setText('样品编号:')
-		self.tab2_sample_number_label.setFixedSize(70, 20)
+		# self.tab2_sample_number_label.setBaseSizeeze(70,40)
 		self.tab2_sample_number_browser = QTextBrowser()
 		self.tab2_sample_number_browser.setText('00001')
-		self.tab2_sample_number_browser.setFixedSize(70, 20)
+		self.tab2_sample_number_browser.setAlignment(QtCore.Qt.AlignCenter)
+		# self.tab2_sample_number_browser.setBaseSize(70,40)
 		self.tab2_tester_name_label = QLabel()
 		self.tab2_tester_name_label.setText('测试人员:')
-		self.tab2_tester_name_label.setFixedSize(50, 20)
+		# self.tab2_tester_name_label.setMinimumSize(50, 20)
 		self.tab2_tester_name_browser = QTextBrowser()
 		self.tab2_tester_name_browser.setText('薛岩')
-		self.tab2_tester_name_browser.setFixedSize(70, 20)
+		self.tab2_tester_name_browser.setAlignment(QtCore.Qt.AlignCenter)
+		# self.tab2_tester_name_browser.setMinimumSize(70, 20)
 		self.tab2_supervisor_name_label = QLabel()
 		self.tab2_supervisor_name_label.setText('复核/监督人员:')
-		self.tab2_supervisor_name_label.setFixedSize(100, 20)
+		# self.tab2_supervisor_name_label.setMinimumSize(100, 20)
 		self.tab2_supervisor_name_combo = QComboBox()
-		self.tab2_supervisor_name_combo.setFixedSize(70, 20)
+		# self.tab2_supervisor_name_combo.setFixedSize(70, 20)
 		self.tab2_supervisor_name_combo.addItem('刘力')
 		self.tab2_supervisor_name_combo.addItem('申亚飞')
 		self.tab2_supervisor_name_combo.addItem('裴毓')
@@ -176,10 +177,10 @@ class RadarTestMain(QMainWindow):
 		self.tab2_supervisor_name_combo.addItem('薛岩')
 		self.tab2_test_data_label = QLabel()
 		self.tab2_test_data_label.setText('试验日期:')
-		self.tab2_test_data_label.setFixedSize(70, 20)
+		# self.tab2_test_data_label.setFixedSize(70, 20)
 		self.tab2_test_data_edit = QDateEdit()
 		self.tab2_test_data_edit.setAlignment(QtCore.Qt.AlignCenter)
-		self.tab2_test_data_edit.setFixedSize(100, 20)
+		# self.tab2_test_data_edit.setFixedSize(100, 20)
 		self.tab2_test_data_edit.setCalendarPopup(True)
 		self.tab2_test_data_edit.setDate(QtCore.QDate.currentDate())
 		# 仪表状态栏
@@ -218,7 +219,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_horizontal_power_config_button.setEnabled(False)
 		self.horizontal_power_config_menu_window = HorizontalPowerMenu()
 		self.tab2_horizontal_power_config_button.clicked.connect(
-				self.horizontal_power_config_menu_window.show)
+			self.horizontal_power_config_menu_window.show)
 		# 水平威力范围按钮显示，勾取后可以设置
 		self.tab2_horizontal_power_box.stateChanged.connect(
 			lambda:
@@ -230,7 +231,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_vertical_power_config_button.setEnabled(False)
 		self.vertical_power_config_menu_window = VerticalPowerMenu()
 		self.tab2_vertical_power_config_button.clicked.connect(
-				self.vertical_power_config_menu_window.show)
+			self.vertical_power_config_menu_window.show)
 		# 垂直威力范围按钮显示，勾取后可以设置
 		self.tab2_vertical_power_box.stateChanged.connect(
 			lambda:
@@ -242,7 +243,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_distance_resolution_config_button.setEnabled(False)
 		self.distance_resolution_config_menu_window = DistanceResolution()
 		self.tab2_distance_resolution_config_button.clicked.connect(
-				self.distance_resolution_config_menu_window.show)
+			self.distance_resolution_config_menu_window.show)
 		# 距离分辨率按钮显示，勾取后可以设置
 		self.tab2_distance_resolution_box.stateChanged.connect(
 			lambda:
@@ -254,7 +255,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_distance_distinction_config_button.setEnabled(False)
 		self.distance_distinction_config_menu_window = DistanceDistinction()
 		self.tab2_distance_distinction_config_button.clicked.connect(
-				self.distance_distinction_config_menu_window.show)
+			self.distance_distinction_config_menu_window.show)
 		# 距离区分度按钮显示，勾取后可以设置
 		self.tab2_distance_distinction_box.stateChanged.connect(
 			lambda:
@@ -266,7 +267,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_horizontal_angular_range_config_button.setEnabled(False)
 		self.horizontal_angular_range_config_menu_window = HorizontalAngularRange()
 		self.tab2_horizontal_angular_range_config_button.clicked.connect(
-				self.horizontal_angular_range_config_menu_window.show)
+			self.horizontal_angular_range_config_menu_window.show)
 		# 水平角度范围按钮显示，勾取后可以设置
 		self.tab2_horizontal_angular_range_box.stateChanged.connect(
 			lambda:
@@ -278,7 +279,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_vertical_angular_range_config_button.setEnabled(False)
 		self.vertical_angular_range_config_menu_window = VerticalAngularRange()
 		self.tab2_vertical_angular_range_config_button.clicked.connect(
-				self.vertical_angular_range_config_menu_window.show)
+			self.vertical_angular_range_config_menu_window.show)
 		# 垂直角度范围按钮显示，勾取后可以设置
 		self.tab2_vertical_angular_range_box.stateChanged.connect(
 			lambda:
@@ -290,7 +291,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_angular_resolution_config_button.setEnabled(False)
 		self.angular_resolution_config_menu_window = AngularResolution()
 		self.tab2_angular_resolution_config_button.clicked.connect(
-				self.angular_resolution_config_menu_window.show)
+			self.angular_resolution_config_menu_window.show)
 		# 角度分辨率按钮显示，勾取后可以设置
 		self.tab2_angular_resolution_box.stateChanged.connect(
 			lambda:
@@ -302,7 +303,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_angular_distinction_config_button.setEnabled(False)
 		self.angular_distinction_config_menu_window = AngularDistinction()
 		self.tab2_angular_distinction_config_button.clicked.connect(
-				self.angular_distinction_config_menu_window.show)
+			self.angular_distinction_config_menu_window.show)
 		# 角度区分度按钮显示，勾取后可以设置
 		self.tab2_angular_distinction_box.stateChanged.connect(
 			lambda:
@@ -314,7 +315,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_speed_range_config_button.setEnabled(False)
 		self.speed_range_config_menu_window = SpeedRange()
 		self.tab2_speed_range_config_button.clicked.connect(
-				self.speed_range_config_menu_window.show)
+			self.speed_range_config_menu_window.show)
 		# 速度范围按钮显示，勾取后可以设置
 		self.tab2_speed_range_box.stateChanged.connect(
 			lambda:
@@ -326,7 +327,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_speed_resolution_config_button.setEnabled(False)
 		self.speed_resolution_config_menu_window = SpeedResolution()
 		self.tab2_speed_resolution_config_button.clicked.connect(
-				self.speed_resolution_config_menu_window.show)
+			self.speed_resolution_config_menu_window.show)
 		# 速度分辨率按钮显示，勾取后可以设置
 		self.tab2_speed_resolution_box.stateChanged.connect(
 			lambda:
@@ -338,7 +339,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_speed_distinction_config_button.setEnabled(False)
 		self.speed_distinction_config_menu_window = SpeedDistinction()
 		self.tab2_speed_distinction_config_button.clicked.connect(
-				self.speed_distinction_config_menu_window.show)
+			self.speed_distinction_config_menu_window.show)
 		# 速度区分度按钮显示，勾取后可以设置
 		self.tab2_speed_distinction_box.stateChanged.connect(
 			lambda:
@@ -349,7 +350,7 @@ class RadarTestMain(QMainWindow):
 		self.tab2_status_test_label = QLabel('测试状态')
 		self.tab2_status_test_edit = QTextBrowser()
 		self.tab2_status_test_edit.setStyleSheet(
-				'background-color:white;font-size:12px')
+			'background-color:white;font-size:12px')
 		# 状态栏始终显示底部
 		self.tab2_status_test_edit.ensureCursorVisible()  # 游标可用
 		cursor = self.tab2_status_test_edit.textCursor()  # 设置游标
@@ -365,13 +366,13 @@ class RadarTestMain(QMainWindow):
 		self.tab2_realtime_plot.setXRange(-5, 5)
 		self.tab2_realtime_plot.setYRange(0, 40)
 		self.tab2_realtime_plot_ready = self.tab2_realtime_plot.plot(
-				np.random.normal(size=1), np.random.normal(size=1))
+			np.random.normal(size=1), np.random.normal(size=1))
 		self.tab2_realtime_table = QTableWidget()
 		self.tab2_realtime_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 		self.tab2_realtime_table.setColumnCount(6)
 		self.tab2_realtime_table.setRowCount(20)
 		self.tab2_realtime_table.setHorizontalHeaderLabels(
-				['ID', '垂直距离', '水平距离', '垂直速度', '水平速度', '目标RCS'])
+			['ID', '垂直距离', '水平距离', '垂直速度', '水平速度', '目标RCS'])
 		# 位置初始化
 		self.tab2_layout_init()
 
@@ -466,16 +467,16 @@ class RadarTestMain(QMainWindow):
 			self.turn_table_status = TurnTableStatus(self.turn_table)
 			self.turn_table_status.start()
 			self.turn_table_status.my_signal.connect(
-					self.display_turn_table_status)
+				self.display_turn_table_status)
 		else:
 			self.tab2_status_turntable_button.setText('连接转台')
 			self.tab2_status_turntable_button.setIcon(QIcon('./image/wifi_off.png'))
-	
+
 	def display_turn_table_status(self, angle):
 		print(angle[0])
 		print(angle[1])
 		pass
-		
+
 	# 自检菜单选项
 	# 雷达信号接收
 	def get_radar_message(self):
@@ -487,17 +488,17 @@ class RadarTestMain(QMainWindow):
 		self.timer = pg.QtCore.QTimer()
 		self.timer.timeout.connect(lambda: self.paint_message(self.message))
 		self.timer.start(500)
-	
+
 	# 获取目标初始信息
 	def set_message(self, message):
 		self.message = message
-	
+
 	# 画面、表格显示目标信息
 	def paint_message(self, message):
 		new_message = np.array(message)
 		self.tab2_realtime_table.clear()
 		self.tab2_realtime_table.setHorizontalHeaderLabels(
-				['ID', '垂直距离', '水平距离', '垂直速度', '水平速度', '目标RCS'])
+			['ID', '垂直距离', '水平距离', '垂直速度', '水平速度', '目标RCS'])
 		if len(new_message) > 0:
 			self.tab2_realtime_plot_ready.setData(new_message[:, 2], new_message[:, 1], pen=None, symbol='o')
 			# print(new_message)
@@ -515,7 +516,7 @@ class RadarTestMain(QMainWindow):
 
 	def tab3_ui(self):
 		pass
-	
+
 
 # 水平威力范围详细菜单
 class HorizontalPowerMenu(QWidget):
@@ -613,7 +614,7 @@ class HorizontalPowerMenu(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		# 界面数据初始化
 		try:
@@ -639,7 +640,7 @@ class HorizontalPowerMenu(QWidget):
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -649,27 +650,27 @@ class HorizontalPowerMenu(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/HorizontalPowerTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -732,7 +733,7 @@ class VerticalPowerMenu(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -769,7 +770,7 @@ class VerticalPowerMenu(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/VerticalPowerTest.txt', encoding='unicode_escape')
@@ -788,13 +789,13 @@ class VerticalPowerMenu(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -804,27 +805,27 @@ class VerticalPowerMenu(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/VerticalPowerTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -887,7 +888,7 @@ class DistanceResolution(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -924,7 +925,7 @@ class DistanceResolution(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/DistanceResolutionTest.txt', encoding='unicode_escape')
@@ -943,13 +944,13 @@ class DistanceResolution(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -959,27 +960,27 @@ class DistanceResolution(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/DistanceResolutionTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -1042,7 +1043,7 @@ class DistanceDistinction(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -1079,7 +1080,7 @@ class DistanceDistinction(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/DistanceResolutionTest.txt', encoding='unicode_escape')
@@ -1098,13 +1099,13 @@ class DistanceDistinction(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -1114,27 +1115,27 @@ class DistanceDistinction(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/DistanceDistinctionTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -1197,7 +1198,7 @@ class HorizontalAngularRange(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -1234,7 +1235,7 @@ class HorizontalAngularRange(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/DistanceResolutionTest.txt', encoding='unicode_escape')
@@ -1253,13 +1254,13 @@ class HorizontalAngularRange(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -1269,27 +1270,27 @@ class HorizontalAngularRange(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/HorizontalAngularRangeTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -1352,7 +1353,7 @@ class VerticalAngularRange(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -1389,7 +1390,7 @@ class VerticalAngularRange(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/VerticalAngularRangeTest.txt', encoding='unicode_escape')
@@ -1408,13 +1409,13 @@ class VerticalAngularRange(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -1424,27 +1425,27 @@ class VerticalAngularRange(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/VerticalAngularRangeTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -1507,7 +1508,7 @@ class AngularResolution(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -1544,7 +1545,7 @@ class AngularResolution(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/AngularResolutionTest.txt', encoding='unicode_escape')
@@ -1563,13 +1564,13 @@ class AngularResolution(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -1579,27 +1580,27 @@ class AngularResolution(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/AngularResolutionTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -1662,7 +1663,7 @@ class AngularDistinction(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -1699,7 +1700,7 @@ class AngularDistinction(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/AngularDistinctionTest.txt', encoding='unicode_escape')
@@ -1718,13 +1719,13 @@ class AngularDistinction(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -1734,27 +1735,27 @@ class AngularDistinction(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/AngularDistinctionTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -1817,7 +1818,7 @@ class SpeedRange(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -1854,7 +1855,7 @@ class SpeedRange(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/SpeedRangeTest.txt', encoding='unicode_escape')
@@ -1873,13 +1874,13 @@ class SpeedRange(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -1889,27 +1890,27 @@ class SpeedRange(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/SpeedRangeTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -1972,7 +1973,7 @@ class SpeedResolution(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -2009,7 +2010,7 @@ class SpeedResolution(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/SpeedResolutionTest.txt', encoding='unicode_escape')
@@ -2028,13 +2029,13 @@ class SpeedResolution(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -2044,27 +2045,27 @@ class SpeedResolution(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/SpeedResolutionTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -2127,7 +2128,7 @@ class SpeedDistinction(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_config)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -2164,7 +2165,7 @@ class SpeedDistinction(QWidget):
 		self.h_layout.addLayout(self.grid_layout)
 		self.h_layout.addLayout(self.v_layout)
 		self.setLayout(self.h_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/SpeedDistinctionTest.txt', encoding='unicode_escape')
@@ -2183,13 +2184,13 @@ class SpeedDistinction(QWidget):
 		else:
 			file.close()
 		event.accept()
-	
+
 	def radiobutton_select(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			self.motor_pattern_one_way_combo.setEnabled(False)
 		else:
 			self.motor_pattern_one_way_combo.setEnabled(True)
-	
+
 	def confirm_config(self):
 		if self.motor_pattern_round_trip_button.isChecked():
 			motor_pattern = '往返运动'
@@ -2199,27 +2200,27 @@ class SpeedDistinction(QWidget):
 			motor_pattern_one_way = self.motor_pattern_one_way_combo.currentText()
 		file = open('./config/SpeedDistinctionTest.txt', 'w+')
 		file.write('目标RCS设置为:%sdBsm\n'
-				   '最小测试距离设置为:%sm\n'
-				   '最大测试距离设置为:%sm\n'
-				   '最小测试角度设置为:%s°\n'
-				   '最大测试角度设置为:%s°\n'
-				   '步进距离设置为:%sm\n'
-				   '步进角度设置为:%s°\n'
-				   '驻留时间设置为:%ss\n'
-				   '运动模式设置为:%s\n'
-				   '单向运动模式设置为:%s\n'
-				   '测试模式设置为:%s\n' % (
-					   self.target_rcs_edit.toPlainText(),
-					   self.min_range_edit.toPlainText(),
-					   self.max_range_edit.toPlainText(),
-					   self.min_angle_edit.toPlainText(),
-					   self.max_angle_edit.toPlainText(),
-					   self.step_range_edit.toPlainText(),
-					   self.step_angle_edit.toPlainText(),
-					   self.dwell_time_edit.toPlainText(),
-					   motor_pattern,
-					   motor_pattern_one_way,
-					   self.test_mode_combo.currentText()))
+		           '最小测试距离设置为:%sm\n'
+		           '最大测试距离设置为:%sm\n'
+		           '最小测试角度设置为:%s°\n'
+		           '最大测试角度设置为:%s°\n'
+		           '步进距离设置为:%sm\n'
+		           '步进角度设置为:%s°\n'
+		           '驻留时间设置为:%ss\n'
+		           '运动模式设置为:%s\n'
+		           '单向运动模式设置为:%s\n'
+		           '测试模式设置为:%s\n' % (
+			           self.target_rcs_edit.toPlainText(),
+			           self.min_range_edit.toPlainText(),
+			           self.max_range_edit.toPlainText(),
+			           self.min_angle_edit.toPlainText(),
+			           self.max_angle_edit.toPlainText(),
+			           self.step_range_edit.toPlainText(),
+			           self.step_angle_edit.toPlainText(),
+			           self.dwell_time_edit.toPlainText(),
+			           motor_pattern,
+			           motor_pattern_one_way,
+			           self.test_mode_combo.currentText()))
 		time.sleep(1)
 		self.close()
 
@@ -2294,53 +2295,53 @@ class AddMission(QWidget):
 		self.grid_layout.addWidget(self.supervise_worker_text, 8, 1, 1, 1)
 		self.grid_layout.addWidget(self.confirm_button, 9, 1, 1, 1)
 		self.setLayout(self.grid_layout)
-	
+
 	def echo_sample_name(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入样品名称：', QLineEdit.Normal)
 		self.sample_name_text.setText(value)
 		self.sample_name_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_sample_type(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入型号规格：', QLineEdit.Normal)
 		self.sample_type_text.setText(value)
 		self.sample_type_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_sample_number(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入样品编号：', QLineEdit.Normal)
 		self.sample_number_text.setText(value)
 		self.sample_number_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_report_number(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入报告编号：', QLineEdit.Normal)
 		self.report_number_text.setText(value)
 		self.report_number_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_request_company(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入委托单位：', QLineEdit.Normal)
 		self.request_company_text.setText(value)
 		self.request_company_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_test_basis(self):
 		items = ['GB∕T 36654-2018 76GHz车辆无线电设备射频指标技术要求及测试方法',
-				 '毫米波雷达上海市地方标准',
-				 '毫米波雷达国家标准',
-				 '毫米波雷达企业标准']
+		         '毫米波雷达上海市地方标准',
+		         '毫米波雷达国家标准',
+		         '毫米波雷达企业标准']
 		value, ok = QInputDialog.getItem(self, '新建任务信息', '请选择试验依据：', items, 1, True)
 		self.test_basis_text.setText(value)
 		self.test_basis_text.setAlignment(QtCore.Qt.AlignHCenter)
-	
+
 	def echo_test_worker(self):
 		items = ['薛岩', '裴毓', '张晓蕾', '刘力']
 		value, ok = QInputDialog.getItem(self, '新建任务信息', '请输入测试人员：', items, 1, True)
 		self.test_worker_text.setText(value)
 		self.test_worker_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_supervise_worker(self):
 		items = ['薛岩', '裴毓', '张晓蕾', '刘力']
 		value, ok = QInputDialog.getItem(self, '新建任务信息', '请输入监督人员：', items, 1, True)
 		self.supervise_worker_text.setText(value)
 		self.supervise_worker_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def confirm_information(self):
 		file = open('./config/MissionInformation.txt', 'w+')
 		file.write(
@@ -2362,8 +2363,8 @@ class AddMission(QWidget):
 				self.test_basis_text.toPlainText(),
 				self.test_worker_text.toPlainText(),
 				self.supervise_worker_text.toPlainText()))
-		# time.sleep(1)
-		# self.close()
+	# time.sleep(1)
+	# self.close()
 
 
 # 修改任务
@@ -2413,7 +2414,7 @@ class ModifyMission(QWidget):
 		self.confirm_button = QPushButton('确认')
 		self.confirm_button.clicked.connect(self.confirm_information)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout(self)
 		self.grid_layout.addWidget(self.sample_name_button, 0, 0, 1, 1)
@@ -2436,7 +2437,7 @@ class ModifyMission(QWidget):
 		self.grid_layout.addWidget(self.supervise_worker_text, 8, 1, 1, 1)
 		self.grid_layout.addWidget(self.confirm_button, 9, 1, 1, 1)
 		self.setLayout(self.grid_layout)
-	
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/MissionInformation.txt')
@@ -2463,89 +2464,89 @@ class ModifyMission(QWidget):
 				self.test_worker_text.setAlignment(QtCore.Qt.AlignCenter)
 				self.supervise_worker_text.setText(self.edit_result[8].split(':')[1][0:-1])
 				self.supervise_worker_text.setAlignment(QtCore.Qt.AlignCenter)
-		
+
 		except IOError:
 			print('读取任务信息文件失败!')
 		else:
 			file.close()
 		event.accept()
-	
+
 	def echo_sample_name(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入样品名称：', QLineEdit.Normal)
 		self.sample_name_text.setText(value)
 		self.sample_name_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_sample_type(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入型号规格：', QLineEdit.Normal)
 		self.sample_type_text.setText(value)
 		self.sample_type_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_sample_number(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入样品编号：', QLineEdit.Normal)
 		self.sample_number_text.setText(value)
 		self.sample_number_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_report_number(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入报告编号：', QLineEdit.Normal)
 		self.report_number_text.setText(value)
 		self.report_number_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_request_company(self):
 		value, ok = QInputDialog.getText(self, '新建任务信息', '请输入委托单位：', QLineEdit.Normal)
 		self.request_company_text.setText(value)
 		self.request_company_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_test_basis(self):
 		items = ['GB∕T 36654-2018 76GHz车辆无线电设备射频指标技术要求及测试方法',
-				 '毫米波雷达上海市地方标准',
-				 '毫米波雷达国家标准',
-				 '毫米波雷达企业标准']
+		         '毫米波雷达上海市地方标准',
+		         '毫米波雷达国家标准',
+		         '毫米波雷达企业标准']
 		value, ok = QInputDialog.getItem(self, '新建任务信息', '请选择试验依据：', items, 1, True)
 		self.test_basis_text.setText(value)
 		self.test_basis_text.setAlignment(QtCore.Qt.AlignHCenter)
-	
+
 	def echo_test_worker(self):
 		items = ['薛岩', '裴毓', '张晓蕾', '刘力']
 		value, ok = QInputDialog.getItem(self, '新建任务信息', '请输入测试人员：', items, 1, True)
 		self.test_worker_text.setText(value)
 		self.test_worker_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def echo_supervise_worker(self):
 		items = ['薛岩', '裴毓', '张晓蕾', '刘力']
 		value, ok = QInputDialog.getItem(self, '新建任务信息', '请输入监督人员：', items, 1, True)
 		self.supervise_worker_text.setText(value)
 		self.supervise_worker_text.setAlignment(QtCore.Qt.AlignCenter)
-	
+
 	def confirm_information(self):
 		file = open('./config/MissionInformation.txt', 'w+')
 		file.write(
-				'样品名称:{0}\n'
-				'型号规格:{1}\n'
-				'样品编号:{2}\n'
-				'报告编号:{3}\n'
-				'委托单位:{4}\n'
-				'试验日期:{5}\n'
-				'试验依据:{6}\n'
-				'测试人员:{7}\n'
-				'监督人员:{8}\n'.format(
-					self.sample_name_text.toPlainText(),
-					self.sample_type_text.toPlainText(),
-					self.sample_number_text.toPlainText(),
-					self.report_number_text.toPlainText(),
-					self.request_company_text.toPlainText(),
-					self.test_date_text.date().toString(Qt.ISODate),
-					self.test_basis_text.toPlainText(),
-					self.test_worker_text.toPlainText(),
-					self.supervise_worker_text.toPlainText()))
-		# time.sleep(1)
-		# self.close()
+			'样品名称:{0}\n'
+			'型号规格:{1}\n'
+			'样品编号:{2}\n'
+			'报告编号:{3}\n'
+			'委托单位:{4}\n'
+			'试验日期:{5}\n'
+			'试验依据:{6}\n'
+			'测试人员:{7}\n'
+			'监督人员:{8}\n'.format(
+				self.sample_name_text.toPlainText(),
+				self.sample_type_text.toPlainText(),
+				self.sample_number_text.toPlainText(),
+				self.report_number_text.toPlainText(),
+				self.request_company_text.toPlainText(),
+				self.test_date_text.date().toString(Qt.ISODate),
+				self.test_basis_text.toPlainText(),
+				self.test_worker_text.toPlainText(),
+				self.supervise_worker_text.toPlainText()))
+	# time.sleep(1)
+	# self.close()
 
 
 # 目标模拟器配置菜单
 class TargetSimulateMenu(QWidget):
 	def __init__(self):
 		super(TargetSimulateMenu, self).__init__()
-		
+
 		self.setWindowTitle('目标模拟器设置')
 		self.ip_config_label = QLabel('IP地址:')
 		self.ip_config_edit = QTextEdit()
@@ -2578,7 +2579,7 @@ class TargetSimulateMenu(QWidget):
 		self.result_edit = QTextBrowser()
 		self.result_edit.setMinimumHeight(300)
 		self.layout_init()
-		
+
 	def showEvent(self, event):
 		try:
 			file = open('./config/TargetSimulate.txt')
@@ -2615,24 +2616,24 @@ class TargetSimulateMenu(QWidget):
 		self.v_layout.addWidget(self.result_label)
 		self.v_layout.addWidget(self.result_edit)
 		self.setLayout(self.v_layout)
-	
+
 	def power_supply_connect(self):
 		self.power_supply = HMP()
 		self.power_supply.open('192.168.0.105')
 		self.result_edit.append('电源连接成功' + time.strftime('%H:%M:%S') + '\n')
 		time.sleep(0.1)
 		self.power_supply.reset()
-	
+
 	def confirm_config(self):
 		file = open('./config/PowerSupply.txt', 'w+')
 		file.write('设置IP地址:%s\n'
-				   '设置通道:%s\n'
-				   '设置电压:%sV\n'
-				   '设置电流:%sA\n' % (
-					   self.ip_config_edit.toPlainText(),
-					   self.chan_config_combo.currentText(),
-					   self.volt_config_edit.toPlainText(),
-					   self.curr_config_edit.toPlainText()))
+		           '设置通道:%s\n'
+		           '设置电压:%sV\n'
+		           '设置电流:%sA\n' % (
+			           self.ip_config_edit.toPlainText(),
+			           self.chan_config_combo.currentText(),
+			           self.volt_config_edit.toPlainText(),
+			           self.curr_config_edit.toPlainText()))
 		self.power_supply.select_chan(int(self.chan_config_combo.currentText()))
 		time.sleep(0.1)
 		self.power_supply.set_volt(int(self.volt_config_edit.toPlainText()))
@@ -2640,29 +2641,29 @@ class TargetSimulateMenu(QWidget):
 		self.power_supply.set_curr(int(self.curr_config_edit.toPlainText()))
 		time.sleep(2)
 		self.result_edit.append('完成设置通道：' +
-								self.power_supply.return_status_chan() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
+		                        self.power_supply.return_status_chan() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 		self.result_edit.append('完成设置电压：' +
-								self.power_supply.return_status_volt() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
+		                        self.power_supply.return_status_volt() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 		self.result_edit.append('完成设置电流：' +
-								self.power_supply.return_status_curr() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
-	
+		                        self.power_supply.return_status_curr() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
+
 	def query_result(self):
 		self.result_edit.append('当前设置通道：' +
-								self.power_supply.return_status_chan() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
+		                        self.power_supply.return_status_chan() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 		self.result_edit.append('当前设置电压：' +
-								self.power_supply.return_status_volt() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
+		                        self.power_supply.return_status_volt() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 		self.result_edit.append('当前设置电流：' +
-								self.power_supply.return_status_curr() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
-	
+		                        self.power_supply.return_status_curr() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
+
 	def power_on(self):
 		self.power_supply.set_output_on()
-	
+
 	def power_off(self):
 		self.power_supply.set_output_off()
 
@@ -2708,7 +2709,7 @@ class PowerSupplyConfig(QWidget):
 		self.result_edit = QTextBrowser()
 		self.result_edit.setMinimumHeight(300)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.grid_layout = QGridLayout()
 		self.h_layout = QHBoxLayout()
@@ -2732,24 +2733,24 @@ class PowerSupplyConfig(QWidget):
 		self.v_layout.addWidget(self.result_label)
 		self.v_layout.addWidget(self.result_edit)
 		self.setLayout(self.v_layout)
-	
+
 	def power_supply_connect(self):
 		self.power_supply = HMP()
 		self.power_supply.open('192.168.0.105')
 		self.result_edit.append('电源连接成功' + time.strftime('%H:%M:%S') + '\n')
 		time.sleep(0.1)
 		self.power_supply.reset()
-	
+
 	def confirm_config(self):
 		file = open('./config/PowerSupply.txt', 'w+')
 		file.write('设置IP地址:%s\n'
-				   '设置通道:%s\n'
-				   '设置电压:%sV\n'
-				   '设置电流:%sA\n' % (
-					   self.ip_config_edit.toPlainText(),
-					   self.chan_config_combo.currentText(),
-					   self.volt_config_edit.toPlainText(),
-					   self.curr_config_edit.toPlainText()))
+		           '设置通道:%s\n'
+		           '设置电压:%sV\n'
+		           '设置电流:%sA\n' % (
+			           self.ip_config_edit.toPlainText(),
+			           self.chan_config_combo.currentText(),
+			           self.volt_config_edit.toPlainText(),
+			           self.curr_config_edit.toPlainText()))
 		self.power_supply.select_chan(int(self.chan_config_combo.currentText()))
 		time.sleep(0.1)
 		self.power_supply.set_volt(int(self.volt_config_edit.toPlainText()))
@@ -2757,29 +2758,29 @@ class PowerSupplyConfig(QWidget):
 		self.power_supply.set_curr(int(self.curr_config_edit.toPlainText()))
 		time.sleep(2)
 		self.result_edit.append('完成设置通道：' +
-								self.power_supply.return_status_chan() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
+		                        self.power_supply.return_status_chan() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 		self.result_edit.append('完成设置电压：' +
-								self.power_supply.return_status_volt() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
+		                        self.power_supply.return_status_volt() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 		self.result_edit.append('完成设置电流：' +
-								self.power_supply.return_status_curr() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
-	
+		                        self.power_supply.return_status_curr() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
+
 	def query_result(self):
 		self.result_edit.append('当前设置通道：' +
-								self.power_supply.return_status_chan() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
+		                        self.power_supply.return_status_chan() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 		self.result_edit.append('当前设置电压：' +
-								self.power_supply.return_status_volt() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
+		                        self.power_supply.return_status_volt() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
 		self.result_edit.append('当前设置电流：' +
-								self.power_supply.return_status_curr() + 'V ' +
-								time.strftime('%H:%M:%S') + '\n')
-	
+		                        self.power_supply.return_status_curr() + 'V ' +
+		                        time.strftime('%H:%M:%S') + '\n')
+
 	def power_on(self):
 		self.power_supply.set_output_on()
-	
+
 	def power_off(self):
 		self.power_supply.set_output_off()
 
@@ -2853,7 +2854,7 @@ class TurnTableConfig(QWidget):
 		self.result_edit = QTextBrowser()
 		self.result_edit.setMinimumHeight(300)
 		self.layout_init()
-	
+
 	def layout_init(self):
 		self.middle1_h_layout = QHBoxLayout()
 		self.middle2_h_layout = QHBoxLayout()
@@ -2892,7 +2893,7 @@ class TurnTableConfig(QWidget):
 		self.all_v_layout.addWidget(self.result_label)
 		self.all_v_layout.addWidget(self.result_edit)
 		self.setLayout(self.all_v_layout)
-	
+
 	def turn_table_status(self):
 		if self.connect_button.text() == '连接':
 			self.result_edit.append('转台连接成功')
@@ -2934,7 +2935,7 @@ class TurnTableConfig(QWidget):
 			self.azimuth_current_angle_text.setText('')
 			self.pitching_current_angle_text.setText('')
 			self.connect_button.setText('连接')
-	
+
 	def find_home(self):
 		if self.find_home_combo.currentText() == '水平寻零':
 			self.turn_table.s_home(2)
@@ -2955,7 +2956,7 @@ class TurnTableConfig(QWidget):
 			self.pitching_find_home = FindHome(1)
 			self.pitching_find_home.start()
 			self.pitching_find_home.my_signal.connect(self.find_home_result_display)
-	
+
 	def mode_select(self):
 		if self.connect_button.text() == '断开':
 			if self.manual_config_button.isChecked():
@@ -2978,7 +2979,7 @@ class TurnTableConfig(QWidget):
 				self.pitching_absolute_edit.setEnabled(False)
 				self.find_home_button.setEnabled(False)
 				self.confirm_button.setEnabled(False)
-	
+
 	def confirm_config(self):
 		file = open('./config/TurnTable.txt', 'w+')
 		if self.manual_config_button.isChecked():
@@ -2991,18 +2992,18 @@ class TurnTableConfig(QWidget):
 		else:
 			motion_mode = '绝对移动'
 		file.write('设置控制方式:%s\n'
-				   '设置移动方式:%s\n'
-				   '设置方位相对移动角度:%s°\n'
-				   '设置方位绝对移动角度:%s°\n'
-				   '设置俯仰相对移动角度:%s°\n'
-				   '设置俯仰绝对移动角度:%s°\n' % (
-					   config_mode,
-					   motion_mode,
-					   self.azimuth_relative_edit.toPlainText(),
-					   self.azimuth_absolute_edit.toPlainText(),
-					   self.pitching_relative_edit.toPlainText(),
-					   self.pitching_absolute_edit.toPlainText()))
-	
+		           '设置移动方式:%s\n'
+		           '设置方位相对移动角度:%s°\n'
+		           '设置方位绝对移动角度:%s°\n'
+		           '设置俯仰相对移动角度:%s°\n'
+		           '设置俯仰绝对移动角度:%s°\n' % (
+			           config_mode,
+			           motion_mode,
+			           self.azimuth_relative_edit.toPlainText(),
+			           self.azimuth_absolute_edit.toPlainText(),
+			           self.pitching_relative_edit.toPlainText(),
+			           self.pitching_absolute_edit.toPlainText()))
+
 	def manual_motion(self):
 		if self.relative_motion_button.isChecked():
 			self.turn_table.move_to_position(2, float(self.azimuth_relative_edit.toPlainText()), 1, False)
@@ -3010,13 +3011,13 @@ class TurnTableConfig(QWidget):
 		else:
 			self.turn_table.move_to_position(2, float(self.azimuth_absolute_edit.toPlainText()), 1, True)
 			self.turn_table.move_to_position(1, float(self.pitching_absolute_edit.toPlainText()), 1, True)
-	
+
 	def find_home_result_display(self, message):
 		self.result_edit.append(message)
-	
+
 	def azimuth_current_angle_display(self, message):
 		self.azimuth_current_angle_text.setText(message)
-	
+
 	def pitching_current_angle_display(self, message):
 		self.pitching_current_angle_text.setText(message)
 

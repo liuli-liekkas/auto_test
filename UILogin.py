@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QLabel, QLineEdit, QGridLayout, QVBoxLayout, QHBoxLayout, QMessageBox, QPushButton
+from PyQt5.QtWidgets import *
 import UISelect
 
 USER_PWD = {
@@ -22,15 +22,15 @@ class LoginWindow(QWidget):
         self.pwd_line = QLineEdit(self)
         self.login_button = QPushButton('登陆', self)
         self.sign_in_button = QPushButton('注册', self)
-        self.grid_layout = QGridLayout()
-        self.h_layout = QHBoxLayout()
-        self.v_layout = QVBoxLayout()
         self.layout_init()
         self.line_edit_init()
         self.push_button_init()
         self.sign_in_page = SigInPage()
 
     def layout_init(self):
+        self.grid_layout = QGridLayout()
+        self.h_layout = QHBoxLayout()
+        self.v_layout = QVBoxLayout()
         self.grid_layout.addWidget(self.user_label, 0, 0, 1, 1)
         self.grid_layout.addWidget(self.user_line, 0, 1, 1, 1)
         self.grid_layout.addWidget(self.pwd_label, 1, 0, 1, 1)
@@ -59,7 +59,7 @@ class LoginWindow(QWidget):
         self.sign_in_button.clicked.connect(self.show_sign_in_page_func)
 
     def show_sign_in_page_func(self):
-        self.sign_in_page.exec_()
+        self.sign_in_page.exec()
 
     def check_login_func(self):
         self.select_window = UISelect.SelectWindow()
