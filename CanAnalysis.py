@@ -155,7 +155,7 @@ class CanControl:
 
 class CanFDControl:
 	def __init__(self):
-		self.canDLL = ctypes.CDLL('./dll/zlgcan.dll')
+		self.canDLL = ctypes.CDLL('./dll/zlgcanx64.dll')
 
 	pass
 

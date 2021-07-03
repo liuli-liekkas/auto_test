@@ -2,7 +2,7 @@ import pyvisa
 import math
 import ctypes
 from ctypes import wintypes
-from cantools import database
+# from cantools import database
 import numpy as np
 
 
@@ -512,7 +512,7 @@ class TurnTable:
 	# fSetVel：° / s（对转台而言）或者mm / s(对扫描架而言)
 	# iDevice：设备地址号，转台iDevice = 0。
 	def __init__(self):
-		self.dll = ctypes.CDLL("D:\\files\python_learn\\auto_test\\dll\\PcommDllx64.dll")
+		self.dll = ctypes.CDLL("C:\\Users\\liuli\\PycharmProjects\\auto_test\\dll\\PcommDllx64.dll")
 		self.i_device = ctypes.c_short(0)
 	
 	def connect(self):
